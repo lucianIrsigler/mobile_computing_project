@@ -16,10 +16,17 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity
 {
+    //Declaration of variables
+    TextView txtUN;
+    TextView txtPass;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        txtUN = findViewById(R.id.txtUN);
+        txtPass = findViewById(R.id.txtPass);
 
         Button btnLogin = findViewById(R.id.btnLogin);
 
@@ -29,9 +36,9 @@ public class MainActivity extends AppCompatActivity
         ContentValues cv = new ContentValues();
         cv.put("Username", txtUN.getText().toString());
 
-        btnLogin.setOnClickListener(view -> phpReq.doRequest(MainActivity.this, "cars", cv,
+        btnLogin.setOnClickListener(view -> phpReq.doRequest(MainActivity.this, "login", cv,
                 response -> {
-                    if(!response.equals("[]"))
+                    if(response.length() >= 10)
                     {
                         String salt = processJSON(response, "Salt");
                         String resp_username = processJSON(response, "Username");
@@ -44,12 +51,15 @@ public class MainActivity extends AppCompatActivity
                                 Toast.makeText(MainActivity.this, "Correct details", Toast.LENGTH_SHORT).show();
                             }
                             else{
-                                Toast.makeText(MainActivity.this, "It's chaai mchana", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Wrong details", Toast.LENGTH_SHORT).show();
                             }
                         }
                         catch(NoSuchAlgorithmException ex){
                             Toast.makeText(MainActivity.this, ex.toString(), Toast.LENGTH_SHORT).show();
                         }
+                    }
+                    else{
+                        Toast.makeText(MainActivity.this, "No details exist", Toast.LENGTH_SHORT).show();
                     }
 
                 })
@@ -70,8 +80,4 @@ public class MainActivity extends AppCompatActivity
 
         return KeyValue;
     }
-
-    //Declaration of variables
-    TextView txtUN = findViewById(R.id.txtUN);
-    TextView txtPass = findViewById(R.id.txtPass);
 }
