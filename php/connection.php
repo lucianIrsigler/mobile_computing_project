@@ -7,6 +7,7 @@ $database="d2621933";
 $con =mysqli_connect($host,$user,$password,$database);
 
 if (mysqli_connect_errno()){
-        echo "failed to connect";
+	echo "failed to connect";
 }
-?>
+
+
