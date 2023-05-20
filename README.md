@@ -12,7 +12,7 @@ Assignment pdfs/whatever we need
 ## php
 All php files are thrown here.
 
-connection=>creates a connection object using required credentials
+connection=>creates a connection object using required credentials<br>
 addproducts=>POST request to add product to products table
 searchproducts=>GET request to search products
 login => login function(needs to be updated to use salt so)
