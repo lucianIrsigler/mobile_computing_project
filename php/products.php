@@ -49,3 +49,21 @@ function selectFromProductsName($name){
 
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
+
+function selectAllProducts(){
+    include 'connection.php';
+
+    $query = "SELECT * FROM products";
+    $result = mysqli_query($con, $query);
+
+    // Fetch the data into an associative array
+    $data = array();
+    while ($row = mysqli_fetch_assoc($result)) {
+        $data[] = $row;
+    }
+
+    // Close the connection
+    mysqli_close($con);
+
+    return $data;
+}

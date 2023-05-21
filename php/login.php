@@ -11,4 +11,3 @@ if (checkIfValidUser($username,$password)){
 }
 
 echo json_encode($data);
-

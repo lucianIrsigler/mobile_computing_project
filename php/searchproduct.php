@@ -4,7 +4,8 @@
 include "products.php";
 $output=array();
 
-$searchRequest = "e";
+$searchRequest = $_GET["search"];
+
 $outputArray = selectFromProductsName($searchRequest);
 
 $outputJSON = array();
