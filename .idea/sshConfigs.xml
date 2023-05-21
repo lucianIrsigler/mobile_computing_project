@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig authType="PASSWORD" host="lamp.ms.wits.ac.za" id="8ca2c2ca-ef96-42f0-a581-4cdf126a799e" port="22" nameFormat="DESCRIPTIVE" username="s2621933" useOpenSSHConfig="true" />
+      <sshConfig authType="PASSWORD" host="lamp.ms.wits.ac.za" id="97b47b9d-340b-4375-969e-038c7286f15d" port="22" customName="s2621933@lamp.ms.wits.ac.za:22 password2" nameFormat="CUSTOM" username="s2621933" useOpenSSHConfig="true">
+        <option name="customName" value="s2621933@lamp.ms.wits.ac.za:22 password2" />
+      </sshConfig>
+    </configs>
+  </component>
+</project>
