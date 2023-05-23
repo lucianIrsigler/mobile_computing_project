@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity
     //Declaration of variables
     TextView txtUN;
     TextView txtPass;
-
+    //yes
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
