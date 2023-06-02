@@ -1,3 +1,15 @@
+ since you can tell the function what you want the response to be in terms of type(string/
+ jsonArray/jsonObject)
+
+ in my opinion, you should go in this order:
+
+ if the server outputs JSON, then store as JSONObject/JSONArray, object is nice if you want to
+ search for a key.
+
+ otherwise just go for string
+
+
+
  public void postRequest() {
         HTTPHandler httpHandler = new HTTPHandler();
         JSONObject array = new JSONObject();
