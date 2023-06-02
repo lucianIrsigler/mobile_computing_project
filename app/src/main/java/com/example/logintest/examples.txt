@@ -1,0 +1,37 @@
+ public void postRequest() {
+        HTTPHandler httpHandler = new HTTPHandler();
+        JSONObject array = new JSONObject();
+        try {
+            array.put("username", "test");
+        }catch (JSONException e){
+            System.out.println("error");
+        }
+
+        String url = "https://lamp.ms.wits.ac.za/home/s2621933/test/post.php";
+        JSONObject response = httpHandler.postRequest(url, array,JSONObject.class);
+        TextView v = findViewById(R.id.textView);
+
+        try {
+            v.setText(response.getString("success"));
+        }catch (JSONException e){
+            System.out.println("screw you");
+        }
+    }
+
+    public void getRequest() {
+        HTTPHandler httpHandler = new HTTPHandler();
+        JSONObject array = new JSONObject();
+
+        /*
+        If need to add query parameters
+        try {
+            array.put("username", "test");
+        }catch (JSONException e){
+            System.out.println("error");
+        }*/
+
+        String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php?search";
+        JSONArray response = httpHandler.getRequest(url,array,JSONArray.class);
+        TextView v = findViewById(R.id.textView2);
+        v.setText(response.toString());
+    }
