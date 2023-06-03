@@ -52,7 +52,7 @@ public class ProductManager {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
     /**
-     * Adding a product
+     * searching a product
      * @param productName name of product being searched for
      */
     public void searchProduct(String productName) {
@@ -66,6 +66,22 @@ public class ProductManager {
 
         String searchUrl = "https://lamp.ms.wits.ac.za/home/s2571291/searchproduct.php";
         httpHandler.getRequest(searchUrl, params, String.class);
+    }
+    /**
+     * searching for all products from a catergory
+     * @param category name of products looking for
+     */
+    public void findAllInCategory(String category) {
+        JSONObject params = new JSONObject();
+
+        try {
+            params.put("category", category); // Set the category parameter
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String searchUrl = "https://lamp.ms.wits.ac.za/home/s2571291/searchcategory.php";
+        httpHandler.getRequest(searchUrl, params, String.class); // Make a GET request to search for products in the specified category
     }
 
 
