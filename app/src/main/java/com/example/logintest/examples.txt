@@ -47,4 +47,3 @@
         TextView v = findViewById(R.id.textView2);
         v.setText(response.toString());
     }
-
