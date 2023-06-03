@@ -141,3 +141,68 @@ function selectRating($whereClauseElement,$valueToBind){
 
     return $output;
 }
+
+/**
+ * Checks if inputted category is found in the category table
+ *
+ * @param $whereClauseElement
+ * @param $valueToBind
+ * @return array true if category is in the category table,else false
+ */
+function selectRatingSpecific($userID,$productID){
+    include 'connection.php';
+    include "misc.php";
+
+    $query = "SELECT * FROM reviews where userID=? and productID=?";
+
+    $stmt = mysqli_prepare($con,$query);
+
+    mysqli_stmt_bind_param($stmt,"ii",$userID,$productID);
+
+    try {
+        mysqli_stmt_execute($stmt);
+    }catch (Exception $e){
+        echo "error occured:" . $e->getMessage();
+    }
+
+    $result = mysqli_stmt_get_result($stmt);
+    $output = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($con);
+
+    return $output;
+}
+
+function selectAverageRating($productID){
+    include 'connection.php';
+    include "misc.php";
+
+    $query = "SELECT * FROM average_rating where productID=?";
+
+    $stmt = mysqli_prepare($con,$query);
+
+
+    mysqli_stmt_bind_param($stmt,"i",
+        $productID);
+        
+    try {
+        mysqli_stmt_execute($stmt);
+    }catch (Exception $e){
+        return $data;
+    }
+
+    $result = mysqli_stmt_get_result($stmt);
+    $output = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($con);
+
+
+    if (mysqli_num_rows($result)==0){
+        $data = array("error" => "invalid productID");
+    }else {
+        $data = array("average_rating" => $output[0]["average_stars"]);
+    }
+    return $data;
+}
