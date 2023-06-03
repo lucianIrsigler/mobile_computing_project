@@ -4,11 +4,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/*
+ Manages review adding,and selecting
+ */
 public class RatingManager {
     final HTTPHandler handler = new HTTPHandler();
     public RatingManager(){};
 
-
+    /**
+     * Inserts a rating
+     * @param userID userID of user writing the review
+     * @param productID productID of the product being reviewed
+     * @param stars rating
+     * @param date date of review added
+     */
     public void addRating(Integer userID, Integer productID, Double stars, String  date){
         String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/addrating.php";
         JSONObject params = new JSONObject();
@@ -24,10 +33,11 @@ public class RatingManager {
     }
 
     /**
+     * Returns a specific review
      *
-     * @param userID
-     * @param productID
-     * @return
+     * @param userID the userID to get
+     * @param productID the productID to get
+     * @return the JSONArray of the specific review
      */
     public JSONArray getRating(Integer userID,Integer productID){
         JSONObject params = new JSONObject();
@@ -47,8 +57,8 @@ public class RatingManager {
     /**
      * GETS ratings based on userID/productID
      * @param mode mode for the GET request. 0->use the userID, 1->use the productID
-     * @param value value to get
-     * @return rating based on productID/userID
+     * @param value value to specify productID/userID
+     * @return ratings based on productID/userID
      */
     public JSONArray getRatings(Integer mode,Integer value){
         JSONObject params = new JSONObject();
@@ -64,7 +74,11 @@ public class RatingManager {
         return handler.getRequest(url,params,JSONArray.class);
     }
 
-
+    /**
+     * Get the average rating of a a product
+     * @param productID productID of product
+     * @return  -1.0 if product not found otherwise returns the rating
+     */
     public double getAverageRating(Integer productID){
         JSONObject array = new JSONObject();
 
