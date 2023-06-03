@@ -51,7 +51,10 @@ public class ProductManager {
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
-
+    /**
+     * Adding a product
+     * @param productName name of product being searched for
+     */
     public void searchProduct(String productName) {
         JSONObject params = new JSONObject();
 
