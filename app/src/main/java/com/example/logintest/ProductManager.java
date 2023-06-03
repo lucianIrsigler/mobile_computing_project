@@ -1,6 +1,8 @@
 package com.example.logintest;
 import android.graphics.Bitmap;
 import android.util.Base64;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +45,18 @@ public class ProductManager {
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
+    public void searchProduct(String productName) {
+        JSONObject params = new JSONObject();
+
+        try {
+            params.put("search", productName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String searchUrl = "https://lamp.ms.wits.ac.za/home/s2571291/searchproduct.php";
+        httpHandler.getRequest(searchUrl, params, String.class);
+    }
 
 
 }
