@@ -32,9 +32,14 @@ function insertProduct($ID,$name,$description,$price,$category,$dateAdded){
 }
 
 function selectFromProductsName($name){
-    include 'connection.php';
-    $query = "SELECT * FROM products WHERE productName LIKE CONCAT('%', ?, '%')";
+    if ($name == "" || $name==''){
+        return selectAllProducts();
+    }
 
+    include 'connection.php';
+    $query = "SELECT * FROM products WHERE productName LIKE CONCAT('%', ?, '%') 
+    ORDER BY dateAdded DESC";
+    
     $stmt = mysqli_prepare($con,$query);
 
     mysqli_stmt_bind_param($stmt,"s",$name);
@@ -53,7 +58,7 @@ function selectFromProductsName($name){
 function selectAllProducts(){
     include 'connection.php';
 
-    $query = "SELECT * FROM products";
+    $query = "SELECT * FROM products ORDER BY dateAdded DESC";
     $result = mysqli_query($con, $query);
 
     // Fetch the data into an associative array
