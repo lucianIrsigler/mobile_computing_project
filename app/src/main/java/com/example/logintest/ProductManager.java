@@ -20,7 +20,14 @@ public class ProductManager {
     public ProductManager() {
         httpHandler = new HTTPHandler();
     }
-
+    /**
+     * Adding a product
+     * @param productName name of product
+     * @param productDescription description of the product being added
+     * @param productPrice price
+     * @param category category of product
+     * @param bitmap image of product
+     */
     public /*String*/void addProduct(String productName, String productDescription, double productPrice, String category, Bitmap bitmap) {
         JSONObject params = new JSONObject();
 
@@ -44,7 +51,10 @@ public class ProductManager {
         byte[] byteArray = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
-
+    /**
+     * Adding a product
+     * @param productName name of product being searched for
+     */
     public void searchProduct(String productName) {
         JSONObject params = new JSONObject();
 
