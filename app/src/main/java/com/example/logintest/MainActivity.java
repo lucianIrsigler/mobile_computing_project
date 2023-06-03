@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 public class MainActivity extends AppCompatActivity
 {
     //Declaration of variables
+    //seeing if this works
     TextView txtUN;
     TextView txtPass;
     //yes
