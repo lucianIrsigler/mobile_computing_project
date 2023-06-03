@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:background="@drawable/yellow_rectangle_bg" />
+
+    <TextView
+        android:id="@+id/tvRegistration"
+        style="@style/h4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        android:textSize="35dp"
+        app:layout_constraintStart_toStartOf="@id/guidelineRegisterLeft"
+        app:layout_constraintTop_toTopOf="@id/guidelineRegisterTop"
+        app:layout_constraintEnd_toEndOf="@id/guidelineRegisterRight"
+        android:layout_marginTop="50dp"
+        />
+
+    <EditText
+        android:id="@+id/edEmailRegister"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvRegistration"
+        android:layout_marginTop="80dp"
+        android:textSize="21dp"
+        android:hint="Email"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:drawableLeft="@drawable/baseline_email_24"
+        android:drawablePadding="10dp"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/grey_1"
+        android:background="@color/grey_2"
+        android:padding="10dp"
+        />
+
+    <EditText
+        android:id="@+id/edUsernameRegister"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edEmailRegister"
+        android:layout_marginTop="10dp"
+        android:textSize="21dp"
+        android:hint="Username"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:drawableLeft="@drawable/baseline_person_24"
+        android:drawablePadding="10dp"
+        android:inputType="text"
+        android:textColor="@color/grey_1"
+        android:background="@color/grey_2"
+        android:padding="10dp"
+        />
+
+    <EditText
+        android:id="@+id/edPasswordRegister"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edUsernameRegister"
+        android:layout_marginTop="40dp"
+        android:textSize="21dp"
+        android:hint="Password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:drawableLeft="@drawable/baseline_lock_24"
+        android:drawablePadding="10dp"
+        android:inputType="textPassword"
+        android:textColor="@color/grey_1"
+        android:background="@color/grey_2"
+        android:padding="10dp"
+        />
+
+    <EditText
+        android:id="@+id/edPasswordConfirmRegister"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edPasswordRegister"
+        android:layout_marginTop="10dp"
+        android:textSize="21dp"
+        android:hint="Confirm Password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:drawableLeft="@drawable/baseline_lock_24"
+        android:drawablePadding="10dp"
+        android:inputType="textPassword"
+        android:textColor="@color/grey_1"
+        android:background="@color/grey_2"
+        android:padding="10dp"
+        />
+
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/next_button"
+        android:layout_width="300dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="80dp"
+        android:layout_height="wrap_content"
+        style="@style/blueButtonStyle"
+        app:layout_constraintTop_toBottomOf="@id/edPasswordConfirmRegister"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Next"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Already have an account? Login"
+        android:layout_marginBottom="50dp"
+        android:textSize="17dp"
+        />
+
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineRegisterLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineRegisterTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.05" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineRegisterRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
