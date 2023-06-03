@@ -85,7 +85,7 @@ public class HTTPHandler {
      * String.class,JSONArray.class,JSONObject.class
      * @return The response of the query
      * */
-    public <T> T postRequest(String url, @NonNull JSONObject params, Class<T> responseType) {
+    public <T> T postRequest(String url, @NonNull JSONObject params, Class <T> responseType) {
         FormBody.Builder builder = new FormBody.Builder();
 
         params.keys().forEachRemaining(key -> {
