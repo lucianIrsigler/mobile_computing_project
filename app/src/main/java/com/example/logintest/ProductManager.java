@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ProductManager {
     private final HTTPHandler httpHandler;
-
+//TODO reponses in the activity screen
     public ProductManager() {
         httpHandler = new HTTPHandler();
     }
