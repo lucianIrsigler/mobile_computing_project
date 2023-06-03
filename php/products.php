@@ -72,3 +72,28 @@ function selectAllProducts(){
 
     return $data;
 }
+
+
+function selectProductsCategory($category){
+    if ($category=="all"){
+        return selectAllProducts();
+    }
+
+    include 'connection.php';
+
+    $query = "SELECT * FROM products WHERE category = ? ORDER BY dateAdded DESC";
+
+    $stmt = mysqli_prepare($con,$query);
+
+    mysqli_stmt_bind_param($stmt,"s",$category);
+
+    try {
+        mysqli_stmt_execute($stmt);
+    }catch (Exception $e){
+        echo "error occured:" . $e->getMessage();
+    }
+
+    $result = mysqli_stmt_get_result($stmt);
+
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+}
