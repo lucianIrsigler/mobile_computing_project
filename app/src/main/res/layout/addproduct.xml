@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/productNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:hint="Product Name"
+        android:minHeight="32dp"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/productPriceEditText"
+        android:layout_width="match_parent"
+        android:layout_height="71dp"
+        android:hint="Product Price"
+        android:inputType="number|numberDecimal"
+        android:minHeight="32dp"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/productDescriptionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:textSize="16sp"
+        android:minHeight="32dp"
+        android:hint="Product Description" />
+
+    <EditText
+        android:id="@+id/productCategoryEditText"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:textSize="16sp"
+        android:minHeight="32dp"
+        android:hint="Category" />
+
+    <ImageView
+
+        android:id="@+id/productImageView"
+        android:layout_width="352dp"
+        android:layout_height="115dp"
+
+        android:hint="ImageProduct"
+        android:src="@android:drawable/ic_menu_gallery" />
+
+    <Button
+        android:id="@+id/buttonSelectImage"
+        android:layout_width="126dp"
+        android:layout_height="41dp"
+        android:text="Select Image"
+        android:textSize="16sp"
+        android:minHeight="32dp"/>
+
+
+    <Button
+        android:id="@+id/addProductButton"
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:text="Add Product"
+        android:textSize="16sp"
+        android:minHeight="32dp"/>
+</LinearLayout>
