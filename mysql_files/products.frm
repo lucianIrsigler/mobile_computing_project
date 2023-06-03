@@ -1,10 +1,9 @@
 CREATE TABLE products(
-productID int,
-productName varchar(255),
-productDescription (255),
-price int,
-category varchar(255),
-dateAdded date,
-PRIMARY KEY productID,
-FOREIGN KEY (category) REFERENCES category(category),
-);
+productID INTEGER NOT NULL AUTO_INCREMENT,
+productName VARCHAR(50),
+productDescription VARCHAR(255),
+price FLOAT(2),
+category VARCHAR(50),
+dateAdded DATE,
+PRIMARY KEY(productID),
+FOREIGN KEY(category) REFERENCES category(category) ON DELETE CASCADE);
