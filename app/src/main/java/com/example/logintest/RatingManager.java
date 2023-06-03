@@ -9,7 +9,7 @@ import org.json.JSONObject;
  */
 public class RatingManager {
     final HTTPHandler handler = new HTTPHandler();
-    public RatingManager(){};
+    public RatingManager(){}
 
     /**
      * Inserts a rating
