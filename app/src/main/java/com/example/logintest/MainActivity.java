@@ -1,18 +1,11 @@
 package com.example.logintest;
 
-import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.os.Handler;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -24,9 +17,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.fragment_splash_screen);
 
-        txtUN = findViewById(R.id.txtUN);
+        Handler handler = new Handler();
+
+        handler.postDelayed(this::switchToLogin,2000);
+    }
+
+    private void switchToLogin(){
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+        /*txtUN = findViewById(R.id.txtUN);
         txtPass = findViewById(R.id.txtPass);
 
         Button btnLogin = findViewById(R.id.btnLogin);
@@ -66,19 +69,5 @@ public class MainActivity extends AppCompatActivity
                 })
             );
     }
-
-    public String processJSON(String json, String key)
-    {
-        String KeyValue = "";
-        try {
-            JSONArray jArr = new JSONArray(json);
-            JSONObject item = jArr.getJSONObject(0);
-            KeyValue = item.getString(key);
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return KeyValue;
-    }
+    */
 }

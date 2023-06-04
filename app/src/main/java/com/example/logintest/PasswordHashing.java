@@ -8,10 +8,10 @@ import java.security.NoSuchAlgorithmException;
 
 public class PasswordHashing
 {
-    private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
+    private final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
 
     @Contract(value = "_ -> new", pure = true)
-    public static @NotNull String bytesToHex(byte [] bytes) {
+    public @NotNull String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int i = 0; i < bytes.length; i++) {
             int v = bytes[i] & 0xFF;
