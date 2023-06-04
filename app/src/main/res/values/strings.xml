@@ -11,6 +11,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="product_price_content_description">Product Price in Rands</string>
+
     <string-array name="categories_array">
         <item>Phones</item>
         <item>Tablets</item>
