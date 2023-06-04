@@ -48,11 +48,11 @@
 
     <Button
         android:id="@+id/buttonSelectImage"
-        android:layout_width="126dp"
-        android:layout_height="41dp"
+        android:layout_width="221dp"
+        android:layout_height="79dp"
+        android:minHeight="32dp"
         android:text="Select Image"
-        android:textSize="16sp"
-        android:minHeight="32dp"/>
+        android:textSize="16sp" />
 
 
     <Button

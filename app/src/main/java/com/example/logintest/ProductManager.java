@@ -28,7 +28,7 @@ public class ProductManager {
      * @param category category of product
      * @param bitmap image of product
      */
-    public /*String*/void addProduct(String productName, String productDescription, double productPrice, String category, Bitmap bitmap) {
+    public /*String*/void addProduct(String productName, String productDescription, double productPrice, String category, Bitmap bitmap)throws Exception {
         JSONObject params = new JSONObject();
 
         try {
