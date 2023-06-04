@@ -1,13 +1,24 @@
 <?php
-include "users.php";
+	ini_set('display_errors', 1);
+	error_reporting(E_ALL);
 
-$username = $_POST["user"];
-$password = $_POST["pass"];
+	include 'connection.php';
 
-if (checkIfValidUser($username,$password)){
-	$data = array("status"=>1);
-}else{
-	$data = array("status"=>0);
-}
+	$username = $_REQUEST["Username"];
 
-echo json_encode($data);
+	$query = "SELECT * FROM users WHERE Username=?;";
+	$stmt = mysqli_prepare($con, $query);
+        mysqli_stmt_bind_param($stmt, "s", $username);
+        mysqli_stmt_execute($stmt);
+
+	$result = mysqli_stmt_get_result($stmt);
+	
+	$output=array();
+
+	while ($row = $result -> fetch_assoc()){
+		$output[] = $row;
+	}
+
+	mysqli_stmt_close($stmt);
+	echo json_encode($output);
+?>
