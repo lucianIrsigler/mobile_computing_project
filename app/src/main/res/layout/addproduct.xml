@@ -7,7 +7,7 @@
     <EditText
         android:id="@+id/productNameEditText"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="93dp"
         android:hint="Product Name"
         android:minHeight="32dp"
         android:textSize="16sp" />
@@ -24,7 +24,7 @@
             android:inputType="number|numberDecimal"
             android:minHeight="32dp"
             android:textSize="16sp"
-            android:prefixText="R" />
+             />
 
     </com.google.android.material.textfield.TextInputLayout>
 
