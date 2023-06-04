@@ -28,9 +28,6 @@ import org.xmlpull.v1.XmlPullParser;
 
 public class HomePage extends AppCompatActivity {
 
-    private FragmentBottomNavBinding bottomNavBinding;
-    private FragmentHomeBinding homeBinding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +72,9 @@ public class HomePage extends AppCompatActivity {
         Button buttonNo = dialogView.findViewById(R.id.btnNo);
         buttonNo.setOnClickListener(v -> {
             alertDialog.dismiss();
+            //todo reset user id
+            SharedPreferencesManager.initialize(this);
+            SharedPreferencesManager.resetUserID();
         });
 
         alertDialog.show();

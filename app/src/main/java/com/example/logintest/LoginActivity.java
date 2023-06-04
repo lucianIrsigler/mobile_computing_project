@@ -1,6 +1,8 @@
 package com.example.logintest;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -78,6 +80,11 @@ public class LoginActivity extends AppCompatActivity
                             Intent intent = new Intent(LoginActivity.this, HomePage.class);
                             intent.putExtra("sourceActivity", "LoginPage");
                             finish();
+
+                            //todo STORE USER ID AFTER LOGIN
+                            SharedPreferencesManager.initialize(this);
+                            SharedPreferencesManager.storeUserId(12345);
+
                             startActivity(intent);
                         }
                         else{

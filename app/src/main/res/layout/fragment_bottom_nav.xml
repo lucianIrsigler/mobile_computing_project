@@ -29,7 +29,6 @@
         app:itemPaddingTop="10dp"
         app:elevation="0dp"
         app:itemIconTint="@drawable/bottom_nav_item_background"
-
         >
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>

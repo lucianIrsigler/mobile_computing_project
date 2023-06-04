@@ -3,7 +3,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <!-- Title -->
     <TextView
         android:id="@+id/dialog_title"
         android:layout_width="match_parent"
@@ -14,7 +13,6 @@
         android:textStyle="bold"
         android:padding="16dp"/>
 
-    <!-- Message -->
     <TextView
         android:id="@+id/dialog_message"
         android:layout_width="match_parent"
@@ -23,7 +21,6 @@
         android:gravity="center"
         android:padding="18dp"/>
 
-    <!-- Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -22,20 +22,8 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View view = binding.getRoot();
 
-        Button postButton = binding.postItemButton; // Initialize the Button object
-
-        postButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Create an Intent to navigate to the second screen
-                Intent intent = new Intent(getActivity(), prodAddScreen.class);
-                startActivity(intent);
-            }
-        });
-
-        return view;
+        return binding.getRoot();
     }
 }
 
