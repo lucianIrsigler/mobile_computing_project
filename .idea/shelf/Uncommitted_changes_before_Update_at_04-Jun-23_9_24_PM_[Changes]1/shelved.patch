@@ -1,0 +1,17 @@
+Index: app/src/main/java/com/example/logintest/SignUpPersonalDetails.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/SignUpPersonalDetails.java b/app/src/main/java/com/example/logintest/SignUpPersonalDetails.java
+--- a/app/src/main/java/com/example/logintest/SignUpPersonalDetails.java	
++++ b/app/src/main/java/com/example/logintest/SignUpPersonalDetails.java	
+@@ -254,7 +254,7 @@
+                     editPhoneNum.setBackgroundResource(R.drawable.edterr);
+                 }else{
+                     errorText.setText("");
+-                    editPhoneNum.setBackgroundResource(R.drawable.edterr);
++                    editPhoneNum.setBackgroundResource(R.drawable.edtnormal);
+                 }
+             }
+ 

@@ -1,0 +1,28 @@
+Index: app/src/main/res/layout/fragment_register_pt2.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_register_pt2.xml b/app/src/main/res/layout/fragment_register_pt2.xml
+--- a/app/src/main/res/layout/fragment_register_pt2.xml	
++++ b/app/src/main/res/layout/fragment_register_pt2.xml	
+@@ -106,7 +106,7 @@
+         android:layout_width="300dp"
+         android:layout_height="wrap_content"
+         android:layout_marginLeft="30dp"
+-        android:layout_marginTop="60dp"
++        android:layout_marginTop="70dp"
+         android:layout_marginRight="30dp"
+         android:text="Register"
+         app:layout_constraintEnd_toEndOf="@id/edDOB"
+@@ -130,8 +130,8 @@
+ 
+     <EditText
+         android:id="@+id/tvErrors"
+-        android:layout_width="293dp"
+-        android:layout_height="33dp"
++        android:layout_width="290dp"
++        android:layout_height="45dp"
+         android:layout_marginBottom="6dp"
+         android:background="@null"
+         android:clickable="false"

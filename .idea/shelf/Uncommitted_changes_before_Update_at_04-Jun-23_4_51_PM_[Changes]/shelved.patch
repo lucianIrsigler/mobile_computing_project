@@ -1,0 +1,321 @@
+Index: app/src/main/java/com/example/logintest/SignUpAccountDetails.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.text.Editable;\r\nimport android.text.TextWatcher;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport java.util.Objects;\r\n\r\npublic class SignUpAccountDetails extends AppCompatActivity {\r\n    EditText editEmail;\r\n    EditText editUsername;\r\n    EditText editPassword;\r\n    EditText confirmPasswordTv;\r\n    Button btnNext;\r\n    TextView alreadyHaveAccountlbl;\r\n\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.fragment_register);\r\n\r\n        editEmail = findViewById(R.id.edEmailRegister);;\r\n        editUsername = findViewById(R.id.edUsernameRegister);\r\n        editPassword = findViewById(R.id.edPasswordRegister);\r\n        confirmPasswordTv = findViewById(R.id.edPasswordConfirmRegister);\r\n        btnNext = findViewById(R.id.next_button);\r\n        alreadyHaveAccountlbl = findViewById(R.id.tvLogin);\r\n\r\n        alreadyHaveAccountlbl.setOnClickListener( view->{\r\n            Intent intent = new Intent(SignUpAccountDetails.this, LoginActivity.class);\r\n            startActivity(intent);\r\n        }\r\n        );\r\n\r\n        btnNext.setOnClickListener(view -> {\r\n            //check if all input edit texts have their errors enabled. If no, then proceed to next activity\r\n                String email = Objects.requireNonNull(editEmail.getText()).toString();\r\n                String username = Objects.requireNonNull(editUsername.getText()).toString();\r\n                String password = Objects.requireNonNull(editPassword.getText()).toString();\r\n                String confirmPassword = Objects.requireNonNull(confirmPasswordTv.getText()).toString();\r\n\r\n\r\n                if (!password.equals(confirmPassword)\r\n                        || email.isEmpty()\r\n                        || username.isEmpty()\r\n                        || password.isEmpty()\r\n                        || !email.matches(\"^[\\\\w-.]+@([\\\\w-]+\\\\.)+[\\\\w-]{2,4}$\")\r\n                ){\r\n                    System.out.println(\"error\");\r\n                    //TODO show popup\r\n                }else{\r\n                    Intent intent = new Intent(SignUpAccountDetails.this, SignUpPersonalDetails.class);\r\n                    intent.putExtra(\"email\", email);\r\n                    intent.putExtra(\"username\", username);\r\n                    intent.putExtra(\"password\", password);\r\n                    intent.putExtra(\"sourceActivity\", \"PersonalDetails\");\r\n                    startActivity(intent);\r\n                }\r\n            });\r\n\r\n        editEmail.addTextChangedListener(new TextWatcher() {\r\n            @Override\r\n            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n            }\r\n\r\n            @Override\r\n            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n                String email = Objects.requireNonNull(editEmail.getText()).toString();\r\n                if(email.isEmpty()) {\r\n                    editEmail.setError(\"Email cannot be empty\");\r\n                }\r\n                else if(!email.matches(\"^[\\\\w-.]+@([\\\\w-]+\\\\.)+[\\\\w-]{2,4}$\")) {\r\n                    editEmail.setError(\"Invalid email\");\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void afterTextChanged(Editable editable) {\r\n            }\r\n        });\r\n\r\n        editUsername.addTextChangedListener(new TextWatcher() {\r\n            @Override\r\n            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n                String username = Objects.requireNonNull(editUsername.getText()).toString();\r\n                if(username.isEmpty()) {\r\n                    editUsername.setError(\"Username cannot be empty\");\r\n                }\r\n                else if(!username.matches(\"^(?!.*\\\\..*\\\\.)[\\\\p{Alnum}.]{1,20}$\")) {\r\n                    editUsername.setError(\"Username can only have letters, numbers, and the following special characters: _ - . @\");\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void afterTextChanged(Editable editable) {\r\n\r\n            }\r\n        });\r\n\r\n        editPassword.addTextChangedListener(new TextWatcher() {\r\n            @Override\r\n            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n            }\r\n\r\n            @Override\r\n            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n                String password = Objects.requireNonNull(editPassword.getText()).toString();\r\n\r\n                if(password.isEmpty()) {\r\n                    editPassword.setError(\"Password cannot be empty\");\r\n                }\r\n                else if(password.length() < 8) {\r\n                    editPassword.setError(\"Password must be at least 8 characters long\");\r\n                }\r\n                //password must contain at least one uppercase letter, one lowercase letter, one number, and one special character\r\n                else if(!password.matches(\"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$\")) {\r\n                    editPassword.setError(\"Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character\");\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void afterTextChanged(Editable editable) {\r\n\r\n            }\r\n        });\r\n\r\n        confirmPasswordTv.addTextChangedListener(new TextWatcher() {\r\n            @Override\r\n            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n            }\r\n\r\n            @Override\r\n            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n                String password = Objects.requireNonNull(confirmPasswordTv.getText()).toString();\r\n\r\n                if(password.isEmpty()) {\r\n                    confirmPasswordTv.setError(\"Password cannot be empty\");\r\n                }\r\n                else if(!password.equals(editPassword.getText().toString())) {\r\n                    confirmPasswordTv.setError(\"Passwords must match\");\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void afterTextChanged(Editable editable) {\r\n\r\n            }\r\n        });\r\n\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/SignUpAccountDetails.java b/app/src/main/java/com/example/logintest/SignUpAccountDetails.java
+--- a/app/src/main/java/com/example/logintest/SignUpAccountDetails.java	(revision 337d899ebf3be7f8b0c305d5667b65b5c91fffda)
++++ b/app/src/main/java/com/example/logintest/SignUpAccountDetails.java	(date 1685890070354)
+@@ -3,10 +3,14 @@
+ import android.content.Intent;
+ import android.os.Bundle;
+ import android.text.Editable;
++import android.text.InputType;
+ import android.text.TextWatcher;
++import android.view.View;
+ import android.widget.Button;
+ import android.widget.EditText;
+ import android.widget.TextView;
++import android.widget.Toast;
++import android.widget.ToggleButton;
+ 
+ import androidx.appcompat.app.AppCompatActivity;
+ import java.util.Objects;
+@@ -28,39 +32,42 @@
+         editPassword = findViewById(R.id.edPasswordRegister);
+         confirmPasswordTv = findViewById(R.id.edPasswordConfirmRegister);
+         btnNext = findViewById(R.id.next_button);
++        ToggleButton tglPassword = findViewById(R.id.togglePwd);
++        ToggleButton tglConfirmPassword = findViewById(R.id.toggleConfirmPwd);
++
+         alreadyHaveAccountlbl = findViewById(R.id.tvLogin);
+ 
+         alreadyHaveAccountlbl.setOnClickListener( view->{
+-            Intent intent = new Intent(SignUpAccountDetails.this, LoginActivity.class);
+-            startActivity(intent);
+-        }
++                    Intent intent = new Intent(SignUpAccountDetails.this, LoginActivity.class);
++                    startActivity(intent);
++                }
+         );
+ 
+         btnNext.setOnClickListener(view -> {
+             //check if all input edit texts have their errors enabled. If no, then proceed to next activity
+-                String email = Objects.requireNonNull(editEmail.getText()).toString();
+-                String username = Objects.requireNonNull(editUsername.getText()).toString();
+-                String password = Objects.requireNonNull(editPassword.getText()).toString();
+-                String confirmPassword = Objects.requireNonNull(confirmPasswordTv.getText()).toString();
++            String email = Objects.requireNonNull(editEmail.getText()).toString();
++            String username = Objects.requireNonNull(editUsername.getText()).toString();
++            String password = Objects.requireNonNull(editPassword.getText()).toString();
++            String confirmPassword = Objects.requireNonNull(confirmPasswordTv.getText()).toString();
+ 
+ 
+-                if (!password.equals(confirmPassword)
+-                        || email.isEmpty()
+-                        || username.isEmpty()
+-                        || password.isEmpty()
+-                        || !email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
+-                ){
+-                    System.out.println("error");
+-                    //TODO show popup
+-                }else{
+-                    Intent intent = new Intent(SignUpAccountDetails.this, SignUpPersonalDetails.class);
+-                    intent.putExtra("email", email);
+-                    intent.putExtra("username", username);
+-                    intent.putExtra("password", password);
+-                    intent.putExtra("sourceActivity", "PersonalDetails");
+-                    startActivity(intent);
+-                }
+-            });
++            if (!password.equals(confirmPassword)
++                    || email.isEmpty()
++                    || username.isEmpty()
++                    || password.isEmpty()
++                    || !email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
++            ){
++                //todo make error beter
++                Toast.makeText(SignUpAccountDetails.this, "Make sure all fields are valid", Toast.LENGTH_LONG).show();
++            }else{
++                Intent intent = new Intent(SignUpAccountDetails.this, SignUpPersonalDetails.class);
++                intent.putExtra("email", email);
++                intent.putExtra("username", username);
++                intent.putExtra("password", password);
++                intent.putExtra("sourceActivity", "PersonalDetails");
++                startActivity(intent);
++            }
++        });
+ 
+         editEmail.addTextChangedListener(new TextWatcher() {
+             @Override
+@@ -117,13 +124,18 @@
+ 
+                 if(password.isEmpty()) {
+                     editPassword.setError("Password cannot be empty");
++                    editPassword.setBackgroundResource(R.drawable.edterr);
+                 }
+                 else if(password.length() < 8) {
+                     editPassword.setError("Password must be at least 8 characters long");
++                    editPassword.setBackgroundResource(R.drawable.edterr);
+                 }
+                 //password must contain at least one uppercase letter, one lowercase letter, one number, and one special character
+                 else if(!password.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")) {
+                     editPassword.setError("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character");
++                    editPassword.setBackgroundResource(R.drawable.edterr);
++                }else{
++                    editPassword.setBackgroundResource(R.drawable.edtnormal);
+                 }
+             }
+ 
+@@ -144,9 +156,13 @@
+ 
+                 if(password.isEmpty()) {
+                     confirmPasswordTv.setError("Password cannot be empty");
++                    confirmPasswordTv.setBackgroundResource(R.drawable.edterr);
+                 }
+                 else if(!password.equals(editPassword.getText().toString())) {
+                     confirmPasswordTv.setError("Passwords must match");
++                    confirmPasswordTv.setBackgroundResource(R.drawable.edterr);
++                }else{
++                    confirmPasswordTv.setBackgroundResource(R.drawable.edtnormal);
+                 }
+             }
+ 
+@@ -156,6 +172,21 @@
+             }
+         });
+ 
++        tglPassword.setOnClickListener(view->{
++            if (editPassword.getInputType()==InputType.TYPE_CLASS_TEXT){
++                editPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
++            }else {
++                editPassword.setInputType(InputType.TYPE_CLASS_TEXT);
++            }
++        });
++
++        tglConfirmPassword.setOnClickListener(view->{
++            if (confirmPasswordTv.getInputType()==InputType.TYPE_CLASS_TEXT){
++                confirmPasswordTv.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
++            }else {
++                confirmPasswordTv.setInputType(InputType.TYPE_CLASS_TEXT);
++            }
++        });
+ 
+     }
+ }
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'com.android.application'\r\n}\r\n\r\nandroid {\r\n    namespace 'com.example.logintest'\r\n    compileSdk 33\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.logintest\"\r\n        minSdk 24\r\n        targetSdk 33\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n    buildFeatures {\r\n        viewBinding true\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation 'androidx.appcompat:appcompat:1.6.1'\r\n    implementation 'com.google.android.material:material:1.9.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'\r\n    implementation 'androidx.annotation:annotation:1.3.0'\r\n    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'\r\n    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'\r\n    testImplementation 'junit:junit:4.13.2'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.5'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'\r\n    implementation 'com.squareup.okhttp3:okhttp:4.9.2'\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 337d899ebf3be7f8b0c305d5667b65b5c91fffda)
++++ b/app/build.gradle	(date 1685888746318)
+@@ -8,7 +8,7 @@
+ 
+     defaultConfig {
+         applicationId "com.example.logintest"
+-        minSdk 24
++        minSdk 26
+         targetSdk 33
+         versionCode 1
+         versionName "1.0"
+Index: app/src/main/java/com/example/logintest/SignUpPersonalDetails.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.text.InputType;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport org.jetbrains.annotations.Contract;\r\nimport org.jetbrains.annotations.NotNull;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.security.MessageDigest;\r\nimport java.security.NoSuchAlgorithmException;\r\nimport java.security.SecureRandom;\r\nimport java.util.Objects;\r\nimport java.util.concurrent.atomic.AtomicBoolean;\r\n\r\npublic class SignUpPersonalDetails extends AppCompatActivity {\r\n    EditText editFirstName;\r\n    EditText editLastName;\r\n    EditText editPhoneNum;\r\n    EditText editDOB;\r\n    Button btnRegister;\r\n    TextView alreadyHaveAccountlbl;\r\n\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.fragment_register_pt2);\r\n\r\n        editFirstName = findViewById(R.id.edFirstName);\r\n        editLastName = findViewById(R.id.edLastName);\r\n        editPhoneNum = findViewById(R.id.edPhoneNum);\r\n        editDOB = findViewById(R.id.edDOB);\r\n        btnRegister = findViewById(R.id.register_button);\r\n        alreadyHaveAccountlbl = findViewById(R.id.tvAlreadyHaveAccount);\r\n\r\n        alreadyHaveAccountlbl.setOnClickListener(view -> {\r\n            Intent intent = new Intent(SignUpPersonalDetails.this, LoginActivity.class);\r\n            startActivity(intent);\r\n        });\r\n\r\n        HTTPHandler httpHandler = new HTTPHandler();\r\n        JSONObject params = new JSONObject();\r\n\r\n        btnRegister.setOnClickListener(view -> {\r\n            String firstName = Objects.requireNonNull(editFirstName.getText().toString());\r\n            String lastName = Objects.requireNonNull(editLastName.getText().toString());\r\n            String phoneNum = Objects.requireNonNull(editPhoneNum.getText().toString());\r\n            String DOB = Objects.requireNonNull(editDOB.getText().toString());\r\n            if (firstName.isEmpty() || lastName.isEmpty()||phoneNum.isEmpty()||DOB.isEmpty()){\r\n                System.out.println(\"error\");\r\n                //TODO show popup\r\n            }else{\r\n                Intent j = getIntent();\r\n                String email = j.getStringExtra(\"email\");\r\n                String username = j.getStringExtra(\"username\");\r\n                String password = j.getStringExtra(\"password\");\r\n                String salt = bytesToHex(generateSalt());\r\n                System.out.println(email);\r\n\r\n                try{\r\n                    params.put(\"firstname\", firstName);\r\n                    params.put(\"lastname\", lastName);\r\n                    params.put(\"phone\", phoneNum);\r\n                    params.put(\"dateOfBirth\", DOB);\r\n                    params.put(\"username\", username);\r\n                    params.put(\"password\", bytesToHex(hashPassword(combineSaltAndPassword(salt.getBytes(), password.getBytes()))));\r\n                    params.put(\"email\", email);\r\n                    params.put(\"salt\", salt);\r\n                }catch (Exception e){\r\n                    System.out.println(\"Error\");\r\n                    //todo proper error handling\r\n                }\r\n\r\n                AtomicBoolean flag = new AtomicBoolean(false);\r\n                while(!flag.get())\r\n                {\r\n                    String response = httpHandler.postRequest(\"https://lamp.ms.wits.ac.za/home/s2571291/users/insert_users/insertUser.php\", params, String.class);\r\n                    Toast.makeText(SignUpPersonalDetails.this, response, Toast.LENGTH_LONG).show();\r\n\r\n                    if(response.equals(\"Username already exists\")){\r\n                        editFirstName.setError(\"Username already exists\");\r\n                        flag.set(true);\r\n                    }\r\n                    else if(response.equals(\"Salt already exists\")){\r\n                        try {\r\n                            params.put(\"salt\", bytesToHex(generateSalt()));\r\n                        } catch (JSONException e) {\r\n                            throw new RuntimeException(e);\r\n                            //todo proper error handling\r\n                        }\r\n                        flag.set(false);\r\n                    }\r\n                    else{\r\n                        Intent intent = new Intent(SignUpPersonalDetails.this, LoginActivity.class);\r\n                        intent.putExtra(\"sourceActivity\", \"AccountDetails\");\r\n                        flag.set(true);\r\n                        startActivity(intent);\r\n                        finish();\r\n                    }\r\n                }\r\n            }\r\n            });\r\n    }\r\n\r\n\r\n    //generating a random salt and hashing the password\r\n    @NonNull\r\n    private byte[] generateSalt() {\r\n        SecureRandom random = new SecureRandom();\r\n        byte[] salt = new byte[4];\r\n        random.nextBytes(salt);\r\n        return salt;\r\n    }\r\n\r\n    @NonNull\r\n    private byte[] combineSaltAndPassword(@NonNull byte[] salt, @NonNull byte[] password) {\r\n        byte[] saltedPassword = new byte[salt.length + password.length];\r\n        System.arraycopy(salt, 0, saltedPassword, 0, salt.length);\r\n        System.arraycopy(password, 0, saltedPassword, salt.length, password.length);\r\n        return saltedPassword;\r\n    }\r\n\r\n    @NonNull\r\n    private byte[] hashPassword(byte[] saltedPassword) {\r\n        try {\r\n            MessageDigest messageDigest = MessageDigest.getInstance(\"SHA-256\");\r\n            return messageDigest.digest(saltedPassword);\r\n        } catch (NoSuchAlgorithmException e) {\r\n            throw new RuntimeException(\"Error hashing the password.\", e);\r\n        }\r\n    }\r\n\r\n    private final char[] HEX_ARRAY = \"0123456789abcdef\".toCharArray();\r\n\r\n    @Contract(value = \"_ -> new\", pure = true)\r\n    public @NotNull String bytesToHex(@NonNull byte[] bytes) {\r\n        char[] hexChars = new char[bytes.length * 2];\r\n        for (int i = 0; i < bytes.length; i++) {\r\n            int v = bytes[i] & 0xFF;\r\n            hexChars[i * 2] = HEX_ARRAY[v >>> 4];\r\n            hexChars[i * 2 + 1] = HEX_ARRAY[v & 0x0F];\r\n        }\r\n        return new String(hexChars);\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/SignUpPersonalDetails.java b/app/src/main/java/com/example/logintest/SignUpPersonalDetails.java
+--- a/app/src/main/java/com/example/logintest/SignUpPersonalDetails.java	(revision 337d899ebf3be7f8b0c305d5667b65b5c91fffda)
++++ b/app/src/main/java/com/example/logintest/SignUpPersonalDetails.java	(date 1685888797258)
+@@ -2,7 +2,8 @@
+ 
+ import android.content.Intent;
+ import android.os.Bundle;
+-import android.text.InputType;
++import android.text.Editable;
++import android.text.TextWatcher;
+ import android.widget.Button;
+ import android.widget.EditText;
+ import android.widget.TextView;
+@@ -19,6 +20,8 @@
+ import java.security.MessageDigest;
+ import java.security.NoSuchAlgorithmException;
+ import java.security.SecureRandom;
++import java.time.LocalDate;
++import java.time.Period;
+ import java.util.Objects;
+ import java.util.concurrent.atomic.AtomicBoolean;
+ 
+@@ -108,6 +111,125 @@
+                 }
+             }
+             });
++        //Text Changed Listeners
++        editFirstName.addTextChangedListener(new TextWatcher() {
++            @Override
++            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
++
++            }
++
++            @Override
++            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
++                String firstName = Objects.requireNonNull(editFirstName.getText()).toString().trim();
++
++                if (firstName.isEmpty()) {
++                    editFirstName.setError("Please enter your first name");
++                }
++                else if(firstName.length() < 3){
++                    editFirstName.setError("First name must be at least 3 characters long");
++                }
++                else if (!firstName.matches("^[A-Z][A-Za-z\\s'-]*[a-z]$")){
++                    editFirstName.setError("First name format is incorrect. See 'help' for more information");
++                }
++            }
++
++            @Override
++            public void afterTextChanged(Editable editable) {
++
++            }
++        });
++
++        editLastName.addTextChangedListener(new TextWatcher() {
++            @Override
++            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2){
++
++            }
++
++            @Override
++            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
++                String lastName = Objects.requireNonNull(editLastName.getText()).toString();
++
++                if (lastName.isEmpty()) {
++                    editLastName.setError("Please enter your last name");
++                }
++                else if (lastName.length() < 3){
++                    editLastName.setError("Last name must be at least 3 characters long");
++                }
++                else if (!lastName.matches("^[A-Z][A-Za-z\\s'-]*[a-z]$")){
++                    editLastName.setError("Last name format is incorrect. See 'help' for more information");
++                }
++            }
++
++            @Override
++            public void afterTextChanged(Editable editable) {
++
++            }
++        });
++
++        editDOB.addTextChangedListener(new TextWatcher() {
++            @Override
++            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2){
++
++            }
++
++            @Override
++            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
++                //validate date of birth using regex
++                //date of birth must be in the format yyyy-mm-dd
++                String dobStr = Objects.requireNonNull(editDOB.getText()).toString();
++
++                if (dobStr.isEmpty()) {
++                    editDOB.setError("Please enter your date of birth");
++                }
++                else if (!dobStr.matches("^(19|20)\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|1\\d|2[0-8]|3[0-1])$")){
++                    editDOB.setError("Date of birth format is incorrect. See 'help' for more information");
++                }
++                else{
++                    LocalDate today = LocalDate.now();
++                    LocalDate dob = LocalDate.parse(dobStr);
++                    Period p = Period.between(dob, today);
++
++                    assert p != null;
++                    if(dob.isAfter(today)){
++                        editDOB.setError("Date of birth cannot be in the future");
++                    }
++                    else if (p.getYears() < 18){
++                        editDOB.setError("You must be 18 years or older to register");
++                    }
++                }
++            }
++
++            @Override
++            public void afterTextChanged(Editable editable) {
++
++            }
++        });
++
++        editPhoneNum.addTextChangedListener(new TextWatcher() {
++            @Override
++            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2){
++
++            }
++
++            @Override
++            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
++                //validate phone number using regex
++                //phone number must be 9 characters long
++                String phoneNumber = Objects.requireNonNull(editPhoneNum.getText()).toString();
++
++                if (phoneNumber.isEmpty()) {
++                    editPhoneNum.setError("Please enter your phone number");
++                }
++                else if (phoneNumber.length() != 9){
++                    editPhoneNum.setError("Phone number 9 characters long");
++                }
++            }
++
++            @Override
++            public void afterTextChanged(Editable editable) {
++
++            }
++        });
+     }
+ 
+ 

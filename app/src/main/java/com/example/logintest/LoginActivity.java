@@ -48,7 +48,6 @@ public class LoginActivity extends AppCompatActivity
         ToggleButton tglPassword = findViewById(R.id.togglePwd);
 
 
-
         //Make request using login.php with parameters in text fields
         HTTPHandler httpHandler = new HTTPHandler();
 
@@ -144,5 +143,11 @@ public class LoginActivity extends AppCompatActivity
                 editPassword.setInputType(InputType.TYPE_CLASS_TEXT);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+
+
     }
 }

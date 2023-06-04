@@ -254,7 +254,7 @@ public class SignUpPersonalDetails extends AppCompatActivity {
                     editPhoneNum.setBackgroundResource(R.drawable.edterr);
                 }else{
                     errorText.setText("");
-                    editPhoneNum.setBackgroundResource(R.drawable.edterr);
+                    editPhoneNum.setBackgroundResource(R.drawable.edtnormal);
                 }
             }
 

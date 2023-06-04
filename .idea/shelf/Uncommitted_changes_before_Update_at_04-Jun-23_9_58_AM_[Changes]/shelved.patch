@@ -1,0 +1,220 @@
+Index: app/src/main/java/com/example/logintest/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.ContentValues;\r\nimport android.os.Bundle;\r\nimport android.widget.Button;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.security.NoSuchAlgorithmException;\r\n\r\npublic class MainActivity extends AppCompatActivity\r\n{\r\n    //Declaration of variables\r\n    //seeing if this works\r\n    TextView txtUN;\r\n    TextView txtPass;\r\n    //yes\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_main);\r\n\r\n        txtUN = findViewById(R.id.txtUN);\r\n        txtPass = findViewById(R.id.txtPass);\r\n\r\n        Button btnLogin = findViewById(R.id.btnLogin);\r\n\r\n        //Make request using login.php with parameters in text fields\r\n        PHPRequest phpReq = new PHPRequest(\"https://lamp.ms.wits.ac.za/home/s2571291/\");\r\n\r\n        ContentValues cv = new ContentValues();\r\n        cv.put(\"Username\", txtUN.getText().toString());\r\n\r\n        btnLogin.setOnClickListener(view -> phpReq.doRequest(MainActivity.this, \"login\", cv,\r\n                response -> {\r\n                    if(response.length() >= 10)\r\n                    {\r\n                        String salt = processJSON(response, \"Salt\");\r\n                        String resp_username = processJSON(response, \"Username\");\r\n                        String resp_password = processJSON(response, \"Password\");\r\n\r\n                        PasswordHashing p = new PasswordHashing();\r\n\r\n                        try{\r\n                            if(txtUN.getText().toString().equals(resp_username) && resp_password.equals(p.hashedPassword(salt.getBytes(), txtPass.getText().toString()))){\r\n                                Toast.makeText(MainActivity.this, \"Correct details\", Toast.LENGTH_SHORT).show();\r\n                            }\r\n                            else{\r\n                                Toast.makeText(MainActivity.this, \"Wrong details\", Toast.LENGTH_SHORT).show();\r\n                            }\r\n                        }\r\n                        catch(NoSuchAlgorithmException ex){\r\n                            Toast.makeText(MainActivity.this, ex.toString(), Toast.LENGTH_SHORT).show();\r\n                        }\r\n                    }\r\n                    else{\r\n                        Toast.makeText(MainActivity.this, \"No details exist\", Toast.LENGTH_SHORT).show();\r\n                    }\r\n\r\n                })\r\n            );\r\n    }\r\n\r\n    public String processJSON(String json, String key)\r\n    {\r\n        String KeyValue = \"\";\r\n        try {\r\n            JSONArray jArr = new JSONArray(json);\r\n            JSONObject item = jArr.getJSONObject(0);\r\n            KeyValue = item.getString(key);\r\n        }\r\n        catch (JSONException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        return KeyValue;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/MainActivity.java b/app/src/main/java/com/example/logintest/MainActivity.java
+--- a/app/src/main/java/com/example/logintest/MainActivity.java	(revision 9d2508c9f7933ba0a0498082c9034d2da89ec4fd)
++++ b/app/src/main/java/com/example/logintest/MainActivity.java	(date 1685822278573)
+@@ -25,8 +25,8 @@
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_main);
+-
+-        txtUN = findViewById(R.id.txtUN);
++    }
++        /*txtUN = findViewById(R.id.txtUN);
+         txtPass = findViewById(R.id.txtPass);
+ 
+         Button btnLogin = findViewById(R.id.btnLogin);
+@@ -80,5 +80,5 @@
+         }
+ 
+         return KeyValue;
+-    }
++    }*/
+ }
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\">\r\n\r\n    <uses-permission android:name=\"android.permission.INTERNET\"/>\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.LoginTest\"\r\n        tools:targetApi=\"31\">\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision 9d2508c9f7933ba0a0498082c9034d2da89ec4fd)
++++ b/app/src/main/AndroidManifest.xml	(date 1685822278694)
+@@ -12,7 +12,7 @@
+         android:label="@string/app_name"
+         android:roundIcon="@mipmap/ic_launcher_round"
+         android:supportsRtl="true"
+-        android:theme="@style/Theme.LoginTest"
++        android:theme="@style/Theme.RetailBunny"
+         tools:targetApi="31">
+         <activity
+             android:name=".MainActivity"
+Index: app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_main.xml b/app/src/main/res/layout/activity_main.xml
+deleted file mode 100644
+--- a/app/src/main/res/layout/activity_main.xml	(revision 9d2508c9f7933ba0a0498082c9034d2da89ec4fd)
++++ /dev/null	(revision 9d2508c9f7933ba0a0498082c9034d2da89ec4fd)
+@@ -1,121 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-
+-    xmlns:tools="http://schemas.android.com/tools"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    tools:context=".MainActivity">
+-
+-    <TextView
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:id="@+id/lblSignIn"
+-        android:text="@string/sign_in"
+-        android:textSize="35sp"
+-        android:textStyle="bold"
+-        android:layout_margin="50dp"
+-        android:gravity="center"
+-        android:layout_centerHorizontal="true"/>
+-
+-    <EditText
+-        android:id="@+id/txtUN"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:layout_below="@id/lblSignIn"
+-        android:layout_marginStart="15dp"
+-        android:layout_marginTop="15dp"
+-        android:layout_marginEnd="15dp"
+-        android:layout_marginBottom="15dp"
+-        android:background="#15000000"
+-        android:drawableStart="@drawable/baseline_account_circle_24"
+-        android:drawablePadding="20dp"
+-        android:hint="@string/username"
+-        android:importantForAutofill="no"
+-        android:inputType="text"
+-        android:padding="20dp"
+-        android:textColorHint="#616161"
+-        tools:ignore="VisualLintTextFieldSize" />
+-
+-    <EditText
+-        android:id="@+id/txtPass"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:layout_below="@id/txtUN"
+-        android:layout_marginStart="15dp"
+-        android:layout_marginTop="15dp"
+-        android:layout_marginEnd="15dp"
+-        android:layout_marginBottom="15dp"
+-        android:background="#15000000"
+-        android:drawableStart="@drawable/baseline_remove_red_eye_24"
+-        android:drawablePadding="20dp"
+-        android:hint="@string/password"
+-        android:importantForAutofill="no"
+-        android:inputType="textPassword"
+-        android:padding="20dp"
+-        android:textColorHint="#616161"
+-        tools:ignore="VisualLintTextFieldSize" />
+-
+-    <Button
+-        android:id="@+id/btnLogin"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:layout_below="@+id/txtPass"
+-        android:layout_centerHorizontal="true"
+-        android:layout_marginStart="20dp"
+-        android:layout_marginTop="20dp"
+-        android:layout_marginEnd="20dp"
+-        android:layout_marginBottom="20dp"
+-        android:text="@string/login" />
+-
+-    <TextView
+-        android:id="@+id/lblForgotPassword"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:layout_below="@id/btnLogin"
+-        android:layout_centerHorizontal="true"
+-        android:layout_margin="20dp"
+-        android:layout_marginStart="20dp"
+-        android:layout_marginTop="20dp"
+-        android:layout_marginEnd="20dp"
+-        android:layout_marginBottom="20dp"
+-        android:clickable="true"
+-        android:focusable="true"
+-        android:minHeight="48dp"
+-        android:text="@string/forgot_password"
+-        android:textColor="#3066EA"
+-        android:textStyle="bold" />
+-
+-    <TextView
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:id="@+id/lblAltSignIn"
+-        android:layout_above="@+id/SocialIcons"
+-        android:text="@string/sign_in_with"
+-        android:layout_centerHorizontal="true"/>
+-
+-    <LinearLayout
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:id="@+id/SocialIcons"
+-        android:layout_alignParentBottom="true"
+-        android:gravity="center">
+-
+-        <ImageView
+-            android:layout_width="48dp"
+-            android:layout_height="48dp"
+-            android:layout_margin="20dp"
+-            android:id="@+id/GoogleLogo"
+-            android:src="@drawable/google"
+-            tools:ignore="ContentDescription" />
+-
+-        <ImageView
+-            android:layout_width="48dp"
+-            android:layout_height="48dp"
+-            android:layout_margin="20dp"
+-            android:id="@+id/HuaweiLogo"
+-            android:src="@drawable/huawei"
+-            tools:ignore="ContentDescription" />
+-
+-    </LinearLayout>
+-
+-</RelativeLayout>
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\r\n    id 'com.android.application'\r\n}\r\n\r\nandroid {\r\n    namespace 'com.example.logintest'\r\n    compileSdk 33\r\n\r\n    defaultConfig {\r\n        applicationId \"com.example.logintest\"\r\n        minSdk 24\r\n        targetSdk 33\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n}\r\n\r\ndependencies {\r\n\r\n    implementation 'androidx.appcompat:appcompat:1.6.1'\r\n    implementation 'com.google.android.material:material:1.9.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'\r\n    implementation fileTree(dir: 'C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\platforms\\\\android-33', include: ['*.aar', '*.jar'], exclude: [])\r\n    testImplementation 'junit:junit:4.13.2'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.5'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'\r\n    implementation 'com.squareup.okhttp3:okhttp:4.9.2'\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 9d2508c9f7933ba0a0498082c9034d2da89ec4fd)
++++ b/app/build.gradle	(date 1685822278609)
+@@ -33,7 +33,6 @@
+     implementation 'androidx.appcompat:appcompat:1.6.1'
+     implementation 'com.google.android.material:material:1.9.0'
+     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+-    implementation fileTree(dir: 'C:\\Users\\User\\AppData\\Local\\Android\\Sdk\\platforms\\android-33', include: ['*.aar', '*.jar'], exclude: [])
+     testImplementation 'junit:junit:4.13.2'
+     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"JavadocGenerationManager\">\r\n    <option name=\"OUTPUT_DIRECTORY\" value=\"D:/Download_holder/folders/Document_holder/documentation\" />\r\n    <option name=\"OTHER_OPTIONS\" value=\"-sourcepath C:\\Users\\User\\AppData\\Local\\Android\\Sdk\\platforms\\android-33\\android,jar\" />\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_17\" default=\"true\" project-jdk-name=\"jbr-17\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/out\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 9d2508c9f7933ba0a0498082c9034d2da89ec4fd)
++++ b/.idea/misc.xml	(date 1685865481474)
+@@ -1,10 +1,9 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="JavadocGenerationManager">
+     <option name="OUTPUT_DIRECTORY" value="D:/Download_holder/folders/Document_holder/documentation" />
+     <option name="OTHER_OPTIONS" value="-sourcepath C:\Users\User\AppData\Local\Android\Sdk\platforms\android-33\android,jar" />
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/out" />
+   </component>
+ </project>
+\ No newline at end of file
