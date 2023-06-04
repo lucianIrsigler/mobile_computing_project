@@ -2,7 +2,8 @@ package com.example.logintest;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -19,6 +20,8 @@ import org.json.JSONObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -30,6 +33,9 @@ public class SignUpPersonalDetails extends AppCompatActivity {
     Button btnRegister;
     TextView alreadyHaveAccountlbl;
 
+    EditText errorText;
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_register_pt2);
@@ -38,6 +44,7 @@ public class SignUpPersonalDetails extends AppCompatActivity {
         editLastName = findViewById(R.id.edLastName);
         editPhoneNum = findViewById(R.id.edPhoneNum);
         editDOB = findViewById(R.id.edDOB);
+        errorText = findViewById(R.id.tvErrors);
         btnRegister = findViewById(R.id.register_button);
         alreadyHaveAccountlbl = findViewById(R.id.tvAlreadyHaveAccount);
 
@@ -108,6 +115,132 @@ public class SignUpPersonalDetails extends AppCompatActivity {
                 }
             }
             });
+        //Text Changed Listeners
+        editFirstName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
+                String firstName = Objects.requireNonNull(editFirstName.getText()).toString().trim();
+
+                if (firstName.isEmpty()) {
+                    errorText.setText("Please enter your first name");
+                }
+                else if(firstName.length() < 3){
+                    errorText.setText("First name must be at least 3 characters long");
+                }
+                else if (!firstName.matches("^[A-Z][A-Za-z\\s'-]*[a-z]$")){
+                    errorText.setText("First name format is incorrect. See 'help' for more information");
+                }else{
+                    errorText.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        editLastName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2){
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
+                String lastName = Objects.requireNonNull(editLastName.getText()).toString();
+
+                if (lastName.isEmpty()) {
+                    errorText.setText("Please enter your last name");
+                }
+                else if (lastName.length() < 3){
+                    errorText.setText("Last name must be at least 3 characters long");
+                }
+                else if (!lastName.matches("^[A-Z][A-Za-z\\s'-]*[a-z]$")){
+                    errorText.setText("Last name format is incorrect. See 'help' for more information");
+                }else{
+                    errorText.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        editDOB.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2){
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
+                //validate date of birth using regex
+                //date of birth must be in the format yyyy-mm-dd
+                String dobStr = Objects.requireNonNull(editDOB.getText()).toString();
+
+                if (dobStr.isEmpty()) {
+                    errorText.setText("Please enter your date of birth");
+                }
+                else if (!dobStr.matches("^(19|20)\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|1\\d|2[0-8]|3[0-1])$")){
+                    errorText.setText("Date of birth format is incorrect. See 'help' for more information");
+                }
+                else{
+                    LocalDate today = LocalDate.now();
+                    LocalDate dob = LocalDate.parse(dobStr);
+                    Period p = Period.between(dob, today);
+
+                    assert p != null;
+                    if(dob.isAfter(today)){
+                        errorText.setText("Date of birth cannot be in the future");
+                    }
+                    else if (p.getYears() < 18){
+                        errorText.setText("You must be 16 years or older to register");
+                    }else{
+                        errorText.setText("");
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        editPhoneNum.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2){
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
+                //validate phone number using regex
+                //phone number must be 9 characters long
+                String phoneNumber = Objects.requireNonNull(editPhoneNum.getText()).toString();
+
+                if (phoneNumber.isEmpty()) {
+                    errorText.setText("Please enter your phone number");
+                }
+                else if (phoneNumber.length() != 9){
+                    errorText.setText("Phone number 9 characters long");
+                }else{
+                    errorText.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
 

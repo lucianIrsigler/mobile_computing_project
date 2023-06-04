@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <ImageView
+        android:id="@+id/imageView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
         android:background="@drawable/yellow_rectangle_bg_2"
-        />
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/tvAlmostThere"
@@ -84,36 +85,35 @@
         android:id="@+id/edDOB"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:inputType="date"
-        app:layout_constraintTop_toBottomOf="@id/edPhoneNum"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="20dp"
-        android:hint="Date of Birth"
-
         android:background="@color/grey_2"
-        android:padding="10dp"
         android:drawableLeft="@drawable/baseline_calendar_month_24"
         android:drawablePadding="10dp"
+        android:hint="Date of Birth"
+        android:inputType="date"
+
+        android:padding="10dp"
         android:textSize="21dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edPhoneNum"
 
         />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/register_button"
-        android:layout_width="300dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginTop="60dp"
-        android:layout_height="wrap_content"
         style="@style/blueButtonStyle"
-        app:layout_constraintTop_toBottomOf="@id/edDOB"
-        app:layout_constraintStart_toStartOf="@id/edDOB"
-        app:layout_constraintEnd_toEndOf="@id/edDOB"
-
-
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="30dp"
         android:text="Register"
-        />
+        app:layout_constraintEnd_toEndOf="@id/edDOB"
+        app:layout_constraintStart_toStartOf="@id/edDOB"
+
+
+        app:layout_constraintTop_toBottomOf="@id/edDOB" />
 
 
     <TextView
@@ -127,6 +127,22 @@
         android:layout_marginBottom="50dp"
         android:textSize="17dp"
         />
+
+    <EditText
+        android:id="@+id/tvErrors"
+        android:layout_width="293dp"
+        android:layout_height="33dp"
+        android:layout_marginBottom="6dp"
+        android:background="@null"
+        android:clickable="false"
+        android:inputType="none"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/register_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edDOB" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

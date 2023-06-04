@@ -3,11 +3,13 @@ package com.example.logintest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -40,15 +42,11 @@ public class LoginActivity extends AppCompatActivity
 
         editUsername = findViewById(R.id.edUsername);
         editPassword = findViewById(R.id.edPassword);
-
-        /*textInputEditText_Username = findViewById(R.id.ed);
-        textInputLayout_Password = findViewById(R.id.TextInputLayout_Password);
-        textInputEditText_Password = findViewById(R.id.TextInputEditText_Password);
-        lblForgotPassword = findViewById(R.id.lblForgotPassword);*/
-
         btnLogin = findViewById(R.id.login_button);
         lblForgotPassword = findViewById(R.id.tvForgotPassword);
         signUpText = findViewById(R.id.signUpText);
+        ToggleButton tglPassword = findViewById(R.id.togglePwd);
+
 
 
         //Make request using login.php with parameters in text fields
@@ -111,9 +109,6 @@ public class LoginActivity extends AppCompatActivity
                 if(Objects.requireNonNull(editUsername.getText()).toString().isEmpty()){
                     editUsername.setError("Please enter your Username");
                 }
-                /*else{
-                    editUsername.setErrorEnabled(false);
-                }*/
             }
 
             @Override
@@ -133,14 +128,20 @@ public class LoginActivity extends AppCompatActivity
                 if(Objects.requireNonNull(editPassword.getText()).toString().isEmpty()){
                     editPassword.setError("Please enter your Password");
                 }
-                /*else{
-                    editPassword.setErrorEnabled(false);
-                }*/
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
 
+            }
+        });
+
+        tglPassword.setOnClickListener(view->{
+            if (editPassword.getInputType()== InputType.TYPE_CLASS_TEXT){
+                editPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            }else {
+                editPassword.setInputType(InputType.TYPE_CLASS_TEXT);
             }
         });
     }
