@@ -22,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -124,17 +125,21 @@ public class SignUpPersonalDetails extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
                 String firstName = Objects.requireNonNull(editFirstName.getText()).toString().trim();
-
+                //todo idk the editFirstName and editLastName does not change its background to red
                 if (firstName.isEmpty()) {
                     errorText.setText("Please enter your first name");
+                    editFirstName.setBackgroundResource(R.drawable.edterr);
                 }
                 else if(firstName.length() < 3){
                     errorText.setText("First name must be at least 3 characters long");
+                    editFirstName.setBackgroundResource(R.drawable.edterr);
                 }
                 else if (!firstName.matches("^[A-Z][A-Za-z\\s'-]*[a-z]$")){
                     errorText.setText("First name format is incorrect. See 'help' for more information");
+                    editFirstName.setBackgroundResource(R.drawable.edterr);
                 }else{
                     errorText.setText("");
+                    editFirstName.setBackgroundResource(R.drawable.edtnormal);
                 }
             }
 
@@ -156,14 +161,18 @@ public class SignUpPersonalDetails extends AppCompatActivity {
 
                 if (lastName.isEmpty()) {
                     errorText.setText("Please enter your last name");
+                    editLastName.setBackgroundResource(R.drawable.edterr);
                 }
                 else if (lastName.length() < 3){
                     errorText.setText("Last name must be at least 3 characters long");
+                    editLastName.setBackgroundResource(R.drawable.edterr);
                 }
                 else if (!lastName.matches("^[A-Z][A-Za-z\\s'-]*[a-z]$")){
                     errorText.setText("Last name format is incorrect. See 'help' for more information");
+                    editLastName.setBackgroundResource(R.drawable.edterr);
                 }else{
                     errorText.setText("");
+                    editLastName.setBackgroundResource(R.drawable.edtnormal);
                 }
             }
 
@@ -187,23 +196,33 @@ public class SignUpPersonalDetails extends AppCompatActivity {
 
                 if (dobStr.isEmpty()) {
                     errorText.setText("Please enter your date of birth");
+                    editDOB.setBackgroundResource(R.drawable.edterr);
                 }
                 else if (!dobStr.matches("^(19|20)\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|1\\d|2[0-8]|3[0-1])$")){
                     errorText.setText("Date of birth format is incorrect. See 'help' for more information");
+                    editDOB.setBackgroundResource(R.drawable.edterr);
                 }
                 else{
                     LocalDate today = LocalDate.now();
-                    LocalDate dob = LocalDate.parse(dobStr);
-                    Period p = Period.between(dob, today);
+                    try {
+                        LocalDate dob = LocalDate.parse(dobStr);
+                        Period p = Period.between(dob, today);
 
-                    assert p != null;
-                    if(dob.isAfter(today)){
-                        errorText.setText("Date of birth cannot be in the future");
-                    }
-                    else if (p.getYears() < 18){
-                        errorText.setText("You must be 16 years or older to register");
-                    }else{
-                        errorText.setText("");
+                        assert p != null;
+                        if(dob.isAfter(today)){
+                            errorText.setText("Date of birth cannot be in the future");
+                            editDOB.setBackgroundResource(R.drawable.edterr);
+                        }
+                        else if (p.getYears() < 18){
+                            errorText.setText("You must be 16 years or older to register");
+                            editDOB.setBackgroundResource(R.drawable.edterr);
+                        }else{
+                            errorText.setText("");
+                            editDOB.setBackgroundResource(R.drawable.edtnormal);
+                        }
+                    }catch (DateTimeParseException e){
+                        errorText.setText("Invalid date");
+                        editDOB.setBackgroundResource(R.drawable.edterr);
                     }
                 }
             }
@@ -228,11 +247,14 @@ public class SignUpPersonalDetails extends AppCompatActivity {
 
                 if (phoneNumber.isEmpty()) {
                     errorText.setText("Please enter your phone number");
+                    editPhoneNum.setBackgroundResource(R.drawable.edterr);
                 }
                 else if (phoneNumber.length() != 9){
                     errorText.setText("Phone number 9 characters long");
+                    editPhoneNum.setBackgroundResource(R.drawable.edterr);
                 }else{
                     errorText.setText("");
+                    editPhoneNum.setBackgroundResource(R.drawable.edterr);
                 }
             }
 
