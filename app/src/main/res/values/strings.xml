@@ -15,7 +15,7 @@
     <string-array name="categories_array">
         <item>Phones</item>
         <item>Tablets</item>
-        <item>Misc</item>
+        <item>misc</item>
         <!-- Add more categories as needed -->
     </string-array>
 </resources>

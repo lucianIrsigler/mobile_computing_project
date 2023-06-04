@@ -9,10 +9,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ProductManager {
     private final HTTPHandler httpHandler;
@@ -30,18 +33,22 @@ public class ProductManager {
      */
     public /*String*/void addProduct(String productName, String productDescription, double productPrice, String category, Bitmap bitmap) {
         JSONObject params = new JSONObject();
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String currentDate = sdf.format(new Date());
         try {
             params.put("name", productName);
             params.put("description", productDescription);
             params.put("price", productPrice);
             params.put("category", category);
-            params.put("image", bitmapToBase64(bitmap));
+            //params.put("image", bitmapToBase64(bitmap));
+            params.put("date_added", currentDate);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        String addProductUrl = "https://lamp.ms.wits.ac.za/home/s2571291/addproduct.php";
+
+        String addProductUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/addproduct.php";
         /*return*/ httpHandler.postRequest(addProductUrl, params, String.class);
     }
 
@@ -59,12 +66,12 @@ public class ProductManager {
         JSONObject params = new JSONObject();
 
         try {
-            params.put("search", productName);
+            params.put("productName", productName);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        String searchUrl = "https://lamp.ms.wits.ac.za/home/s2571291/searchproduct.php";
+        String searchUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php";
         httpHandler.getRequest(searchUrl, params, String.class);
     }
     /**
@@ -80,7 +87,7 @@ public class ProductManager {
             e.printStackTrace();
         }
 
-        String searchUrl = "https://lamp.ms.wits.ac.za/home/s2571291/searchcategory.php";
+        String searchUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchcategory.php";
         httpHandler.getRequest(searchUrl, params, String.class); // Make a GET request to search for products in the specified category
     }
 
