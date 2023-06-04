@@ -12,14 +12,21 @@
         android:minHeight="32dp"
         android:textSize="16sp" />
 
-    <EditText
-        android:id="@+id/productPriceEditText"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="71dp"
-        android:hint="Product Price"
-        android:inputType="number|numberDecimal"
-        android:minHeight="32dp"
-        android:textSize="16sp" />
+        android:layout_height="wrap_content"
+        android:hint="Product Price (Rands)">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/productPriceEditText"
+            android:layout_width="match_parent"
+            android:layout_height="71dp"
+            android:inputType="number|numberDecimal"
+            android:minHeight="32dp"
+            android:textSize="16sp"
+            android:prefixText="R" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <EditText
         android:id="@+id/productDescriptionEditText"
@@ -29,13 +36,17 @@
         android:minHeight="32dp"
         android:hint="Product Description" />
 
-    <EditText
-        android:id="@+id/productCategoryEditText"
+
+
+    <Spinner
+        android:id="@+id/productCategorySpinner"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:textSize="16sp"
+        android:layout_height="68dp"
+        android:hint="Category"
         android:minHeight="32dp"
-        android:hint="Category" />
+        android:textSize="16sp"
+        />
+
 
     <ImageView
 
