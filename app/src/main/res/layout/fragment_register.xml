@@ -77,6 +77,36 @@
         android:padding="10dp"
         />
 
+    <ToggleButton
+        android:id="@+id/toggleConfirmPwd"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintEnd_toEndOf="@id/edPasswordConfirmRegister"
+        app:layout_constraintTop_toTopOf="@id/edPasswordConfirmRegister"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/edPasswordConfirmRegister"
+        android:textOff=""
+        android:textOn=""
+        android:background="@drawable/password_toggle_selector"
+
+        />
+
+    <ToggleButton
+        android:id="@+id/togglePwd"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintEnd_toEndOf="@id/edPasswordRegister"
+        app:layout_constraintTop_toTopOf="@id/edPasswordRegister"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/edPasswordRegister"
+        android:textOff=""
+        android:textOn=""
+        android:background="@drawable/password_toggle_selector"
+
+        />
+
+
+
     <EditText
         android:id="@+id/edPasswordConfirmRegister"
         android:layout_width="300dp"

@@ -79,8 +79,6 @@
         android:drawablePadding="10dp"
         android:maxLength="9"
 
-
-
         />
 
     <EditText

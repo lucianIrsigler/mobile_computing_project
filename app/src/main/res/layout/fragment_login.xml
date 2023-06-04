@@ -26,8 +26,6 @@
         android:background="@color/grey_2"
         android:padding="10dp"
 
-
-
         />
 
     <EditText
@@ -45,6 +43,19 @@
         android:inputType="textPassword"
         android:background="@color/grey_2"
         android:padding="10dp"
+        />
+    <ToggleButton
+        android:id="@+id/togglePwd"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        app:layout_constraintEnd_toEndOf="@id/edPassword"
+        app:layout_constraintTop_toTopOf="@id/edPassword"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/edPassword"
+        android:textOff=""
+        android:textOn=""
+        android:background="@drawable/password_toggle_selector"
+
         />
 
     <androidx.appcompat.widget.AppCompatButton
