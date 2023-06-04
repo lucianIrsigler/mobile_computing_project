@@ -66,14 +66,14 @@ public class SignUpPersonalDetails extends AppCompatActivity {
                 System.out.println(email);
 
                 try{
-                    params.put("firstname",firstName);
-                    params.put("lastname",lastName);
-                    params.put("phone",phoneNum);
-                    params.put("dateOfBirth",DOB);
-                    params.put("username",username);
-                    params.put("password",password);
-                    params.put("email",email);
-                    params.put("salt",salt);
+                    params.put("firstname", firstName);
+                    params.put("lastname", lastName);
+                    params.put("phone", phoneNum);
+                    params.put("dateOfBirth", DOB);
+                    params.put("username", username);
+                    params.put("password", bytesToHex(hashPassword(combineSaltAndPassword(salt.getBytes(), password.getBytes()))));
+                    params.put("email", email);
+                    params.put("salt", salt);
                 }catch (Exception e){
                     System.out.println("Error");
                     //todo proper error handling
