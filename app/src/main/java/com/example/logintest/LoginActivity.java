@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity
 
                             //todo STORE USER ID AFTER LOGIN
                             SharedPreferencesManager.initialize(this);
-                            SharedPreferencesManager.storeUserId(12345);
+                            SharedPreferencesManager.storeUserId(657532);
 
                             startActivity(intent);
                         }
