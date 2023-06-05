@@ -62,8 +62,36 @@ public class ProductManager {
      * searching a product
      * @param productName name of product being searched for
      */
-    public void searchProduct(String productName) {
-        JSONObject params = new JSONObject();
+    public /*void*/List<Product> searchProduct(String productName) {
+        List<Product> searchResults = new ArrayList<>();
+
+        try {
+            JSONObject params = new JSONObject();
+            params.put("productName", productName);
+
+            String searchUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php";
+            String response = httpHandler.getRequest(searchUrl, params, String.class);
+
+            // Parse the response and populate the searchResults list
+            JSONArray jsonArray = new JSONArray(response);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonProduct = jsonArray.getJSONObject(i);
+                String name = jsonProduct.getString("name");
+                String description = jsonProduct.getString("description");
+                double price = jsonProduct.getDouble("price");
+                // Get other product properties if needed
+
+                // Create a new Product object and add it to the searchResults list
+                Product product = new Product(name, description, price);
+                searchResults.add(product);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return searchResults;
+       /* JSONObject params = new JSONObject();
 
         try {
             params.put("productName", productName);
@@ -72,7 +100,7 @@ public class ProductManager {
         }
 
         String searchUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php";
-        httpHandler.getRequest(searchUrl, params, String.class);
+        httpHandler.getRequest(searchUrl, params, String.class);*/
     }
     /**
      * searching for all products from a catergory
