@@ -24,6 +24,6 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
         return binding.getRoot();
-    }
+}
 }
 
