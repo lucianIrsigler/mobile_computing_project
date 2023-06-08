@@ -33,6 +33,18 @@
     <string name="please_enter_your_phone_number">Please enter your phone number</string>
     <string name="phone_number_9_characters_long">Phone number 9 characters long</string>
 
+    <string-array name="provinces_array">
+        <item>Gauteng</item>
+        <item>Eastern Cape</item>
+        <item>Western Cape</item>
+        <item>Northern Cape</item>
+        <item>Mpumalanga</item>
+        <item>KwaZulu-Natal </item>
+        <item>Limpopo</item>
+        <item>North West</item>
+        <item>Free State</item>
+    </string-array>
+
     <string-array name="categories_array">
         <item>technology</item>
         <item>misc</item>
