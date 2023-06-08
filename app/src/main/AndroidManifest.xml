@@ -35,7 +35,6 @@
         <activity android:name=".SignUpAccountDetails" />
         <activity android:name=".SignUpPersonalDetails" />
         <activity android:name=".HomePage" />
-        <activity android:name=".UserProfileActivity" />
     </application>
 
 </manifest>
