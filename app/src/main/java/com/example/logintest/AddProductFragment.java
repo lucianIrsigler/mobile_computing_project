@@ -48,9 +48,21 @@ public class AddProductFragment extends Fragment {
             // Get the product details from user input (e.g., name, description, price, category)
             String productName = productNameEditText.getText().toString();
             String productDescription = productDescriptionEditText.getText().toString();
-            double productPrice = Double.parseDouble(productPriceEditText.getText().toString());
+            String productPriceText = productPriceEditText.getText().toString();
             String productCategory = productCategorySpinner.getSelectedItem().toString();
 
+            if (productName.isEmpty() || productDescription.isEmpty() || productPriceText.isEmpty()) {
+                Toast.makeText(getActivity(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
+                return; // Exit the onClickListener without adding the product
+            }
+
+            double productPrice;
+            try {
+                productPrice = Double.parseDouble(productPriceText);
+            } catch (NumberFormatException e) {
+                Toast.makeText(getActivity(), "Invalid price format", Toast.LENGTH_SHORT).show();
+                return; // Exit the onClickListener without adding the product
+            }
             ImageView productImageView = binding.getRoot().findViewById(R.id.productImageView);
             Bitmap bitmap = ((BitmapDrawable) productImageView.getDrawable()).getBitmap();
 
