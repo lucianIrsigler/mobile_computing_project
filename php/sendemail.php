@@ -19,17 +19,17 @@ $mail->isSMTP();
 $mail->Host = 'smtp.gmail.com';
 $mail->Port = 587;
 $mail->SMTPAuth = true;
-$mail->Username = 'l.irsigler64@gmail.com';
-$mail->Password = 'hguwqreizfixkyzn'; // this is an application specific password.
+$mail->Username = 'retailbunny.noreply@gmail.com';
+$mail->Password = 'opgtfgmaxninsien'; // this is an application specific password.
 
 /** 
  * 
 */
 
 // Email content
-$mail->setFrom('l.irsigler64@gmail.com', 'Test');
-$mail->addAddress('lucianirsigler@gmail.com', 'Tester');
-$mail->Subject = 'Email Subject';
+$mail->setFrom('retailbunny.noreply@gmail.com', 'Retail Bunny');
+$mail->addAddress('useremail@gmail.com', 'Username'); //to be determined by sql query
+$mail->Subject = 'Email Subject'; 
 $mail->Body = 'Email content goes here.';
 
 error_reporting(E_ALL);
