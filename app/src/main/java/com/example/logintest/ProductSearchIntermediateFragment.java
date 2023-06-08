@@ -21,6 +21,7 @@ public class ProductSearchIntermediateFragment extends Fragment {
     public androidx.appcompat.widget.SearchView searchView;
     private ProductSearchIntermediateBinding binding;
 
+    final ProductManager productManager = new ProductManager();
     public String query;
 
     public ProductSearchIntermediateFragment(){}

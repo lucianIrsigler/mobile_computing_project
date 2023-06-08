@@ -39,9 +39,11 @@ import java.util.Objects;
 public class HomePage extends AppCompatActivity {
 
     EmptyLayoutBinding binding;
+    final ProductManager productManager = new ProductManager();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println(productManager.searchProduct("p"));
         binding = EmptyLayoutBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
