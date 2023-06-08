@@ -44,7 +44,6 @@ public class ProductSearchIntermediateFragment extends Fragment {
         searchAutoComplete.setText(this.query);
 
         //todo keyboard disappears so need to fix that too
-
         //todo maybe add onclick if java allows it
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -60,7 +59,6 @@ public class ProductSearchIntermediateFragment extends Fragment {
                 // Perform the search and update the RecyclerView
                 List<Product> searchResults = productManager.searchProduct(query);
 
-                Log.i("test",Integer.toString(searchResults.toArray().length));
                 searchResultAdapter.setProducts(searchResults);
                 return true;
             }
