@@ -57,11 +57,13 @@ public class prodAddScreen extends AppCompatActivity {
                     // Call the addProduct method of the product manager to add the product
                     productManager.addProduct(productName, productDescription, productPrice, productCategory, bitmap);
                     Toast.makeText(prodAddScreen.this, "Product added successfully", Toast.LENGTH_SHORT).show();
+                    finish();
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(prodAddScreen.this, "Failed to add product", Toast.LENGTH_SHORT).show();
                 }
             }
+
         });
 
 
