@@ -1,0 +1,593 @@
+Index: app/src/main/java/com/example/logintest/UserProfileActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Context;\r\nimport android.content.SharedPreferences;\r\nimport android.os.Bundle;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.fragment.app.FragmentManager;\r\nimport androidx.fragment.app.FragmentTransaction;\r\n\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\nimport org.w3c.dom.Text;\r\n\r\npublic class UserProfileActivity extends AppCompatActivity {\r\n\r\n    UsersManager usersManager = new UsersManager();\r\n\r\n    TextView textUsername;\r\n    TextView textID;\r\n    TextView textEmail;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.fragment_user_profile);\r\n        FragmentManager fragmentManager = getSupportFragmentManager();\r\n        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();\r\n        BottomNavigationFragment bottomNavigationFragment = new BottomNavigationFragment();\r\n        fragmentTransaction.replace(R.id.container, bottomNavigationFragment);\r\n        fragmentTransaction.commit();\r\n\r\n        textUsername = findViewById(R.id.tvUsernameUP);\r\n        textID = findViewById(R.id.tvIDUP);\r\n        textEmail = findViewById(R.id.tvEmailUP);\r\n        updateUserProfile();\r\n    }\r\n\r\n    private void updateUserProfile(){\r\n        //TODO get userid to set things\r\n        SharedPreferencesManager.initialize(this);\r\n        long userId = SharedPreferencesManager.retrieveUserId();\r\n\r\n        JSONObject userInfo = usersManager.getUserInformation();\r\n\r\n        try {\r\n            textUsername.setText(userInfo.getString(\"username\"));\r\n            textID.setText(Long.toString(userId));\r\n            textEmail.setText(userInfo.getString(\"email\"));\r\n        }catch (JSONException e){\r\n            Toast.makeText(this,\"Invalid user\",Toast.LENGTH_SHORT).show();\r\n        }\r\n\r\n\r\n    }\r\n\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/UserProfileActivity.java b/app/src/main/java/com/example/logintest/UserProfileActivity.java
+--- a/app/src/main/java/com/example/logintest/UserProfileActivity.java	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/java/com/example/logintest/UserProfileActivity.java	(date 1686221028178)
+@@ -26,11 +26,11 @@
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.fragment_user_profile);
+-        FragmentManager fragmentManager = getSupportFragmentManager();
+-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+-        BottomNavigationFragment bottomNavigationFragment = new BottomNavigationFragment();
+-        fragmentTransaction.replace(R.id.container, bottomNavigationFragment);
+-        fragmentTransaction.commit();
++        //FragmentManager fragmentManager = getSupportFragmentManager();
++        //FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
++        //BottomNavigationFragment bottomNavigationFragment = new BottomNavigationFragment();
++        //fragmentTransaction.replace(R.id.container, bottomNavigationFragment);
++        //fragmentTransaction.commit();
+ 
+         textUsername = findViewById(R.id.tvUsernameUP);
+         textID = findViewById(R.id.tvIDUP);
+Index: app/src/main/java/com/example/logintest/SearchActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.SearchView;\r\n\r\npublic class SearchActivity extends AppCompatActivity {\r\n    private SearchView searchBar;\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_search);\r\n\r\n        SearchView searchBar = findViewById(R.id.searchBar);\r\n\r\n        // Set up the OnQueryTextListener\r\n        // TODO commented code below needs to go where OG search bar is as the below will take user from that screen to this searchresults screen\r\n        //TODO replace Intent(SearchActivity.this, SearchResultsActivity.class); with activities needed\r\n        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {\r\n            @Override\r\n            public boolean onQueryTextSubmit(String query) {\r\n                // Start the SearchResultsActivity and pass the search query\r\n                Intent intent = new Intent(SearchActivity.this, SearchResultsActivity.class);\r\n                intent.putExtra(\"searchQuery\", query);\r\n                startActivity(intent);\r\n                return true;\r\n            }\r\n\r\n            @Override\r\n            public boolean onQueryTextChange(String newText) {\r\n                // Handle text change (optional)\r\n                return false;\r\n            }\r\n        });\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/SearchActivity.java b/app/src/main/java/com/example/logintest/SearchActivity.java
+--- a/app/src/main/java/com/example/logintest/SearchActivity.java	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/java/com/example/logintest/SearchActivity.java	(date 1686215117613)
+@@ -4,6 +4,7 @@
+ 
+ import android.content.Intent;
+ import android.os.Bundle;
++import android.util.Log;
+ import android.view.View;
+ import android.widget.SearchView;
+ 
+@@ -14,11 +15,16 @@
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_search);
+ 
+-        SearchView searchBar = findViewById(R.id.searchBar);
++        searchBar = findViewById(R.id.searchBar);
++
++
+ 
+         // Set up the OnQueryTextListener
+         // TODO commented code below needs to go where OG search bar is as the below will take user from that screen to this searchresults screen
+         //TODO replace Intent(SearchActivity.this, SearchResultsActivity.class); with activities needed
++
++
++        /*
+         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+             @Override
+             public boolean onQueryTextSubmit(String query) {
+@@ -34,6 +40,6 @@
+                 // Handle text change (optional)
+                 return false;
+             }
+-        });
++        });*/
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/logintest/prodAddScreen.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport android.graphics.Bitmap;\r\nimport android.graphics.drawable.BitmapDrawable;\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.ImageView;\r\nimport android.widget.Spinner;\r\nimport android.widget.Toast;\r\n\r\npublic class prodAddScreen extends AppCompatActivity {\r\n    private EditText productNameEditText;\r\n    private EditText productPriceEditText;\r\n    private EditText productDescriptionEditText;\r\n    private EditText productCategoryEditText;\r\n    private Spinner productCategorySpinner;\r\n    // Define the product manager instance\r\n    private ProductManager productManager;\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.addproduct);\r\n\r\n\r\n        productManager = new ProductManager();\r\n\r\n\r\n        productNameEditText = findViewById(R.id.productNameEditText);\r\n        productDescriptionEditText = findViewById(R.id.productDescriptionEditText);\r\n        productPriceEditText = findViewById(R.id.productPriceEditText);\r\n        productCategorySpinner = findViewById(R.id.productCategorySpinner);\r\n\r\n\r\n\r\n        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories_array, android.R.layout.simple_spinner_item);\r\n        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);\r\n        productCategorySpinner.setAdapter(adapter);\r\n        Button addProductButton = findViewById(R.id.addProductButton);\r\n        addProductButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                // Get the product details from user input (e.g., name, description, price, category)\r\n                String productName = productNameEditText.getText().toString();\r\n                String productDescription = productDescriptionEditText.getText().toString();\r\n                double productPrice = Double.parseDouble(productPriceEditText.getText().toString());\r\n                String productCategory = productCategorySpinner.getSelectedItem().toString();\r\n\r\n                ImageView productImageView = findViewById(R.id.productImageView);\r\n                Bitmap bitmap = ((BitmapDrawable) productImageView.getDrawable()).getBitmap();\r\n\r\n                try {\r\n                    // Call the addProduct method of the product manager to add the product\r\n                    productManager.addProduct(productName, productDescription, productPrice, productCategory, bitmap);\r\n                    Toast.makeText(prodAddScreen.this, \"Product added successfully\", Toast.LENGTH_SHORT).show();\r\n                    finish();\r\n                } catch (Exception e) {\r\n                    e.printStackTrace();\r\n                    Toast.makeText(prodAddScreen.this, \"Failed to add product\", Toast.LENGTH_SHORT).show();\r\n                }\r\n            }\r\n\r\n        });\r\n\r\n\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/prodAddScreen.java b/app/src/main/java/com/example/logintest/prodAddScreen.java
+--- a/app/src/main/java/com/example/logintest/prodAddScreen.java	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/java/com/example/logintest/prodAddScreen.java	(date 1686214615002)
+@@ -29,7 +29,6 @@
+ 
+         productManager = new ProductManager();
+ 
+-
+         productNameEditText = findViewById(R.id.productNameEditText);
+         productDescriptionEditText = findViewById(R.id.productDescriptionEditText);
+         productPriceEditText = findViewById(R.id.productPriceEditText);
+Index: app/src/main/java/com/example/logintest/MainActivity.java
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/MainActivity.java b/app/src/main/java/com/example/logintest/MainActivity.java
+deleted file mode 100644
+--- a/app/src/main/java/com/example/logintest/MainActivity.java	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ /dev/null	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
+@@ -1,73 +0,0 @@
+-package com.example.logintest;
+-
+-import android.content.Intent;
+-import android.os.Bundle;
+-import android.os.Handler;
+-import android.widget.TextView;
+-
+-import androidx.appcompat.app.AppCompatActivity;
+-
+-public class MainActivity extends AppCompatActivity
+-{
+-    //Declaration of variables
+-    //seeing if this works
+-    TextView txtUN;
+-    TextView txtPass;
+-    //yes
+-    @Override
+-    protected void onCreate(Bundle savedInstanceState) {
+-        super.onCreate(savedInstanceState);
+-        setContentView(R.layout.fragment_splash_screen);
+-
+-        Handler handler = new Handler();
+-
+-        handler.postDelayed(this::switchToLogin,2000);
+-    }
+-
+-    private void switchToLogin(){
+-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+-        startActivity(intent);
+-    }
+-
+-        /*txtUN = findViewById(R.id.txtUN);
+-        txtPass = findViewById(R.id.txtPass);
+-
+-        Button btnLogin = findViewById(R.id.btnLogin);
+-
+-        //Make request using login.php with parameters in text fields
+-        PHPRequest phpReq = new PHPRequest("https://lamp.ms.wits.ac.za/home/s2571291/");
+-
+-        ContentValues cv = new ContentValues();
+-        cv.put("Username", txtUN.getText().toString());
+-
+-        btnLogin.setOnClickListener(view -> phpReq.doRequest(MainActivity.this, "login", cv,
+-                response -> {
+-                    if(response.length() >= 10)
+-                    {
+-                        String salt = processJSON(response, "Salt");
+-                        String resp_username = processJSON(response, "Username");
+-                        String resp_password = processJSON(response, "Password");
+-
+-                        PasswordHashing p = new PasswordHashing();
+-
+-                        try{
+-                            if(txtUN.getText().toString().equals(resp_username) && resp_password.equals(p.hashedPassword(salt.getBytes(), txtPass.getText().toString()))){
+-                                Toast.makeText(MainActivity.this, "Correct details", Toast.LENGTH_SHORT).show();
+-                            }
+-                            else{
+-                                Toast.makeText(MainActivity.this, "Wrong details", Toast.LENGTH_SHORT).show();
+-                            }
+-                        }
+-                        catch(NoSuchAlgorithmException ex){
+-                            Toast.makeText(MainActivity.this, ex.toString(), Toast.LENGTH_SHORT).show();
+-                        }
+-                    }
+-                    else{
+-                        Toast.makeText(MainActivity.this, "No details exist", Toast.LENGTH_SHORT).show();
+-                    }
+-
+-                })
+-            );
+-    }
+-    */
+-}
+Index: app/src/main/java/com/example/logintest/BottomNavigationFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.Menu;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.example.logintest.databinding.FragmentBottomNavBinding;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\n\r\npublic class BottomNavigationFragment extends Fragment {\r\n\r\n    private FragmentBottomNavBinding binding;\r\n\r\n    public BottomNavigationFragment(){}\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        binding = FragmentBottomNavBinding.inflate(inflater, container, false);\r\n        View view = binding.getRoot();\r\n        BottomNavigationView view1 = binding.getRoot().findViewById(R.id.bottomNavView);\r\n\r\n        Menu menu = view1.getMenu();\r\n\r\n        MenuItem homeNav = menu.findItem(R.id.homeNav);\r\n        MenuItem addProduct = menu.findItem(R.id.addProductNav);\r\n        MenuItem userProfile = menu.findItem(R.id.userProfileNav);\r\n\r\n        homeNav.setOnMenuItemClickListener(\r\n                v->{\r\n                    Intent intent = new Intent(getActivity(),HomePage.class);\r\n                    startActivity(intent);\r\n                    return false;\r\n        });\r\n\r\n        addProduct.setOnMenuItemClickListener(\r\n                v->{\r\n                    Intent intent = new Intent(getActivity(),prodAddScreen.class);\r\n                    startActivity(intent);\r\n                    return false;\r\n                }\r\n        );\r\n\r\n        userProfile.setOnMenuItemClickListener(\r\n                v->{\r\n                    Intent intent = new Intent(getActivity(),UserProfileActivity.class);\r\n                    startActivity(intent);\r\n                    return false;\r\n                });\r\n\r\n        return view;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/BottomNavigationFragment.java b/app/src/main/java/com/example/logintest/BottomNavigationFragment.java
+--- a/app/src/main/java/com/example/logintest/BottomNavigationFragment.java	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/java/com/example/logintest/BottomNavigationFragment.java	(date 1686221097650)
+@@ -2,60 +2,63 @@
+ 
+ import android.content.Intent;
+ import android.os.Bundle;
++import android.util.Log;
+ import android.view.LayoutInflater;
+ import android.view.Menu;
+ import android.view.MenuItem;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.widget.SearchView;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
++import androidx.fragment.app.FragmentManager;
++import androidx.fragment.app.FragmentTransaction;
+ 
+ import com.example.logintest.databinding.FragmentBottomNavBinding;
+ import com.google.android.material.bottomnavigation.BottomNavigationView;
+ 
+ public class BottomNavigationFragment extends Fragment {
+ 
++    private FragmentManager manager;
+     private FragmentBottomNavBinding binding;
+ 
+-    public BottomNavigationFragment(){}
++    public BottomNavigationFragment(FragmentManager manager){
++        this.manager = manager;
++    }
+ 
+     @Nullable
+     @Override
+     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+         binding = FragmentBottomNavBinding.inflate(inflater, container, false);
+-        View view = binding.getRoot();
+-        BottomNavigationView view1 = binding.getRoot().findViewById(R.id.bottomNavView);
+-
+-        Menu menu = view1.getMenu();
++        BottomNavigationView botNav = binding.getRoot().findViewById(R.id.bottomNavView);
+ 
+-        MenuItem homeNav = menu.findItem(R.id.homeNav);
+-        MenuItem addProduct = menu.findItem(R.id.addProductNav);
+-        MenuItem userProfile = menu.findItem(R.id.userProfileNav);
++        botNav.setOnItemSelectedListener(item->{
++            int id = item.getItemId();
+ 
+-        homeNav.setOnMenuItemClickListener(
+-                v->{
+-                    Intent intent = new Intent(getActivity(),HomePage.class);
+-                    startActivity(intent);
+-                    return false;
+-        });
+-
+-        addProduct.setOnMenuItemClickListener(
+-                v->{
+-                    Intent intent = new Intent(getActivity(),prodAddScreen.class);
+-                    startActivity(intent);
+-                    return false;
+-                }
+-        );
+-
+-        userProfile.setOnMenuItemClickListener(
+-                v->{
+-                    Intent intent = new Intent(getActivity(),UserProfileActivity.class);
+-                    startActivity(intent);
+-                    return false;
+-                });
++            if (id==R.id.homeNav){
++                replaceFragment(manager,R.id.container,"home",new HomeFragment());
++                Log.i("nav","1");
++            }else if(id==R.id.addProductNav){
++                Intent intent = new Intent(getActivity(),prodAddScreen.class);
++                startActivity(intent);
++                Log.i("nav","2");
++            }else{
++                //R.id.userProfileNav
++                replaceFragment(manager,R.id.container,"userprofile",new UserProfileFragment());
++                Log.i("nav","3");
++            }
++            return false;
++        });
+ 
+-        return view;
++
++        return binding.getRoot();
++    }
++
++    private void replaceFragment(FragmentManager manager,int id, String tag,Fragment fragment){
++        FragmentTransaction fragmentTransaction = manager.beginTransaction();
++        fragmentTransaction.replace(id,fragment,tag);
++        fragmentTransaction.commit();
+     }
+ }
+Index: app/src/main/java/com/example/logintest/LoginActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.content.SharedPreferences;\r\nimport android.os.Bundle;\r\nimport android.text.Editable;\r\nimport android.text.InputType;\r\nimport android.text.TextWatcher;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\nimport android.widget.ToggleButton;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.google.android.material.textfield.TextInputEditText;\r\nimport com.google.android.material.textfield.TextInputLayout;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.security.NoSuchAlgorithmException;\r\nimport java.util.Objects;\r\n\r\npublic class LoginActivity extends AppCompatActivity\r\n{\r\n    EditText editUsername;\r\n    EditText editPassword;\r\n\r\n    Button btnLogin;\r\n\r\n    TextView lblForgotPassword;\r\n\r\n    TextView signUpText;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.fragment_login);\r\n\r\n\r\n        editUsername = findViewById(R.id.edUsername);\r\n        editPassword = findViewById(R.id.edPassword);\r\n        btnLogin = findViewById(R.id.login_button);\r\n        lblForgotPassword = findViewById(R.id.tvForgotPassword);\r\n        signUpText = findViewById(R.id.signUpText);\r\n        ToggleButton tglPassword = findViewById(R.id.togglePwd);\r\n\r\n\r\n        //Make request using login.php with parameters in text fields\r\n        HTTPHandler httpHandler = new HTTPHandler();\r\n\r\n        JSONObject params = new JSONObject();\r\n\r\n        signUpText.setOnClickListener(view -> {\r\n            Intent intent = new Intent(LoginActivity.this, SignUpAccountDetails.class);\r\n            intent.putExtra(\"sourceActivity\", \"LoginPage\");\r\n            startActivity(intent);\r\n        });\r\n\r\n        btnLogin.setOnClickListener(view -> {\r\n            try{\r\n                params.put(\"Username\", Objects.requireNonNull(editUsername.getText()).toString());\r\n\r\n                JSONArray response = httpHandler.getRequest(\"https://lamp.ms.wits.ac.za/home/s2571291/users/login_users/login.php\", params, JSONArray.class);\r\n\r\n                if(!response.toString().equals(\"[]\"))\r\n                {\r\n                    String salt = response.getJSONObject(0).getString(\"Salt\");\r\n                    String resp_username = response.getJSONObject(0).getString(\"Username\");\r\n                    String resp_password = response.getJSONObject(0).getString(\"Password\");\r\n\r\n                    PasswordHashing p = new PasswordHashing();\r\n\r\n                    try{\r\n                        if(editUsername.getText().toString().equals(resp_username) && resp_password.equals(p.hashedPassword(salt.getBytes(), Objects.requireNonNull(editPassword.getText()).toString()))){\r\n                            Intent intent = new Intent(LoginActivity.this, HomePage.class);\r\n                            intent.putExtra(\"sourceActivity\", \"LoginPage\");\r\n                            finish();\r\n\r\n                            //todo STORE USER ID AFTER LOGIN\r\n                            SharedPreferencesManager.initialize(this);\r\n                            SharedPreferencesManager.storeUserId(657532);\r\n\r\n                            startActivity(intent);\r\n                        }\r\n                        else{\r\n                            Toast.makeText(LoginActivity.this, \"Incorrect Username or Password\", Toast.LENGTH_LONG).show();\r\n                        }\r\n                    }\r\n                    catch(NoSuchAlgorithmException ex){\r\n                        ex.printStackTrace();\r\n                    }\r\n                }\r\n                else{\r\n                    Toast.makeText(LoginActivity.this, \"Incorrect Username or Password\", Toast.LENGTH_SHORT).show();\r\n                }\r\n            }\r\n            catch(JSONException ex){\r\n                ex.printStackTrace();\r\n            }\r\n        });\r\n\r\n        editUsername.addTextChangedListener(new TextWatcher() {\r\n            @Override\r\n            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n                if(Objects.requireNonNull(editUsername.getText()).toString().isEmpty()){\r\n                    editUsername.setError(\"Please enter your Username\");\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void afterTextChanged(Editable editable) {\r\n\r\n            }\r\n        });\r\n\r\n        editPassword.addTextChangedListener(new TextWatcher() {\r\n            @Override\r\n            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2){\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){\r\n                if(Objects.requireNonNull(editPassword.getText()).toString().isEmpty()){\r\n                    editPassword.setError(\"Please enter your Password\");\r\n                }\r\n\r\n            }\r\n\r\n            @Override\r\n            public void afterTextChanged(Editable editable) {\r\n\r\n            }\r\n        });\r\n\r\n        tglPassword.setOnClickListener(view->{\r\n            if (editPassword.getInputType()== InputType.TYPE_CLASS_TEXT){\r\n                editPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);\r\n            }else {\r\n                editPassword.setInputType(InputType.TYPE_CLASS_TEXT);\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public void onBackPressed() {\r\n\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/LoginActivity.java b/app/src/main/java/com/example/logintest/LoginActivity.java
+--- a/app/src/main/java/com/example/logintest/LoginActivity.java	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/java/com/example/logintest/LoginActivity.java	(date 1686211752532)
+@@ -29,11 +29,8 @@
+ {
+     EditText editUsername;
+     EditText editPassword;
+-
+     Button btnLogin;
+-
+     TextView lblForgotPassword;
+-
+     TextView signUpText;
+ 
+     @Override
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"testRunner\" value=\"GRADLE\" />\r\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\r\n        <option name=\"gradleHome\" value=\"$USER_HOME$/Downloads/gradle-7.4.2-all/gradle-7.4.2\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$\" />\r\n            <option value=\"$PROJECT_DIR$/app\" />\r\n          </set>\r\n        </option>\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/.idea/gradle.xml	(date 1686209073994)
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="GradleMigrationSettings" migrationVersion="1" />
+   <component name="GradleSettings">
+     <option name="linkedExternalProjectsSettings">
+       <GradleProjectSettings>
+Index: app/src/main/java/com/example/logintest/ProductManager.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\nimport android.graphics.Bitmap;\r\nimport android.util.Base64;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.io.ByteArrayOutputStream;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.ArrayList;\r\nimport java.util.Collections;\r\nimport java.util.Comparator;\r\nimport java.util.Date;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\n\r\npublic class ProductManager {\r\n    private final HTTPHandler httpHandler;\r\n//TODO reponses in the activity screen\r\n    public ProductManager() {\r\n        httpHandler = new HTTPHandler();\r\n    }\r\n    /**\r\n     * Adding a product\r\n     * @param productName name of product\r\n     * @param productDescription description of the product being added\r\n     * @param productPrice price\r\n     * @param category category of product\r\n     * @param bitmap image of product\r\n     */\r\n    public /*String*/void addProduct(String productName, String productDescription, double productPrice, String category, Bitmap bitmap) {\r\n        JSONObject params = new JSONObject();\r\n        SimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd\", Locale.getDefault());\r\n        String currentDate = sdf.format(new Date());\r\n        try {\r\n            params.put(\"name\", productName);\r\n            params.put(\"description\", productDescription);\r\n            params.put(\"price\", productPrice);\r\n            params.put(\"category\", category);\r\n            //params.put(\"image\", bitmapToBase64(bitmap));\r\n            params.put(\"date_added\", currentDate);\r\n\r\n        } catch (JSONException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n\r\n        String addProductUrl = \"https://lamp.ms.wits.ac.za/home/s2621933/php/addproduct.php\";\r\n        /*return*/ httpHandler.postRequest(addProductUrl, params, String.class);\r\n    }\r\n\r\n    private String bitmapToBase64(Bitmap bitmap) {\r\n        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();\r\n        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);\r\n        byte[] byteArray = byteArrayOutputStream.toByteArray();\r\n        return Base64.encodeToString(byteArray, Base64.DEFAULT);\r\n    }\r\n    /**\r\n     * searching a product\r\n     * @param productName name of product being searched for\r\n     */\r\n    public /*void*/List<Product> searchProduct(String productName) {\r\n        List<Product> searchResults = new ArrayList<>();\r\n\r\n        try {\r\n            JSONObject params = new JSONObject();\r\n            params.put(\"productName\", productName);\r\n\r\n            String searchUrl = \"https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php\";\r\n            String response = httpHandler.getRequest(searchUrl, params, String.class);\r\n\r\n            // Parse the response and populate the searchResults list\r\n            JSONArray jsonArray = new JSONArray(response);\r\n            for (int i = 0; i < jsonArray.length(); i++) {\r\n                JSONObject jsonProduct = jsonArray.getJSONObject(i);\r\n                String name = jsonProduct.getString(\"name\");\r\n                String description = jsonProduct.getString(\"description\");\r\n                double price = jsonProduct.getDouble(\"price\");\r\n                // Get other product properties if needed\r\n\r\n                // Create a new Product object and add it to the searchResults list\r\n                Product product = new Product(name, description, price);\r\n                searchResults.add(product);\r\n            }\r\n\r\n        } catch (JSONException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        return searchResults;\r\n       /* JSONObject params = new JSONObject();\r\n\r\n        try {\r\n            params.put(\"productName\", productName);\r\n        } catch (JSONException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        String searchUrl = \"https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php\";\r\n        httpHandler.getRequest(searchUrl, params, String.class);*/\r\n    }\r\n    /**\r\n     * searching for all products from a catergory\r\n     * @param category name of products looking for\r\n     */\r\n    public void findAllInCategory(String category) {\r\n        JSONObject params = new JSONObject();\r\n\r\n        try {\r\n            params.put(\"category\", category); // Set the category parameter\r\n        } catch (JSONException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        String searchUrl = \"https://lamp.ms.wits.ac.za/home/s2621933/php/searchcategory.php\";\r\n        httpHandler.getRequest(searchUrl, params, String.class); // Make a GET request to search for products in the specified category\r\n    }\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/ProductManager.java b/app/src/main/java/com/example/logintest/ProductManager.java
+--- a/app/src/main/java/com/example/logintest/ProductManager.java	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/java/com/example/logintest/ProductManager.java	(date 1686214784518)
+@@ -1,6 +1,7 @@
+ package com.example.logintest;
+ import android.graphics.Bitmap;
+ import android.util.Base64;
++import android.util.Log;
+ import android.widget.EditText;
+ import android.widget.TextView;
+ 
+@@ -77,6 +78,7 @@
+             for (int i = 0; i < jsonArray.length(); i++) {
+                 JSONObject jsonProduct = jsonArray.getJSONObject(i);
+                 String name = jsonProduct.getString("name");
++
+                 String description = jsonProduct.getString("description");
+                 double price = jsonProduct.getDouble("price");
+                 // Get other product properties if needed
+Index: app/src/main/res/layout/empty_layout.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><FrameLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:id=\"@+id/container\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\" />
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/empty_layout.xml b/app/src/main/res/layout/empty_layout.xml
+--- a/app/src/main/res/layout/empty_layout.xml	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/res/layout/empty_layout.xml	(date 1686220242043)
+@@ -1,4 +1,16 @@
+-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++<FrameLayout
+     android:id="@+id/container"
+     android:layout_width="match_parent"
+-    android:layout_height="match_parent" />
+\ No newline at end of file
++    android:layout_height="match_parent" />
++
++<FrameLayout
++    android:id="@+id/container1"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent" />
++
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/logintest/HomeFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.example.logintest.databinding.FragmentHomeBinding;\r\n\r\npublic class HomeFragment extends Fragment {\r\n    private FragmentHomeBinding binding;\r\n    public HomeFragment() {\r\n        // Required empty public constructor\r\n    }\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        binding = FragmentHomeBinding.inflate(inflater, container, false);\r\n\r\n        return binding.getRoot();\r\n}\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/HomeFragment.java b/app/src/main/java/com/example/logintest/HomeFragment.java
+--- a/app/src/main/java/com/example/logintest/HomeFragment.java	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/java/com/example/logintest/HomeFragment.java	(date 1686221659850)
+@@ -2,10 +2,13 @@
+ 
+ import android.content.Intent;
+ import android.os.Bundle;
++import android.util.Log;
+ import android.view.LayoutInflater;
++import android.view.MotionEvent;
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.Button;
++import android.widget.SearchView;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+@@ -14,6 +17,7 @@
+ import com.example.logintest.databinding.FragmentHomeBinding;
+ 
+ public class HomeFragment extends Fragment {
++    public androidx.appcompat.widget.SearchView searchView;
+     private FragmentHomeBinding binding;
+     public HomeFragment() {
+         // Required empty public constructor
+@@ -22,8 +26,25 @@
+     @Override
+     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+         binding = FragmentHomeBinding.inflate(inflater, container, false);
++        searchView = binding.getRoot().findViewById(R.id.searchBar);
++
++        searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
++            @Override
++            public boolean onQueryTextSubmit(String query) {
++                // Start the SearchResultsActivity and pass the search query
++                return true;
++            }
++
++            @Override
++            public boolean onQueryTextChange(String newText) {
++                System.out.println("typing");
++                return false;
++            }
++        });
+ 
+         return binding.getRoot();
+-}
++    }
++
++
+ }
+ 
+Index: app/src/main/java/com/example/logintest/HomePage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.AttributeSet;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.SearchView;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AlertDialog;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.constraintlayout.widget.ConstraintLayout;\r\nimport androidx.fragment.app.FragmentManager;\r\nimport androidx.fragment.app.FragmentTransaction;\r\n\r\nimport com.example.logintest.databinding.FragmentBottomNavBinding;\r\nimport com.example.logintest.databinding.FragmentHomeBinding;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\n\r\nimport org.xmlpull.v1.XmlPullParser;\r\n\r\n\r\npublic class HomePage extends AppCompatActivity {\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.empty_layout);\r\n\r\n        FragmentManager fragmentManager = getSupportFragmentManager();\r\n        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();\r\n        HomeFragment homeFragment = new HomeFragment();\r\n        fragmentTransaction.replace(R.id.container, homeFragment);\r\n\r\n        BottomNavigationFragment botNavFragment = new BottomNavigationFragment();\r\n\r\n        fragmentTransaction.add(R.id.container,botNavFragment);\r\n        fragmentTransaction.commit();\r\n\r\n\r\n    }\r\n\r\n    /**\r\n     * If the back key is pressed, it goes back to login instead of just crashing.\r\n     * There is an alert dialog used here.\r\n     */\r\n    @Override\r\n    public void onBackPressed() {\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);\r\n        LayoutInflater inflater = getLayoutInflater();\r\n        View dialogView = inflater.inflate(R.layout.alert_dialog, null);\r\n        builder.setView(dialogView);\r\n\r\n        TextView titleTextView = dialogView.findViewById(R.id.dialog_title);\r\n        titleTextView.setText(\"Logout\");\r\n\r\n        TextView messageTextView = dialogView.findViewById(R.id.dialog_message);\r\n        messageTextView.setText(\"Are you sure you want to log out?\");\r\n\r\n        final AlertDialog alertDialog = builder.create();\r\n\r\n        Button buttonYes = dialogView.findViewById(R.id.btnYes);\r\n        buttonYes.setOnClickListener(v -> {\r\n            Intent intent = new Intent(HomePage.this,LoginActivity.class);\r\n            startActivity(intent);\r\n        });\r\n\r\n        Button buttonNo = dialogView.findViewById(R.id.btnNo);\r\n        buttonNo.setOnClickListener(v -> {\r\n            alertDialog.dismiss();\r\n            //todo reset user id\r\n            SharedPreferencesManager.initialize(this);\r\n            SharedPreferencesManager.resetUserID();\r\n        });\r\n\r\n        alertDialog.show();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/HomePage.java b/app/src/main/java/com/example/logintest/HomePage.java
+--- a/app/src/main/java/com/example/logintest/HomePage.java	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/java/com/example/logintest/HomePage.java	(date 1686221409061)
+@@ -3,10 +3,13 @@
+ import android.content.Context;
+ import android.content.Intent;
+ import android.os.Bundle;
++import android.os.Handler;
+ import android.util.AttributeSet;
++import android.util.Log;
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.view.ViewTreeObserver;
+ import android.widget.Button;
+ import android.widget.LinearLayout;
+ import android.widget.SearchView;
+@@ -17,34 +20,47 @@
+ import androidx.appcompat.app.AlertDialog;
+ import androidx.appcompat.app.AppCompatActivity;
+ import androidx.constraintlayout.widget.ConstraintLayout;
++import androidx.fragment.app.Fragment;
+ import androidx.fragment.app.FragmentManager;
+ import androidx.fragment.app.FragmentTransaction;
+ 
++import com.example.logintest.databinding.EmptyLayoutBinding;
+ import com.example.logintest.databinding.FragmentBottomNavBinding;
+ import com.example.logintest.databinding.FragmentHomeBinding;
++import com.example.logintest.databinding.HomePageBinding;
+ import com.google.android.material.bottomnavigation.BottomNavigationView;
+ 
+ import org.xmlpull.v1.XmlPullParser;
+ 
++import java.util.List;
++import java.util.Objects;
++
+ 
+ public class HomePage extends AppCompatActivity {
+ 
++    EmptyLayoutBinding binding;
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+-        setContentView(R.layout.empty_layout);
++        binding = EmptyLayoutBinding.inflate(getLayoutInflater());
++
++        setContentView(binding.getRoot());
++
++        FragmentManager fragmentManager = getSupportFragmentManager();
++        fragmentManager.beginTransaction()
++                        .replace(R.id.container,new HomeFragment(),"home")
++                        .replace(R.id.container1, new BottomNavigationFragment(fragmentManager), "bottomNav")
++                        .commit();
++
++        fragmentManager.executePendingTransactions();
++    }
+ 
++
++    private void replaceFragment(int id, String tag,Fragment fragment){
+         FragmentManager fragmentManager = getSupportFragmentManager();
+         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+-        HomeFragment homeFragment = new HomeFragment();
+-        fragmentTransaction.replace(R.id.container, homeFragment);
+-
+-        BottomNavigationFragment botNavFragment = new BottomNavigationFragment();
+-
+-        fragmentTransaction.add(R.id.container,botNavFragment);
++        fragmentTransaction.replace(id,fragment,tag);
+         fragmentTransaction.commit();
+-
+-
+     }
+ 
+     /**
+@@ -69,17 +85,18 @@
+         Button buttonYes = dialogView.findViewById(R.id.btnYes);
+         buttonYes.setOnClickListener(v -> {
+             Intent intent = new Intent(HomePage.this,LoginActivity.class);
++            //todo reset user id
++            SharedPreferencesManager.initialize(this);
++            SharedPreferencesManager.resetUserID();
+             startActivity(intent);
+         });
+ 
+         Button buttonNo = dialogView.findViewById(R.id.btnNo);
+         buttonNo.setOnClickListener(v -> {
+             alertDialog.dismiss();
+-            //todo reset user id
+-            SharedPreferencesManager.initialize(this);
+-            SharedPreferencesManager.resetUserID();
+         });
+ 
+         alertDialog.show();
+     }
++
+ }
+Index: app/src/main/res/layout/home_page.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/home_page.xml b/app/src/main/res/layout/home_page.xml
+--- a/app/src/main/res/layout/home_page.xml	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/res/layout/home_page.xml	(date 1686220242076)
+@@ -3,4 +3,6 @@
+     android:layout_width="match_parent"
+     android:layout_height="match_parent">
+ 
++
++
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\">\r\n\r\n    <uses-permission android:name=\"android.permission.INTERNET\" />\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.RetailBunny\"\r\n        tools:targetApi=\"31\">\r\n        <activity\r\n            android:name=\".SearchResultsActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".SearchActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".prodAddScreen\"\r\n            android:label=\"Product Add Screen\" />\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\">\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n        <activity android:name=\".LoginActivity\" />\r\n        <activity android:name=\".SignUpAccountDetails\" />\r\n        <activity android:name=\".SignUpPersonalDetails\" />\r\n        <activity android:name=\".HomePage\" />\r\n        <activity android:name=\".UserProfileActivity\" />\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+--- a/app/src/main/AndroidManifest.xml	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/app/src/main/AndroidManifest.xml	(date 1686220802878)
+@@ -24,7 +24,7 @@
+             android:name=".prodAddScreen"
+             android:label="Product Add Screen" />
+         <activity
+-            android:name=".MainActivity"
++            android:name=".HomePage"
+             android:exported="true">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+@@ -35,7 +35,7 @@
+         <activity android:name=".LoginActivity" />
+         <activity android:name=".SignUpAccountDetails" />
+         <activity android:name=".SignUpPersonalDetails" />
+-        <activity android:name=".HomePage" />
++        <activity android:name=".InitializationActivity" />
+         <activity android:name=".UserProfileActivity" />
+     </application>
+ 
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_17\" default=\"true\" project-jdk-name=\"jbr-17\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 575c26d72e02372bb8b6f1a8dae11a277797c594)
++++ b/.idea/misc.xml	(date 1686209053219)
+@@ -1,4 +1,3 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ExternalStorageConfigurationManager" enabled="true" />
+   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">

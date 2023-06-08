@@ -1,14 +1,10 @@
 package com.example.logintest;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,41 +14,49 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.logintest.databinding.FragmentHomeBinding;
+import com.example.logintest.databinding.ProductSearchIntermediateBinding;
 
-public class HomeFragment extends Fragment {
+public class ProductSearchIntermediateFragment extends Fragment {
     private FragmentManager manager;
     public androidx.appcompat.widget.SearchView searchView;
-    private FragmentHomeBinding binding;
+    private ProductSearchIntermediateBinding binding;
 
-    public HomeFragment(FragmentManager manager) {
+    public String query;
+
+    public ProductSearchIntermediateFragment(){}
+
+    public ProductSearchIntermediateFragment(FragmentManager manager,String query) {
         this.manager = manager;
+        this.query=query;
         // Required empty public constructor
     }
+
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding = ProductSearchIntermediateBinding.inflate(inflater, container, false);
         searchView = binding.getRoot().findViewById(R.id.searchBar);
+
+        //todo make it look like we didnt steal this
+        SearchView.SearchAutoComplete searchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        searchAutoComplete.setText(this.query);
+
+        //todo keyboard disappears so need to fix that too
 
         //todo maybe add onclick if java allows it
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Start the SearchResultsActivity and pass the search query
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                manager.beginTransaction()
-                        .replace(R.id.container,
-                                new ProductSearchIntermediateFragment(manager,newText),
-                                "searchIntermediate")
-                        .commit();
-
-
-                replaceFragment(manager, R.id.container1,"empty",new EmptyFragment());
-
                 return false;
             }
         });
@@ -66,6 +70,4 @@ public class HomeFragment extends Fragment {
         fragmentTransaction.commit();
     }
 
-
 }
-

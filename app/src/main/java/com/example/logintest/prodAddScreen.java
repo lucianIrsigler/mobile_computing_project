@@ -29,7 +29,6 @@ public class prodAddScreen extends AppCompatActivity {
 
         productManager = new ProductManager();
 
-
         productNameEditText = findViewById(R.id.productNameEditText);
         productDescriptionEditText = findViewById(R.id.productDescriptionEditText);
         productPriceEditText = findViewById(R.id.productPriceEditText);

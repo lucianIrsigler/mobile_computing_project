@@ -29,11 +29,8 @@ public class LoginActivity extends AppCompatActivity
 {
     EditText editUsername;
     EditText editPassword;
-
     Button btnLogin;
-
     TextView lblForgotPassword;
-
     TextView signUpText;
 
     @Override

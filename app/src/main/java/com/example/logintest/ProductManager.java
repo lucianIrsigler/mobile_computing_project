@@ -1,6 +1,7 @@
 package com.example.logintest;
 import android.graphics.Bitmap;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -77,6 +78,7 @@ public class ProductManager {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonProduct = jsonArray.getJSONObject(i);
                 String name = jsonProduct.getString("name");
+
                 String description = jsonProduct.getString("description");
                 double price = jsonProduct.getDouble("price");
                 // Get other product properties if needed

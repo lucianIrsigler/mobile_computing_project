@@ -26,11 +26,11 @@ public class UserProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_user_profile);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        BottomNavigationFragment bottomNavigationFragment = new BottomNavigationFragment();
-        fragmentTransaction.replace(R.id.container, bottomNavigationFragment);
-        fragmentTransaction.commit();
+        //FragmentManager fragmentManager = getSupportFragmentManager();
+        //FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        //BottomNavigationFragment bottomNavigationFragment = new BottomNavigationFragment();
+        //fragmentTransaction.replace(R.id.container, bottomNavigationFragment);
+        //fragmentTransaction.commit();
 
         textUsername = findViewById(R.id.tvUsernameUP);
         textID = findViewById(R.id.tvIDUP);
