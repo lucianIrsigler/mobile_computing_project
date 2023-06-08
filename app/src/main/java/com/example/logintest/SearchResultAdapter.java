@@ -14,7 +14,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     private List<Product> productList;
 
     public void setProducts(List<Product> productList) {
-        List<Product> products = productList;
+        this.productList = productList;
         notifyDataSetChanged();
     }
     public SearchResultAdapter() {
@@ -31,7 +31,6 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = productList.get(position);
-
         holder.nameTextView.setText(product.getName());
         holder.descriptionTextView.setText(product.getDescription());
         holder.priceTextView.setText(String.valueOf(product.getPrice()));
