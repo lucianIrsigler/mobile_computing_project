@@ -1,14 +1,9 @@
 package com.example.logintest;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,15 +36,13 @@ public class BottomNavigationFragment extends Fragment {
             if (id==R.id.homeNav){
                 replaceFragment(manager,R.id.container,"home",new HomeFragment(manager));
             }else if(id==R.id.addProductNav){
-                Intent intent = new Intent(getActivity(),prodAddScreen.class);
-                startActivity(intent);
+                replaceFragment(manager,R.id.container,"addProduct",new AddProductFragment());
             }else{
                 //R.id.userProfileNav
-                replaceFragment(manager,R.id.container,"userprofile",new UserProfileFragment());
+                replaceFragment(manager,R.id.container,"userProfile",new UserProfileFragment());
             }
             return false;
         });
-
 
         return binding.getRoot();
     }

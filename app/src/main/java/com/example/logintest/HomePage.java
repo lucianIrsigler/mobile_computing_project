@@ -1,51 +1,29 @@
 package com.example.logintest;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.logintest.databinding.EmptyLayoutBinding;
-import com.example.logintest.databinding.FragmentBottomNavBinding;
-import com.example.logintest.databinding.FragmentHomeBinding;
-import com.example.logintest.databinding.HomePageBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import org.xmlpull.v1.XmlPullParser;
-
-import java.util.List;
-import java.util.Objects;
 
 
 public class HomePage extends AppCompatActivity {
 
     EmptyLayoutBinding binding;
-    final ProductManager productManager = new ProductManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println(productManager.searchProduct("p"));
         binding = EmptyLayoutBinding.inflate(getLayoutInflater());
-
         setContentView(binding.getRoot());
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -59,8 +37,6 @@ public class HomePage extends AppCompatActivity {
     }
 
 
-
-
     /**
      * If the back key is pressed, it goes back to login instead of just crashing.
      * There is an alert dialog used here.
@@ -68,13 +44,20 @@ public class HomePage extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         FragmentManager manager = getSupportFragmentManager();
-        Fragment fragment = manager.findFragmentById(R.id.container1);
 
-        if (fragment instanceof EmptyFragment) {
-            replaceFragment(R.id.container,"home",new HomeFragment(manager));
-            replaceFragment(R.id.container1,"bottomNav",new BottomNavigationFragment(manager));
-        }else if (fragment instanceof BottomNavigationFragment){
-            showAlert();
+        Fragment botNavFragment = manager.findFragmentById(R.id.container1);
+
+        if (botNavFragment instanceof EmptyFragment) {
+            replaceFragment(R.id.container,new HomeFragment(manager),"home");
+            replaceFragment(R.id.container1,new BottomNavigationFragment(manager),"bottomNav");
+        }else if (botNavFragment instanceof BottomNavigationFragment){
+            //app goes to home tab before showing log out alert
+            Fragment mainFragment = manager.findFragmentById(R.id.container);
+            if (mainFragment instanceof HomeFragment) {
+                showAlert();
+            }else{
+                replaceFragment(R.id.container,new HomeFragment(manager),"home");
+            }
         }
     }
 
@@ -94,10 +77,11 @@ public class HomePage extends AppCompatActivity {
 
         Button buttonYes = dialogView.findViewById(R.id.btnYes);
         buttonYes.setOnClickListener(v -> {
-            Intent intent = new Intent(HomePage.this,LoginActivity.class);
             //todo reset user id
             SharedPreferencesManager.initialize(this);
             SharedPreferencesManager.resetUserID();
+            Intent intent = new Intent(HomePage.this,AccountActivity.class);
+            intent.putExtra("action", "login");
             startActivity(intent);
         });
 
@@ -109,7 +93,7 @@ public class HomePage extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void replaceFragment(int id, String tag,Fragment fragment){
+    private void replaceFragment(int id, Fragment fragment,String tag){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(id,fragment,tag);

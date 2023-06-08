@@ -5,13 +5,22 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.logintest.databinding.FragmentLoginBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,40 +29,49 @@ import org.json.JSONObject;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
-public class LoginActivity extends AppCompatActivity
-{
+public class LoginFragment extends Fragment {
+
+    private FragmentLoginBinding binding;
     EditText editUsername;
     EditText editPassword;
     Button btnLogin;
     TextView lblForgotPassword;
     TextView signUpText;
 
+    FragmentManager manager;
+    public LoginFragment(FragmentManager manager){
+        this.manager=manager;
+    }
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_login);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentLoginBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        editUsername = findViewById(R.id.edUsername);
-        editPassword = findViewById(R.id.edPassword);
-        btnLogin = findViewById(R.id.login_button);
-        lblForgotPassword = findViewById(R.id.tvForgotPassword);
-        signUpText = findViewById(R.id.signUpText);
-        ToggleButton tglPassword = findViewById(R.id.togglePwd);
-
+        editUsername = binding.getRoot().findViewById(R.id.edUsername);
+        editPassword = binding.getRoot().findViewById(R.id.edPassword);
+        btnLogin = binding.getRoot().findViewById(R.id.login_button);
+        lblForgotPassword = binding.getRoot().findViewById(R.id.tvForgotPassword);
+        signUpText = binding.getRoot().findViewById(R.id.signUpText);
+        ToggleButton tglPassword = binding.getRoot().findViewById(R.id.togglePwd);
 
         //Make request using login.php with parameters in text fields
         HTTPHandler httpHandler = new HTTPHandler();
 
         JSONObject params = new JSONObject();
 
-        signUpText.setOnClickListener(view -> {
-            Intent intent = new Intent(LoginActivity.this, SignUpAccountDetails.class);
-            intent.putExtra("sourceActivity", "LoginPage");
-            startActivity(intent);
+        signUpText.setOnClickListener(view1 -> {
+            replaceFragment(manager,R.id.container,
+                    new SignUpAccountDetailsFragment(manager),"signUpAccount");
         });
 
-        btnLogin.setOnClickListener(view -> {
+        btnLogin.setOnClickListener(view1 -> {
             try{
                 params.put("Username", Objects.requireNonNull(editUsername.getText()).toString());
 
@@ -69,18 +87,17 @@ public class LoginActivity extends AppCompatActivity
 
                     try{
                         if(editUsername.getText().toString().equals(resp_username) && resp_password.equals(p.hashedPassword(salt.getBytes(), Objects.requireNonNull(editPassword.getText()).toString()))){
-                            Intent intent = new Intent(LoginActivity.this, HomePage.class);
+                            Intent intent = new Intent(getActivity(), HomePage.class);
                             intent.putExtra("sourceActivity", "LoginPage");
-                            finish();
 
                             //todo STORE USER ID AFTER LOGIN
-                            SharedPreferencesManager.initialize(this);
+                            SharedPreferencesManager.initialize(getActivity());
                             SharedPreferencesManager.storeUserId(657532);
 
                             startActivity(intent);
                         }
                         else{
-                            Toast.makeText(LoginActivity.this, "Incorrect Username or Password", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "Incorrect Username or Password", Toast.LENGTH_LONG).show();
                         }
                     }
                     catch(NoSuchAlgorithmException ex){
@@ -88,7 +105,7 @@ public class LoginActivity extends AppCompatActivity
                     }
                 }
                 else{
-                    Toast.makeText(LoginActivity.this, "Incorrect Username or Password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Incorrect Username or Password", Toast.LENGTH_SHORT).show();
                 }
             }
             catch(JSONException ex){
@@ -135,7 +152,7 @@ public class LoginActivity extends AppCompatActivity
             }
         });
 
-        tglPassword.setOnClickListener(view->{
+        tglPassword.setOnClickListener(view1->{
             if (editPassword.getInputType()== InputType.TYPE_CLASS_TEXT){
                 editPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }else {
@@ -144,9 +161,9 @@ public class LoginActivity extends AppCompatActivity
         });
     }
 
-    @Override
-    public void onBackPressed() {
-
-
+    private void replaceFragment(FragmentManager manager,int id,Fragment fragment,String tag){
+        FragmentTransaction fragmentTransaction = manager.beginTransaction();
+        fragmentTransaction.replace(id,fragment,tag);
+        fragmentTransaction.commit();
     }
 }

@@ -1,9 +1,8 @@
 package com.example.logintest;
+
 import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,8 +11,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;

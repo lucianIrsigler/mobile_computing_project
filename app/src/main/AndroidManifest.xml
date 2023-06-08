@@ -14,15 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RetailBunny"
         tools:targetApi="31">
-        <activity
-            android:name=".SearchResultsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SearchActivity"
-            android:exported="false" />
-        <activity
-            android:name=".prodAddScreen"
-            android:label="Product Add Screen" />
+        <activity android:name=".HomePage" />
         <activity
             android:name=".InitializationActivity"
             android:exported="true">
@@ -31,10 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".AccountActivity"/>
         <activity android:name=".SignUpAccountDetails" />
         <activity android:name=".SignUpPersonalDetails" />
-        <activity android:name=".HomePage" />
+
     </application>
 
 </manifest>

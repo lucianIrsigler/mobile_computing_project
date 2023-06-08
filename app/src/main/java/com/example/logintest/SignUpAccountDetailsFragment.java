@@ -1,51 +1,71 @@
 package com.example.logintest;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.logintest.databinding.FragmentRegisterBinding;
 
 import java.util.Objects;
 
-public class SignUpAccountDetails extends AppCompatActivity {
-    EditText editEmail;
-    EditText editUsername;
-    EditText editPassword;
+public class SignUpAccountDetailsFragment extends Fragment {
+
+    private FragmentRegisterBinding binding;
+    public EditText editEmail;
+    public EditText editUsername;
+    public EditText editPassword;
     EditText confirmPasswordTv;
     Button btnNext;
     TextView alreadyHaveAccountlbl;
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_register);
+    private FragmentManager manager;
 
-        editEmail = findViewById(R.id.edEmailRegister);
-        editUsername = findViewById(R.id.edUsernameRegister);
-        editPassword = findViewById(R.id.edPasswordRegister);
-        confirmPasswordTv = findViewById(R.id.edPasswordConfirmRegister);
-        btnNext = findViewById(R.id.next_button);
-        ToggleButton tglPassword = findViewById(R.id.togglePwd);
-        ToggleButton tglConfirmPassword = findViewById(R.id.toggleConfirmPwd);
-        TextView errorText = findViewById(R.id.tvErrors);
+    public SignUpAccountDetailsFragment(FragmentManager manager){
+        this.manager = manager;
+    }
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentRegisterBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        alreadyHaveAccountlbl = findViewById(R.id.tvLogin);
+        editEmail = binding.getRoot().findViewById(R.id.edEmailRegister);;
+        editUsername = binding.getRoot().findViewById(R.id.edUsernameRegister);
+        editPassword = binding.getRoot().findViewById(R.id.edPasswordRegister);
+        confirmPasswordTv = binding.getRoot().findViewById(R.id.edPasswordConfirmRegister);
+        btnNext = binding.getRoot().findViewById(R.id.next_button);
+        ToggleButton tglPassword = binding.getRoot().findViewById(R.id.togglePwd);
+        ToggleButton tglConfirmPassword = binding.getRoot().findViewById(R.id.toggleConfirmPwd);
+        TextView errorText = binding.getRoot().findViewById(R.id.tvErrors);
 
-        alreadyHaveAccountlbl.setOnClickListener( view->{
-                    Intent intent = new Intent(SignUpAccountDetails.this, LoginActivity.class);
-                    startActivity(intent);
+        alreadyHaveAccountlbl = binding.getRoot().findViewById(R.id.tvLogin);
+
+        alreadyHaveAccountlbl.setOnClickListener( view1->{
+                    replaceFragment(manager,R.id.container,new LoginFragment(manager),"login");
                 }
         );
 
-        btnNext.setOnClickListener(view -> {
+        btnNext.setOnClickListener(view1 -> {
             //check if all input edit texts have their errors enabled. If no, then proceed to next activity
             String email = Objects.requireNonNull(editEmail.getText()).toString();
             String username = Objects.requireNonNull(editUsername.getText()).toString();
@@ -60,14 +80,11 @@ public class SignUpAccountDetails extends AppCompatActivity {
                     || !email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
             ){
                 //todo make error beter
-                Toast.makeText(SignUpAccountDetails.this, "Make sure all fields are valid", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Make sure all fields are valid", Toast.LENGTH_LONG).show();
             }else{
-                Intent intent = new Intent(SignUpAccountDetails.this, SignUpPersonalDetails.class);
-                intent.putExtra("email", email);
-                intent.putExtra("username", username);
-                intent.putExtra("password", password);
-                intent.putExtra("sourceActivity", "PersonalDetails");
-                startActivity(intent);
+                SignUpPersonalDetailsFragment fragment = new SignUpPersonalDetailsFragment(manager);
+                fragment.setArguments(email,username,password);
+                replaceFragment(manager,R.id.container,fragment,"signupPersonal");
             }
         });
 
@@ -80,11 +97,11 @@ public class SignUpAccountDetails extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String email = Objects.requireNonNull(editEmail.getText()).toString();
                 if(email.isEmpty()) {
-                    errorText.setText(R.string.email_cannot_be_empty);
+                    errorText.setText("Email cannot be empty");
                     editEmail.setBackgroundResource(R.drawable.edterr);
                 }
                 else if(!email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
-                    errorText.setText(R.string.invalid_email);
+                    errorText.setText("Invalid email");
                     editEmail.setBackgroundResource(R.drawable.edterr);
                 }else{
                     errorText.setText("");
@@ -107,11 +124,11 @@ public class SignUpAccountDetails extends AppCompatActivity {
                 String username = Objects.requireNonNull(editUsername.getText()).toString();
                 if(username.isEmpty()) {
                     editUsername.setBackgroundResource(R.drawable.edterr);
-                    errorText.setText(R.string.username_cannot_be_empty);
+                    errorText.setText("Username cannot be empty");
                 }
                 else if(!username.matches("^(?!.*\\..*\\.)[\\p{Alnum}.]{1,20}$")) {
                     editUsername.setBackgroundResource(R.drawable.edterr);
-                    errorText.setText(R.string.username_can_only_have_letters_numbers_and_the_following_special_characters);
+                    errorText.setText("Username can only have letters, numbers, and the following special characters: _ - . @");
                 }else{
                     editUsername.setBackgroundResource(R.drawable.edtnormal);
                     errorText.setText("");
@@ -134,16 +151,16 @@ public class SignUpAccountDetails extends AppCompatActivity {
                 String password = Objects.requireNonNull(editPassword.getText()).toString();
 
                 if(password.isEmpty()) {
-                    errorText.setText(R.string.password_cannot_be_empty);
+                    errorText.setText("Password cannot be empty");
                     editPassword.setBackgroundResource(R.drawable.edterr);
                 }
                 else if(password.length() < 8) {
-                    errorText.setText(R.string.password_must_be_at_least_8_characters_long);
+                    errorText.setText("Password must be at least 8 characters long");
                     editPassword.setBackgroundResource(R.drawable.edterr);
                 }
                 //password must contain at least one uppercase letter, one lowercase letter, one number, and one special character
                 else if(!password.matches("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")) {
-                    errorText.setText(R.string.password_requirements);
+                    errorText.setText("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character");
                     editPassword.setBackgroundResource(R.drawable.edterr);
                 }else{
                     errorText.setText("");
@@ -167,11 +184,11 @@ public class SignUpAccountDetails extends AppCompatActivity {
                 String password = Objects.requireNonNull(confirmPasswordTv.getText()).toString();
 
                 if(password.isEmpty()) {
-                    errorText.setText(R.string.password_cannot_be_empty);
+                    errorText.setText("Password cannot be empty");
                     confirmPasswordTv.setBackgroundResource(R.drawable.edterr);
                 }
                 else if(!password.equals(editPassword.getText().toString())) {
-                    errorText.setText(R.string.passwords_must_match);
+                    errorText.setText("Passwords must match");
                     confirmPasswordTv.setBackgroundResource(R.drawable.edterr);
                 }else{
                     errorText.setText("");
@@ -185,15 +202,15 @@ public class SignUpAccountDetails extends AppCompatActivity {
             }
         });
 
-        tglPassword.setOnClickListener(view->{
-            if (editPassword.getInputType()==InputType.TYPE_CLASS_TEXT){
+        tglPassword.setOnClickListener(view1->{
+            if (editPassword.getInputType()== InputType.TYPE_CLASS_TEXT){
                 editPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }else {
                 editPassword.setInputType(InputType.TYPE_CLASS_TEXT);
             }
         });
 
-        tglConfirmPassword.setOnClickListener(view->{
+        tglConfirmPassword.setOnClickListener(view1->{
             if (confirmPasswordTv.getInputType()==InputType.TYPE_CLASS_TEXT){
                 confirmPasswordTv.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }else {
@@ -202,4 +219,11 @@ public class SignUpAccountDetails extends AppCompatActivity {
         });
 
     }
+
+    private void replaceFragment(FragmentManager manager,int id,Fragment fragment,String tag){
+        FragmentTransaction fragmentTransaction = manager.beginTransaction();
+        fragmentTransaction.replace(id,fragment,tag);
+        fragmentTransaction.commit();
+    }
 }
+

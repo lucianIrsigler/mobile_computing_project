@@ -35,12 +35,15 @@ public class AccountOptionsFragment extends Fragment {
         Button btnLogin = binding.getRoot().findViewById(R.id.login_button);
 
         btnLogin.setOnClickListener(view1 -> {
-            Intent intent = new Intent(getActivity(),LoginActivity.class);
+            Intent intent = new Intent(getActivity(),AccountActivity.class);
+            intent.putExtra("action", "login");
             startActivity(intent);
+
         });
 
         btnRegister.setOnClickListener(view1 -> {
-            Intent intent = new Intent(getActivity(),SignUpAccountDetails.class);
+            Intent intent = new Intent(getActivity(),AccountActivity.class);
+            intent.putExtra("action", "register");
             startActivity(intent);
         });
     }

@@ -1,0 +1,185 @@
+Index: app/src/main/java/com/example/logintest/SearchResultAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport java.util.List;\r\n\r\npublic class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {\r\n    private List<Product> productList;\r\n\r\n    public void setProducts(List<Product> productList) {\r\n        this.productList = productList;\r\n        notifyDataSetChanged();\r\n    }\r\n    public SearchResultAdapter() {\r\n        this.productList = productList;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {\r\n        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_result_item, parent, false);\r\n        return new ViewHolder(view);\r\n    }\r\n\r\n    @Override\r\n    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {\r\n        Product product = productList.get(position);\r\n        holder.nameTextView.setText(product.getName());\r\n        holder.descriptionTextView.setText(product.getDescription());\r\n        holder.priceTextView.setText(String.valueOf(product.getPrice()));\r\n    }\r\n\r\n    @Override\r\n    public int getItemCount() {\r\n        return productList.size();\r\n    }\r\n\r\n    public class ViewHolder extends RecyclerView.ViewHolder {\r\n        TextView nameTextView;\r\n        TextView descriptionTextView;\r\n        TextView priceTextView;\r\n\r\n        public ViewHolder(@NonNull View itemView) {\r\n            super(itemView);\r\n            nameTextView = itemView.findViewById(R.id.nameTextView);\r\n            descriptionTextView = itemView.findViewById(R.id.descriptionTextView);\r\n            priceTextView = itemView.findViewById(R.id.priceTextView);\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/SearchResultAdapter.java b/app/src/main/java/com/example/logintest/SearchResultAdapter.java
+--- a/app/src/main/java/com/example/logintest/SearchResultAdapter.java	(revision d3e504c4cc55138a8babd3dfd5f7ad02348740ee)
++++ b/app/src/main/java/com/example/logintest/SearchResultAdapter.java	(date 1686234930364)
+@@ -24,16 +24,17 @@
+     @NonNull
+     @Override
+     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_result_item, parent, false);
++        //R.layout.search_result_item
++        View view = LayoutInflater.from(parent.getContext()).inflate(
++                R.layout.search_recycler_view_row, parent, false);
+         return new ViewHolder(view);
+     }
+ 
+     @Override
+     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+         Product product = productList.get(position);
+-        holder.nameTextView.setText(product.getName());
+-        holder.descriptionTextView.setText(product.getDescription());
+-        holder.priceTextView.setText(String.valueOf(product.getPrice()));
++        holder.tvNamePlaceholder.setText(product.getName());
++        holder.tvPricePlaceholder.setText(String.valueOf(product.getPrice()));
+     }
+ 
+     @Override
+@@ -42,15 +43,13 @@
+     }
+ 
+     public class ViewHolder extends RecyclerView.ViewHolder {
+-        TextView nameTextView;
+-        TextView descriptionTextView;
+-        TextView priceTextView;
++        TextView tvNamePlaceholder;
++        TextView tvPricePlaceholder;
+ 
+         public ViewHolder(@NonNull View itemView) {
+             super(itemView);
+-            nameTextView = itemView.findViewById(R.id.nameTextView);
+-            descriptionTextView = itemView.findViewById(R.id.descriptionTextView);
+-            priceTextView = itemView.findViewById(R.id.priceTextView);
++            tvNamePlaceholder = itemView.findViewById(R.id.tvNamePlaceholder);
++            tvPricePlaceholder = itemView.findViewById(R.id.tvPricePlaceholder);
+         }
+     }
+ }
+Index: app/src/main/java/com/example/logintest/UserProfileActivity.java
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/UserProfileActivity.java b/app/src/main/java/com/example/logintest/UserProfileActivity.java
+deleted file mode 100644
+--- a/app/src/main/java/com/example/logintest/UserProfileActivity.java	(revision d3e504c4cc55138a8babd3dfd5f7ad02348740ee)
++++ /dev/null	(revision d3e504c4cc55138a8babd3dfd5f7ad02348740ee)
+@@ -1,61 +0,0 @@
+-package com.example.logintest;
+-
+-import android.content.Context;
+-import android.content.SharedPreferences;
+-import android.os.Bundle;
+-import android.widget.TextView;
+-import android.widget.Toast;
+-
+-import androidx.appcompat.app.AppCompatActivity;
+-import androidx.fragment.app.FragmentManager;
+-import androidx.fragment.app.FragmentTransaction;
+-
+-import org.json.JSONException;
+-import org.json.JSONObject;
+-import org.w3c.dom.Text;
+-
+-public class UserProfileActivity extends AppCompatActivity {
+-
+-    UsersManager usersManager = new UsersManager();
+-
+-    TextView textUsername;
+-    TextView textID;
+-    TextView textEmail;
+-
+-    @Override
+-    protected void onCreate(Bundle savedInstanceState) {
+-        super.onCreate(savedInstanceState);
+-        setContentView(R.layout.fragment_user_profile);
+-        //FragmentManager fragmentManager = getSupportFragmentManager();
+-        //FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+-        //BottomNavigationFragment bottomNavigationFragment = new BottomNavigationFragment();
+-        //fragmentTransaction.replace(R.id.container, bottomNavigationFragment);
+-        //fragmentTransaction.commit();
+-
+-        textUsername = findViewById(R.id.tvUsernameUP);
+-        textID = findViewById(R.id.tvIDUP);
+-        textEmail = findViewById(R.id.tvEmailUP);
+-        updateUserProfile();
+-    }
+-
+-    private void updateUserProfile(){
+-        //TODO get userid to set things
+-        SharedPreferencesManager.initialize(this);
+-        long userId = SharedPreferencesManager.retrieveUserId();
+-
+-        JSONObject userInfo = usersManager.getUserInformation();
+-
+-        try {
+-            textUsername.setText(userInfo.getString("username"));
+-            textID.setText(Long.toString(userId));
+-            textEmail.setText(userInfo.getString("email"));
+-        }catch (JSONException e){
+-            Toast.makeText(this,"Invalid user",Toast.LENGTH_SHORT).show();
+-        }
+-
+-
+-    }
+-
+-
+-
+-}
+Index: app/src/main/java/com/example/logintest/UserProfileFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport com.example.logintest.databinding.FragmentUserProfileBinding;\r\n\r\npublic class UserProfileFragment extends Fragment {\r\n    private FragmentUserProfileBinding binding;\r\n    public UserProfileFragment() {\r\n        // Required empty public constructor\r\n    }\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        binding = FragmentUserProfileBinding.inflate(inflater, container, false);\r\n        return binding.getRoot();\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/UserProfileFragment.java b/app/src/main/java/com/example/logintest/UserProfileFragment.java
+--- a/app/src/main/java/com/example/logintest/UserProfileFragment.java	(revision d3e504c4cc55138a8babd3dfd5f7ad02348740ee)
++++ b/app/src/main/java/com/example/logintest/UserProfileFragment.java	(date 1686230770783)
+@@ -6,21 +6,53 @@
+ import android.view.View;
+ import android.view.ViewGroup;
+ import android.widget.Button;
++import android.widget.TextView;
++import android.widget.Toast;
++
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
+ import com.example.logintest.databinding.FragmentUserProfileBinding;
+ 
++import org.json.JSONException;
++import org.json.JSONObject;
++
+ public class UserProfileFragment extends Fragment {
+     private FragmentUserProfileBinding binding;
++    UsersManager usersManager = new UsersManager();
++
++    TextView textUsername;
++    TextView textID;
++    TextView textEmail;
++
+     public UserProfileFragment() {
+-        // Required empty public constructor
+     }
+     @Nullable
+     @Override
+     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+         binding = FragmentUserProfileBinding.inflate(inflater, container, false);
++        textUsername = binding.getRoot().findViewById(R.id.tvUsernameUP);
++        textID = binding.getRoot().findViewById(R.id.tvIDUP);
++        textEmail = binding.getRoot().findViewById(R.id.tvEmailUP);
++        updateUserProfile();
++
+         return binding.getRoot();
+     }
++
++    private void updateUserProfile(){
++        //TODO get userid to set things
++        SharedPreferencesManager.initialize(getActivity());
++        long userId = SharedPreferencesManager.retrieveUserId();
++        JSONObject userInfo = usersManager.getUserInformation();
++        try {
++            textUsername.setText(userInfo.getString("username"));
++            textID.setText(Long.toString(userId));
++            textEmail.setText(userInfo.getString("email"));
++        }catch (JSONException e){
++            Toast.makeText(getActivity(),"Invalid user",Toast.LENGTH_SHORT).show();
++        }
++
++    }
++
+ }
+ 
