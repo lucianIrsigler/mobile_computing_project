@@ -17,23 +17,22 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         this.productList = productList;
         notifyDataSetChanged();
     }
-    public SearchResultAdapter() {
-        this.productList = productList;
-    }
+    public SearchResultAdapter() {}
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_result_item, parent, false);
+        //R.layout.search_result_item
+        View view = LayoutInflater.from(parent.getContext()).inflate(
+                R.layout.search_recycler_view_row, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = productList.get(position);
-        holder.nameTextView.setText(product.getName());
-        holder.descriptionTextView.setText(product.getDescription());
-        holder.priceTextView.setText(String.valueOf(product.getPrice()));
+        holder.tvNamePlaceholder.setText(product.getName());
+        holder.tvPricePlaceholder.setText(String.valueOf(product.getPrice()));
     }
 
     @Override
@@ -41,16 +40,14 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         return productList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView;
-        TextView descriptionTextView;
-        TextView priceTextView;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView tvNamePlaceholder;
+        TextView tvPricePlaceholder;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            nameTextView = itemView.findViewById(R.id.nameTextView);
-            descriptionTextView = itemView.findViewById(R.id.descriptionTextView);
-            priceTextView = itemView.findViewById(R.id.priceTextView);
+            tvNamePlaceholder = itemView.findViewById(R.id.tvNamePlaceholder);
+            tvPricePlaceholder = itemView.findViewById(R.id.tvPricePlaceholder);
         }
     }
 }
