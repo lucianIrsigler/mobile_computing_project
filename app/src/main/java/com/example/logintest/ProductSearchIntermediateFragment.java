@@ -75,7 +75,19 @@ public class ProductSearchIntermediateFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                RecyclerView searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
+                SearchResultAdapter searchResultAdapter = new SearchResultAdapter();
+                searchRecyclerView.setAdapter(searchResultAdapter);
+                searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                // Initialize the ProductManager
+                ProductManager productManager = new ProductManager();
+
+                // Perform the search and update the RecyclerView
+                List<Product> searchResults = productManager.searchProduct(newText);
+                searchResultAdapter.setProducts(searchResults);
+
+                return true;
             }
         });
 
