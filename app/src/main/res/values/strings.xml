@@ -11,6 +11,27 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="product_price_content_description">Product Price in Rands</string>
+    <string name="email_cannot_be_empty">Email cannot be empty</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="username_cannot_be_empty">Username cannot be empty</string>
+    <string name="username_can_only_have_letters_numbers_and_the_following_special_characters">Username can only have letters, numbers, and the following special characters: _ - . @</string>
+    <string name="password_cannot_be_empty">Password cannot be empty</string>
+    <string name="password_must_be_at_least_8_characters_long">Password must be at least 8 characters long</string>
+    <string name="password_requirements">Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character</string>
+    <string name="passwords_must_match">Passwords must match</string>
+    <string name="please_enter_your_first_name">Please enter your first name</string>
+    <string name="first_name_must_be_at_least_3_characters_long">First name must be at least 3 characters long</string>
+    <string name="first_name_format_is_incorrect_see_help_for_more_information">First name format is incorrect. See \'help\' for more information</string>
+    <string name="please_enter_your_last_name">Please enter your last name</string>
+    <string name="last_name_must_be_at_least_3_characters_long">Last name must be at least 3 characters long</string>
+    <string name="last_name_format_is_incorrect_see_help_for_more_information">Last name format is incorrect. See \'help\' for more information</string>
+    <string name="please_enter_your_date_of_birth">Please enter your date of birth</string>
+    <string name="date_of_birth_format_is_incorrect_see_help_for_more_information">Date of birth format is incorrect. See \'help\' for more information</string>
+    <string name="date_of_birth_cannot_be_in_the_future">Date of birth cannot be in the future</string>
+    <string name="you_must_be_16_years_or_older_to_register">You must be 16 years or older to register</string>
+    <string name="invalid_date">Invalid date</string>
+    <string name="please_enter_your_phone_number">Please enter your phone number</string>
+    <string name="phone_number_9_characters_long">Phone number 9 characters long</string>
 
     <string-array name="categories_array">
         <item>technology</item>
