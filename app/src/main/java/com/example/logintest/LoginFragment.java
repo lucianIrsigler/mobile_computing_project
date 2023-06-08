@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.logintest.databinding.FragmentLoginBinding;
 
@@ -66,10 +65,8 @@ public class LoginFragment extends Fragment {
 
         JSONObject params = new JSONObject();
 
-        signUpText.setOnClickListener(view1 -> {
-            utility.replaceFragment(manager,R.id.container,
-                    new SignUpAccountDetailsFragment(manager),"signUpAccount");
-        });
+        signUpText.setOnClickListener(view1 -> utility.replaceFragment(manager,R.id.container,
+                new SignUpAccountDetailsFragment(manager),"signUpAccount"));
 
         btnLogin.setOnClickListener(view1 -> {
             try{

@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,11 +31,6 @@ public class ProductSearchIntermediateFragment extends Fragment {
         this.manager = manager;
         this.query=query;
         // Required empty public constructor
-    }
-
-
-    public void setQuery(String query) {
-        this.query = query;
     }
 
     @Nullable

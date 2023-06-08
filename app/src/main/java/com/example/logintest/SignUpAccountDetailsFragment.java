@@ -17,7 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.logintest.databinding.FragmentRegisterBinding;
 
@@ -49,7 +48,7 @@ public class SignUpAccountDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        editEmail = binding.getRoot().findViewById(R.id.edEmailRegister);;
+        editEmail = binding.getRoot().findViewById(R.id.edEmailRegister);
         editUsername = binding.getRoot().findViewById(R.id.edUsernameRegister);
         editPassword = binding.getRoot().findViewById(R.id.edPasswordRegister);
         confirmPasswordTv = binding.getRoot().findViewById(R.id.edPasswordConfirmRegister);
@@ -60,9 +59,7 @@ public class SignUpAccountDetailsFragment extends Fragment {
 
         alreadyHaveAccountlbl = binding.getRoot().findViewById(R.id.tvLogin);
 
-        alreadyHaveAccountlbl.setOnClickListener( view1->{
-                    utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login");
-                }
+        alreadyHaveAccountlbl.setOnClickListener( view1-> utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login")
         );
 
         btnNext.setOnClickListener(view1 -> {

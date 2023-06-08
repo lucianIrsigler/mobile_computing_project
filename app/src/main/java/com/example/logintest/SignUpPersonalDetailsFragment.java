@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.logintest.databinding.FragmentRegisterPt2Binding;
 
@@ -80,9 +79,7 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         btnRegister = binding.getRoot().findViewById(R.id.register_button);
         alreadyHaveAccountlbl = binding.getRoot().findViewById(R.id.tvAlreadyHaveAccount);
 
-        alreadyHaveAccountlbl.setOnClickListener(view1 -> {
-            utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login");
-        });
+        alreadyHaveAccountlbl.setOnClickListener(view1 -> utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login"));
 
         HTTPHandler httpHandler = new HTTPHandler();
         JSONObject params = new JSONObject();
