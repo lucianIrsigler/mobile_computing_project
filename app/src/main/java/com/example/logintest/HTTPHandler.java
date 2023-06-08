@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import okhttp3.Call;
@@ -37,7 +38,7 @@ public class HTTPHandler {
      * @return The response of the query
      * */
     public <T> T getRequest(String url, @NonNull JSONObject params, Class<T> responseType) {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
+        HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(url)).newBuilder();
 
         params.keys().forEachRemaining(key -> {
             try {

@@ -14,16 +14,10 @@ public class InitializationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.startup_activity);
-        replaceFragment(R.id.container,new SplashScreenFragment());
+        utility.replaceFragment(getSupportFragmentManager(),
+                R.id.container,new SplashScreenFragment(),"splashScreen");
         Handler handler = new Handler();
         handler.postDelayed(this::switchToAccountOptions,2500);
-    }
-
-    private void replaceFragment(int id, Fragment fragment){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(id,fragment);
-        fragmentTransaction.commit();
     }
 
     private void switchToAccountOptions(){

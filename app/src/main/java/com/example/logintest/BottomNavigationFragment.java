@@ -34,12 +34,12 @@ public class BottomNavigationFragment extends Fragment {
             int id = item.getItemId();
 
             if (id==R.id.homeNav){
-                replaceFragment(manager,R.id.container,"home",new HomeFragment(manager));
+                utility.replaceFragment(manager,R.id.container, new HomeFragment(manager), "home");
             }else if(id==R.id.addProductNav){
-                replaceFragment(manager,R.id.container,"addProduct",new AddProductFragment());
+                utility.replaceFragment(manager,R.id.container, new AddProductFragment(), "addProduct");
             }else{
                 //R.id.userProfileNav
-                replaceFragment(manager,R.id.container,"userProfile",new UserProfileFragment());
+                utility.replaceFragment(manager,R.id.container, new UserProfileFragment(), "userProfile");
             }
             return false;
         });
@@ -47,9 +47,5 @@ public class BottomNavigationFragment extends Fragment {
         return binding.getRoot();
     }
 
-    private void replaceFragment(FragmentManager manager,int id, String tag,Fragment fragment){
-        FragmentTransaction fragmentTransaction = manager.beginTransaction();
-        fragmentTransaction.replace(id,fragment,tag);
-        fragmentTransaction.commit();
-    }
+
 }

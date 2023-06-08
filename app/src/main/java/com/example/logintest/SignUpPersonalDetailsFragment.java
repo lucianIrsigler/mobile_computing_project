@@ -81,7 +81,7 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         alreadyHaveAccountlbl = binding.getRoot().findViewById(R.id.tvAlreadyHaveAccount);
 
         alreadyHaveAccountlbl.setOnClickListener(view1 -> {
-            replaceFragment(manager,R.id.container,new LoginFragment(manager),"login");
+            utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login");
         });
 
         HTTPHandler httpHandler = new HTTPHandler();
@@ -93,8 +93,7 @@ public class SignUpPersonalDetailsFragment extends Fragment {
             String phoneNum = Objects.requireNonNull(editPhoneNum.getText().toString());
             String DOB = Objects.requireNonNull(editDOB.getText().toString());
             if (firstName.isEmpty() || lastName.isEmpty()||phoneNum.isEmpty()||DOB.isEmpty()){
-                System.out.println("error");
-                //TODO show popup
+                Toast.makeText(getActivity(), "Make sure all fields are filled", Toast.LENGTH_LONG).show();
             }else{
                 String salt = bytesToHex(generateSalt());
                 System.out.println(email);
@@ -133,7 +132,7 @@ public class SignUpPersonalDetailsFragment extends Fragment {
                         flag.set(false);
                     }
                     else{
-                        replaceFragment(manager,R.id.container,new LoginFragment(manager),"login");
+                        utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login");
                         flag.set(true);
                     }
                 }
@@ -165,7 +164,6 @@ public class SignUpPersonalDetailsFragment extends Fragment {
                     editFirstName.setBackgroundResource(R.drawable.edtnormal);
                 }
             }
-
             @Override
             public void afterTextChanged(Editable editable) {
 
@@ -329,9 +327,4 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         return new String(hexChars);
     }
 
-    private void replaceFragment(FragmentManager manager,int id,Fragment fragment,String tag){
-        FragmentTransaction fragmentTransaction = manager.beginTransaction();
-        fragmentTransaction.replace(id,fragment,tag);
-        fragmentTransaction.commit();
-    }
 }

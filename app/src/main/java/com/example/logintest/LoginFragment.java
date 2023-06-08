@@ -67,7 +67,7 @@ public class LoginFragment extends Fragment {
         JSONObject params = new JSONObject();
 
         signUpText.setOnClickListener(view1 -> {
-            replaceFragment(manager,R.id.container,
+            utility.replaceFragment(manager,R.id.container,
                     new SignUpAccountDetailsFragment(manager),"signUpAccount");
         });
 
@@ -90,7 +90,6 @@ public class LoginFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), HomePage.class);
                             intent.putExtra("sourceActivity", "LoginPage");
 
-                            //todo STORE USER ID AFTER LOGIN
                             SharedPreferencesManager.initialize(getActivity());
                             SharedPreferencesManager.storeUserId(657532);
 
@@ -161,9 +160,5 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void replaceFragment(FragmentManager manager,int id,Fragment fragment,String tag){
-        FragmentTransaction fragmentTransaction = manager.beginTransaction();
-        fragmentTransaction.replace(id,fragment,tag);
-        fragmentTransaction.commit();
-    }
+
 }

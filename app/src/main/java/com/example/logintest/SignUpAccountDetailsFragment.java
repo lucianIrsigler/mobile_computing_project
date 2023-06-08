@@ -61,7 +61,7 @@ public class SignUpAccountDetailsFragment extends Fragment {
         alreadyHaveAccountlbl = binding.getRoot().findViewById(R.id.tvLogin);
 
         alreadyHaveAccountlbl.setOnClickListener( view1->{
-                    replaceFragment(manager,R.id.container,new LoginFragment(manager),"login");
+                    utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login");
                 }
         );
 
@@ -79,12 +79,11 @@ public class SignUpAccountDetailsFragment extends Fragment {
                     || password.isEmpty()
                     || !email.matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
             ){
-                //todo make error beter
                 Toast.makeText(getActivity(), "Make sure all fields are valid", Toast.LENGTH_LONG).show();
             }else{
                 SignUpPersonalDetailsFragment fragment = new SignUpPersonalDetailsFragment(manager);
                 fragment.setArguments(email,username,password);
-                replaceFragment(manager,R.id.container,fragment,"signupPersonal");
+                utility.replaceFragment(manager,R.id.container,fragment,"signupPersonal");
             }
         });
 
@@ -220,10 +219,5 @@ public class SignUpAccountDetailsFragment extends Fragment {
 
     }
 
-    private void replaceFragment(FragmentManager manager,int id,Fragment fragment,String tag){
-        FragmentTransaction fragmentTransaction = manager.beginTransaction();
-        fragmentTransaction.replace(id,fragment,tag);
-        fragmentTransaction.commit();
-    }
 }
 

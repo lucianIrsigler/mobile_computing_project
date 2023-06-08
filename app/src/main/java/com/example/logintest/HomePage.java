@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.logintest.databinding.EmptyLayoutBinding;
 
@@ -44,19 +43,23 @@ public class HomePage extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         FragmentManager manager = getSupportFragmentManager();
-
         Fragment botNavFragment = manager.findFragmentById(R.id.container1);
 
         if (botNavFragment instanceof EmptyFragment) {
-            replaceFragment(R.id.container,new HomeFragment(manager),"home");
-            replaceFragment(R.id.container1,new BottomNavigationFragment(manager),"bottomNav");
+            utility.replaceFragment(getSupportFragmentManager(),
+                    R.id.container,new HomeFragment(manager),"home");
+
+            utility.replaceFragment(getSupportFragmentManager(),R.id.container1,
+                    new BottomNavigationFragment(manager),"bottomNav");
+
         }else if (botNavFragment instanceof BottomNavigationFragment){
             //app goes to home tab before showing log out alert
             Fragment mainFragment = manager.findFragmentById(R.id.container);
             if (mainFragment instanceof HomeFragment) {
                 showAlert();
             }else{
-                replaceFragment(R.id.container,new HomeFragment(manager),"home");
+                utility.replaceFragment(getSupportFragmentManager(),
+                        R.id.container,new HomeFragment(manager),"home");
             }
         }
     }
@@ -68,36 +71,26 @@ public class HomePage extends AppCompatActivity {
         builder.setView(dialogView);
 
         TextView titleTextView = dialogView.findViewById(R.id.dialog_title);
-        titleTextView.setText("Logout");
+        String title = "Logout";
+        titleTextView.setText(title);
 
         TextView messageTextView = dialogView.findViewById(R.id.dialog_message);
-        messageTextView.setText("Are you sure you want to log out?");
+        String message = "Are you sure you want to log out?";
+        messageTextView.setText(message);
 
         final AlertDialog alertDialog = builder.create();
 
         Button buttonYes = dialogView.findViewById(R.id.btnYes);
         buttonYes.setOnClickListener(v -> {
-            //todo reset user id
+            //todo check if userID is reset
             SharedPreferencesManager.initialize(this);
             SharedPreferencesManager.resetUserID();
             Intent intent = new Intent(HomePage.this,AccountActivity.class);
             intent.putExtra("action", "login");
             startActivity(intent);
         });
-
         Button buttonNo = dialogView.findViewById(R.id.btnNo);
-        buttonNo.setOnClickListener(v -> {
-            alertDialog.dismiss();
-        });
-
+        buttonNo.setOnClickListener(v -> alertDialog.dismiss());
         alertDialog.show();
     }
-
-    private void replaceFragment(int id, Fragment fragment,String tag){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(id,fragment,tag);
-        fragmentTransaction.commit();
-    }
-
 }

@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment {
                         .commit();
 
 
-                replaceFragment(manager, R.id.container1,"empty",new EmptyFragment());
+                utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
 
                 return false;
             }
@@ -55,11 +55,6 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
-    private void replaceFragment(FragmentManager manager, int id, String tag, Fragment fragment){
-        FragmentTransaction fragmentTransaction = manager.beginTransaction();
-        fragmentTransaction.replace(id,fragment,tag);
-        fragmentTransaction.commit();
-    }
 
 
 }
