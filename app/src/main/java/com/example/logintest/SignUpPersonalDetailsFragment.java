@@ -1,12 +1,16 @@
 package com.example.logintest;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,8 +31,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -50,6 +56,10 @@ public class SignUpPersonalDetailsFragment extends Fragment {
 
     EditText errorText;
 
+    String DOBstorage="00-00-0000";
+
+    private DatePickerDialog datePickerDialog;
+
     public void setArguments(String email,String userName,String password){
         this.email=email;
         this.userName=userName;
@@ -70,7 +80,6 @@ public class SignUpPersonalDetailsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         editFirstName = binding.getRoot().findViewById(R.id.edFirstName);
         editLastName = binding.getRoot().findViewById(R.id.edLastName);
         editPhoneNum = binding.getRoot().findViewById(R.id.edPhoneNum);
@@ -79,16 +88,23 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         btnRegister = binding.getRoot().findViewById(R.id.register_button);
         alreadyHaveAccountlbl = binding.getRoot().findViewById(R.id.tvAlreadyHaveAccount);
 
-        alreadyHaveAccountlbl.setOnClickListener(view1 -> utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login"));
+        initDatePicker();
 
-        HTTPHandler httpHandler = new HTTPHandler();
-        JSONObject params = new JSONObject();
+        alreadyHaveAccountlbl.setOnClickListener(view1 -> utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login"));
 
         btnRegister.setOnClickListener(view1 -> {
             String firstName = Objects.requireNonNull(editFirstName.getText().toString());
             String lastName = Objects.requireNonNull(editLastName.getText().toString());
             String phoneNum = Objects.requireNonNull(editPhoneNum.getText().toString());
             String DOB = Objects.requireNonNull(editDOB.getText().toString());
+
+            HTTPHandler httpHandler = new HTTPHandler();
+            JSONObject params = new JSONObject();
+
+            if (!validateDate()){
+                return;
+            }
+
             if (firstName.isEmpty() || lastName.isEmpty()||phoneNum.isEmpty()||DOB.isEmpty()){
                 Toast.makeText(getActivity(), "Make sure all fields are filled", Toast.LENGTH_LONG).show();
             }else{
@@ -133,6 +149,7 @@ public class SignUpPersonalDetailsFragment extends Fragment {
                 }
             }
         });
+
         //Text Changed Listeners
         editFirstName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -198,56 +215,7 @@ public class SignUpPersonalDetailsFragment extends Fragment {
             }
         });
 
-        editDOB.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2){
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
-                //validate date of birth using regex
-                //date of birth must be in the format yyyy-mm-dd
-                String dobStr = Objects.requireNonNull(editDOB.getText()).toString();
-
-                if (dobStr.isEmpty()) {
-                    errorText.setText(R.string.please_enter_your_date_of_birth);
-                    editDOB.setBackgroundResource(R.drawable.edterr);
-                }
-                else if (!dobStr.matches("^(19|20)\\d{2}-(0[1-9]|1[0-2])-(0[1-9]|1\\d|2[0-8]|3[0-1])$")){
-                    errorText.setText(R.string.date_of_birth_format_is_incorrect_see_help_for_more_information);
-                    editDOB.setBackgroundResource(R.drawable.edterr);
-                }
-                else{
-                    LocalDate today = LocalDate.now();
-                    try {
-                        LocalDate dob = LocalDate.parse(dobStr);
-                        Period p = Period.between(dob, today);
-
-                        assert p != null;
-                        if(dob.isAfter(today)){
-                            errorText.setText(R.string.date_of_birth_cannot_be_in_the_future);
-                            editDOB.setBackgroundResource(R.drawable.edterr);
-                        }
-                        else if (p.getYears() < 18){
-                            errorText.setText(R.string.you_must_be_16_years_or_older_to_register);
-                            editDOB.setBackgroundResource(R.drawable.edterr);
-                        }else{
-                            errorText.setText("");
-                            editDOB.setBackgroundResource(R.drawable.edtnormal);
-                        }
-                    }catch (DateTimeParseException e){
-                        errorText.setText(R.string.invalid_date);
-                        editDOB.setBackgroundResource(R.drawable.edterr);
-                    }
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
+        editDOB.setOnClickListener(view1 -> openDatePicker());
 
         editPhoneNum.addTextChangedListener(new TextWatcher() {
             @Override
@@ -281,6 +249,59 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         });
     }
 
+    private boolean validateDate() {
+        if (DOBstorage.equals("00-00-0000")){
+            errorText.setText(R.string.please_enter_your_date_of_birth);
+            editDOB.setBackgroundResource(R.drawable.edterr);
+            return false;
+        }
+        //Gets selected date
+        String[] substrings = DOBstorage.split("-");
+        System.out.println(Arrays.toString(substrings));
+
+        return true;
+    }
+
+    @SuppressWarnings("deprecation")
+    private void initDatePicker()
+    {
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener()
+        {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day)
+            {
+                month = month + 1;
+                String date = makeDateString(day, month, year);
+                editDOB.setText(date);
+            }
+        };
+
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int style = AlertDialog.THEME_HOLO_LIGHT;
+        datePickerDialog = new DatePickerDialog(getActivity(),
+                style, dateSetListener, year, month, day);
+    }
+
+    private String makeDateString(int day, int month, int year)
+    {
+        //set so we can validate
+        DOBstorage = day + "-" + month + "-" + year;
+        return getMonthFormat(month) + " " + day + " " + year;
+    }
+
+    private String getMonthFormat(int month)
+    {
+        Map<Integer, String> monthsMap = utility.createMonthMap();
+        return monthsMap.get(month);
+    }
+
+    public void openDatePicker()
+    {
+        datePickerDialog.show();
+    }
 
     //generating a random salt and hashing the password
     @NonNull
