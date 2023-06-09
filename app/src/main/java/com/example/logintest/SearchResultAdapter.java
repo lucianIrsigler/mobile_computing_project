@@ -1,5 +1,6 @@
 package com.example.logintest;
 
+import android.location.GnssAntennaInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +11,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import okhttp3.internal.http2.Http2Connection;
+
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
-    private List<Product> productList;
+    private static List<Product> productList;
+
 
     public void setProducts(List<Product> productList) {
         this.productList = productList;
         notifyDataSetChanged();
     }
-    public SearchResultAdapter() {}
+
+    public SearchResultAdapter() {
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Product product);
+    }
+
+    private static OnItemClickListener listener;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     @NonNull
     @Override
@@ -48,6 +64,16 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             super(itemView);
             tvNamePlaceholder = itemView.findViewById(R.id.tvNamePlaceholder);
             tvPricePlaceholder = itemView.findViewById(R.id.tvPricePlaceholder);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION && listener != null) {
+                        listener.onItemClick(productList.get(position));
+                    }
+                }
+            });
         }
     }
 }

@@ -53,13 +53,28 @@ public class ProductSearchIntermediateFragment extends Fragment {
                 searchRecyclerView.setAdapter(searchResultAdapter);
                 searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-                // Initialize the ProductManager
+
                 ProductManager productManager = new ProductManager();
 
-                // Perform the search and update the RecyclerView
+
                 List<Product> searchResults = productManager.searchProduct(query);
 
                 searchResultAdapter.setProducts(searchResults);
+                searchResultAdapter.setOnItemClickListener(new SearchResultAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(Product product) {
+                        // item click event
+                        Log.d("Item Clicked", "Product: " + product.getName());
+
+                        // Navigate to FragmentViewProduct
+                        FragmentViewProduct fragmentViewProduct = new FragmentViewProduct(product);
+                        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.view_products_rv, fragmentViewProduct)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                });
                 return true;
             }
 
@@ -70,10 +85,10 @@ public class ProductSearchIntermediateFragment extends Fragment {
                 searchRecyclerView.setAdapter(searchResultAdapter);
                 searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-                // Initialize the ProductManager
+
                 ProductManager productManager = new ProductManager();
 
-                // Perform the search and update the RecyclerView
+                // search+reccyler view update
                 List<Product> searchResults = productManager.searchProduct(newText);
                 searchResultAdapter.setProducts(searchResults);
 

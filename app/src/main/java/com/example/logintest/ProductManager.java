@@ -70,7 +70,7 @@ public class ProductManager {
             String searchUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php";
             String response = httpHandler.getRequest(searchUrl, params, String.class);
 
-            // Parse the response and populate the searchResults list
+            // populate the searchResults list
             JSONArray jsonArray = new JSONArray(response);
 
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -78,9 +78,9 @@ public class ProductManager {
                 String name = jsonProduct.getString("productName");
                 String description = jsonProduct.getString("productDescription");
                 double price = jsonProduct.getDouble("price");
-                // Get other product properties if needed
+                //get
 
-                // Create a new Product object and add it to the searchResults list
+
                 Product product = new Product(name, description, price);
                 searchResults.add(product);
             }
@@ -108,7 +108,7 @@ public class ProductManager {
         JSONObject params = new JSONObject();
 
         try {
-            params.put("category", category); // Set the category parameter
+            params.put("category", category); //
         } catch (JSONException e) {
             e.printStackTrace();
         }

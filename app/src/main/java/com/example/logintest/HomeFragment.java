@@ -46,17 +46,16 @@ public class HomeFragment extends Fragment {
         recommendedRecyclerView = binding.getRoot().findViewById(R.id.recommendedRecyclerView);
         searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
 
-        // Set up the RecyclerView for recommended products
+        //recycler for recommended products
         recommendedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         recommendedProductAdapter = new SearchResultAdapter();
         recommendedRecyclerView.setAdapter(recommendedProductAdapter);
 
-        // Add recommended products to the adapter
-        List<Product> recommendedProducts = getRecommendedProducts(); // Replace with your own method to fetch recommended products
+        // reco products
+        List<Product> recommendedProducts = getRecommendedProducts();
         recommendedProductAdapter.setProducts(recommendedProducts);
         if (recommendedProducts.isEmpty()) {
-            // Handle the case when no products are retrieved
-            // For example, display a message or show alternative content
+
             Toast.makeText(getActivity(), "No Recommendations at this time", Toast.LENGTH_LONG).show();
         } else {
             recommendedProductAdapter.setProducts(recommendedProducts);
@@ -88,12 +87,13 @@ public class HomeFragment extends Fragment {
     }
 
     private List<Product> getRecommendedProducts() {
+        //todo can use FragmentViewProduct here as well once working so recommned prod can be clickable
         List<Product> randomItems = new ArrayList<>();
-        int numberOfItems = 2; // Specify the number of items you want to retrieve
+        int numberOfItems = 2;//doesnt work
         String productName="";
         try {
             JSONObject params = new JSONObject();
-            params.put("search", productName); // Specify the number of items you want to retrieve
+            params.put("search", productName);
 
             String randomItemsUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php";
 
@@ -106,7 +106,7 @@ public class HomeFragment extends Fragment {
 
 
             if (totalItems >= numberOfItems) {
-                // Randomly select two unique indices from the JSON array
+
                 List<Integer> indices = getRandomIndices(totalItems, numberOfItems);
 
                 for (int i = 0; i < indices.size(); i++) {
