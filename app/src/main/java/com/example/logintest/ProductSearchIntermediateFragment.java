@@ -66,8 +66,12 @@ public class ProductSearchIntermediateFragment extends Fragment {
 
                     // Navigate to FragmentViewProduct
                     FragmentViewProduct fragmentViewProduct = new FragmentViewProduct(product);
-                    utility.replaceFragment(manager,R.id.container,
-                            fragmentViewProduct,"productPage");
+
+                    manager.beginTransaction()
+                            .replace(R.id.container, fragmentViewProduct)
+                            .addToBackStack(null)
+                            .commit();
+
 
                     /*fragmentManager.beginTransaction()
                             .replace(R.id.view_products_rv, fragmentViewProduct)
