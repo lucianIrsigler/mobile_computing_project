@@ -56,7 +56,6 @@ public class ProductSearchIntermediateFragment extends Fragment {
 
                 ProductManager productManager = new ProductManager();
 
-
                 List<Product> searchResults = productManager.searchProduct(query);
 
                 searchResultAdapter.setProducts(searchResults);
@@ -74,10 +73,6 @@ public class ProductSearchIntermediateFragment extends Fragment {
                             .commit();
 
 
-                    /*fragmentManager.beginTransaction()
-                            .replace(R.id.view_products_rv, fragmentViewProduct)
-                            .addToBackStack(null)
-                            .commit();*/
                 });
                 return true;
             }
@@ -88,7 +83,6 @@ public class ProductSearchIntermediateFragment extends Fragment {
                 SearchResultAdapter searchResultAdapter = new SearchResultAdapter();
                 searchRecyclerView.setAdapter(searchResultAdapter);
                 searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
 
                 ProductManager productManager = new ProductManager();
 

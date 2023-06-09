@@ -75,12 +75,10 @@ public class ProductManager {
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonProduct = jsonArray.getJSONObject(i);
+                int productID= Integer.parseInt(jsonProduct.getString("productID"));
                 String name = jsonProduct.getString("productName");
                 String description = jsonProduct.getString("productDescription");
                 double price = jsonProduct.getDouble("price");
-                int productID= Integer.parseInt(jsonProduct.getString("productID"));
-                //get
-
 
                 Product product = new Product(name, description, price,productID);
                 searchResults.add(product);
@@ -90,22 +88,14 @@ public class ProductManager {
         }
 
         return searchResults;
-       /* JSONObject params = new JSONObject();
 
-        try {
-            params.put("productName", productName);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        String searchUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php";
-        httpHandler.getRequest(searchUrl, params, String.class);*/
     }
     /**
      * searching for all products from a catergory
      * @param category name of products looking for
      */
-    public void findAllInCategory(String category) {
+    public List<Product> findAllInCategory(String category) {
+        List<Product> searchResults = new ArrayList<>();
         JSONObject params = new JSONObject();
 
         try {
@@ -115,7 +105,28 @@ public class ProductManager {
         }
 
         String searchUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchcategory.php";
-        httpHandler.getRequest(searchUrl, params, String.class); // Make a GET request to search for products in the specified category
+
+        String response = httpHandler.getRequest(searchUrl, params, String.class);
+
+        try {
+            // populate the searchResults list
+            JSONArray jsonArray = new JSONArray(response);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonProduct = jsonArray.getJSONObject(i);
+                int productID = Integer.parseInt(jsonProduct.getString("productID"));
+                String name = jsonProduct.getString("productName");
+                String description = jsonProduct.getString("productDescription");
+                double price = jsonProduct.getDouble("price");
+
+                Product product = new Product(name, description, price, productID);
+                searchResults.add(product);
+            }
+        }catch (JSONException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        return searchResults;
     }
 
 

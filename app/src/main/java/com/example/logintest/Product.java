@@ -28,6 +28,9 @@ public class Product {
         return price;
     }
 
+    public int getProductID() {
+        return productID;
+    }
     public String getCategory() {
         return category;
     }
