@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <EditText
@@ -48,14 +49,16 @@
         />
 
 
-    <ImageView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/uploadImagesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="211dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.117" />
 
-        android:id="@+id/productImageView"
-        android:layout_width="352dp"
-        android:layout_height="115dp"
-
-        android:hint="ImageProduct"
-        android:src="@android:drawable/ic_menu_gallery" />
 
     <Button
         android:id="@+id/buttonSelectImage"
@@ -65,12 +68,11 @@
         android:text="Select Image"
         android:textSize="16sp" />
 
-
     <Button
         android:id="@+id/addProductButton"
         android:layout_width="match_parent"
         android:layout_height="57dp"
+        android:minHeight="32dp"
         android:text="Add Product"
-        android:textSize="16sp"
-        android:minHeight="32dp"/>
+        android:textSize="16sp" />
 </LinearLayout>

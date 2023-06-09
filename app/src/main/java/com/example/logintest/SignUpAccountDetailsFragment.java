@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +70,9 @@ public class SignUpAccountDetailsFragment extends Fragment {
             String password = Objects.requireNonNull(editPassword.getText()).toString();
             String confirmPassword = Objects.requireNonNull(confirmPasswordTv.getText()).toString();
 
+            UsersManager usersManager = new UsersManager();
+
+            Log.i("startup",usersManager.checkUsername(username).toString());
 
             if (!password.equals(confirmPassword)
                     || email.isEmpty()

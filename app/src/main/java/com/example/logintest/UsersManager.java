@@ -33,5 +33,17 @@ public class UsersManager extends AppCompatActivity {
         return handler.getRequest(url,params,JSONObject.class);
     }
 
+    public JSONObject checkUsername(String username){
+        JSONObject params = new JSONObject();
+        try {
+            params.put("username",username);
+        }catch (JSONException e){
+            System.out.println("error");
+        }
 
+        //url to get request
+        String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/checkusername.php";
+
+        return handler.postRequest(url,params,JSONObject.class);
+    }
 }

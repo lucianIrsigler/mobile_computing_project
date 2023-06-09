@@ -27,13 +27,13 @@ public class ProductManager {
      * @param productDescription description of the product being added
      * @param productPrice price
      * @param category category of product
-     * @param bitmap image of product
      */
-    public /*String*/void addProduct(String productName, String productDescription, double productPrice, String category, Bitmap bitmap) {
+    public /*String*/void addProduct(int productID,String productName, String productDescription, double productPrice, String category) {
         JSONObject params = new JSONObject();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String currentDate = sdf.format(new Date());
         try {
+            params.put("productID",productID);
             params.put("name", productName);
             params.put("description", productDescription);
             params.put("price", productPrice);

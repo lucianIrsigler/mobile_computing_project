@@ -49,7 +49,6 @@ public class ImageUpload extends AppCompatActivity {
     private static final int MAX_IMAGE_SELECTION = 10;
     private ArrayList<Bitmap> selectedImages;
     private ArrayList<Bitmap> imagesToBeUploaded;
-
     private ArrayList<String> extentions;
 
     @Override
@@ -75,7 +74,6 @@ public class ImageUpload extends AppCompatActivity {
         uploadImageRecyclerView.setAdapter(imageAdapterGetFromGallery);
 
         imageSelectionLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-
             if (result.getResultCode() == RESULT_OK) {
                 Intent data = result.getData();
 
