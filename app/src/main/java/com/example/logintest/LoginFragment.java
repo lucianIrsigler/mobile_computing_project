@@ -72,7 +72,7 @@ public class LoginFragment extends Fragment {
             try{
                 params.put("Username", Objects.requireNonNull(editUsername.getText()).toString());
 
-                JSONArray response = httpHandler.getRequest("https://lamp.ms.wits.ac.za/home/s2571291/users/login_users/login.php", params, JSONArray.class);
+                JSONArray response = httpHandler.getRequest("https://lamp.ms.wits.ac.za/home/s2621933/php/login.php", params, JSONArray.class);
 
                 if(!response.toString().equals("[]"))
                 {
@@ -92,7 +92,7 @@ public class LoginFragment extends Fragment {
                             params1.put("username",resp_username);
 
                             String response1 =
-                                    httpHandler.postRequest("https://lamp.ms.wits.ac.za/home/s2621933/php/getUserID.php",
+                                    httpHandler.getRequest("https://lamp.ms.wits.ac.za/home/s2621933/php/getUserID.php",
                                             params1,String.class
                                     );
 

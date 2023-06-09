@@ -114,6 +114,9 @@ public class SignUpPersonalDetailsFragment extends Fragment {
                 }else{
                     errorText.setText("");
                     editDOB.setBackgroundResource(R.drawable.edtnormal);
+                    String date = makeDateString(i2, i1+1, i);
+                    editDOB.setText(date);
+
                 }
             }catch (DateTimeParseException e){
                 errorText.setText(R.string.invalid_date);
@@ -279,7 +282,7 @@ public class SignUpPersonalDetailsFragment extends Fragment {
     }
 
     private boolean isInvalidDate() {
-        return errorText.getText().toString().isEmpty();
+        return editDOB.getText().toString().isEmpty();
     }
 
     @SuppressWarnings("deprecation")
