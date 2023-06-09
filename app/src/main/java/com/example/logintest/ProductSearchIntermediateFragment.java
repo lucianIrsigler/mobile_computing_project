@@ -63,7 +63,7 @@ public class ProductSearchIntermediateFragment extends Fragment {
 
                 searchResultAdapter.setOnItemClickListener(product -> {
                     // item click event
-                    //Log.d("Item Clicked", "Product: " + product.getName());
+                    Log.d("Item Clicked", "Product");
 
                     // Navigate to FragmentViewProduct
                     FragmentViewProduct fragmentViewProduct = new FragmentViewProduct(product);
@@ -95,6 +95,16 @@ public class ProductSearchIntermediateFragment extends Fragment {
                 // search+reccyler view update
                 List<Product> searchResults = productManager.searchProduct(newText);
                 searchResultAdapter.setProducts(searchResults);
+
+                searchResultAdapter.setOnItemClickListener(product -> {
+                    FragmentViewProduct fragmentViewProduct = new FragmentViewProduct(product);
+
+                    manager.beginTransaction()
+                            .replace(R.id.container, fragmentViewProduct)
+                            .addToBackStack(null)
+                            .commit();
+                });
+
 
                 return true;
             }

@@ -14,16 +14,14 @@ import java.util.List;
 
 public class ImageAdapterGetFromGallery extends RecyclerView.Adapter<ImageAdapterGetFromGallery.ViewHolder> {
     private List<Bitmap> imageList;
-    private Bitmap defaultImage;
 
     public ImageAdapterGetFromGallery(List<Bitmap> imageList) {
         this.imageList = imageList;
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void setImageList(List<Bitmap> imageList, Bitmap defaultImage){
+    public void setImageList(List<Bitmap> imageList){
         this.imageList = imageList;
-        this.defaultImage = defaultImage;
         notifyDataSetChanged();
     }
 
@@ -37,11 +35,7 @@ public class ImageAdapterGetFromGallery extends RecyclerView.Adapter<ImageAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bitmap image = imageList.get(position);
-        if (image != null) {
-            holder.imageView.setImageBitmap(image);
-        } else {
-            holder.imageView.setImageBitmap(defaultImage);
-        }
+        holder.imageView.setImageBitmap(image);
     }
 
     @Override
@@ -58,4 +52,3 @@ public class ImageAdapterGetFromGallery extends RecyclerView.Adapter<ImageAdapte
         }
     }
 }
-

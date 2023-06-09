@@ -29,7 +29,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.logintest.databinding.AddproductBinding;
+import com.example.logintest.databinding.FragmentAddProductBinding;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,7 +45,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class AddProductFragment extends Fragment {
-    private AddproductBinding binding;
+    private FragmentAddProductBinding binding;
     private final ProductManager productManager = new ProductManager();
     private EditText productNameEditText;
     private EditText productPriceEditText;
@@ -66,15 +66,14 @@ public class AddProductFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = AddproductBinding.inflate(inflater, container, false);
-
-        productNameEditText = binding.getRoot().findViewById(R.id.productNameEditText);
-        productDescriptionEditText = binding.getRoot().findViewById(R.id.productDescriptionEditText);
-        productPriceEditText = binding.getRoot().findViewById(R.id.productPriceEditText);
+        binding = FragmentAddProductBinding.inflate(inflater, container, false);
+        productNameEditText = binding.getRoot().findViewById(R.id.edProductName);
+        productDescriptionEditText = binding.getRoot().findViewById(R.id.edProductDesc);
+        productPriceEditText = binding.getRoot().findViewById(R.id.edPrice);
         productCategorySpinner = binding.getRoot().findViewById(R.id.productCategorySpinner);
-        uploadImageRecyclerView = binding.getRoot().findViewById(R.id.uploadImagesRecyclerView);
-        Button buttonSelectImage = binding.getRoot().findViewById(R.id.buttonSelectImage);
-
+        uploadImageRecyclerView = binding.getRoot().findViewById(R.id.ivAddProductPlaceholder);
+        Button buttonSelectImage = binding.getRoot().findViewById(R.id.btnSelectImage);
+        Button addProductButton = binding.getRoot().findViewById(R.id.btnAddProduct);
 
 
 
@@ -82,18 +81,16 @@ public class AddProductFragment extends Fragment {
                 R.array.categories_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         productCategorySpinner.setAdapter(adapter);
-        Button addProductButton = binding.getRoot().findViewById(R.id.addProductButton);
 
-        Bitmap defaultImage = BitmapFactory.decodeResource(getResources(), R.drawable.default_image);
 
         extentions = new ArrayList<>();
         selectedImages = new ArrayList<>();
         imagesToBeUploaded = new ArrayList<>();
 
         ImageAdapterGetFromGallery imageAdapterGetFromGallery = new ImageAdapterGetFromGallery(selectedImages);
-        uploadImageRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        uploadImageRecyclerView.setLayoutManager(new LinearLayoutManager(
+                getContext(), LinearLayoutManager.HORIZONTAL, false));
         uploadImageRecyclerView.setAdapter(imageAdapterGetFromGallery);
-
 
         imageSelectionLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
@@ -105,14 +102,12 @@ public class AddProductFragment extends Fragment {
                     } else if (data.getData() != null) {
                         handleSingleImageSelection(data.getData());
                     }
-                    imageAdapterGetFromGallery.setImageList(selectedImages, defaultImage);
+                    imageAdapterGetFromGallery.setImageList(selectedImages);
                 }
             }
         });
 
-        buttonSelectImage.setOnClickListener(v->{
-            openImageSelection();
-        });
+        buttonSelectImage.setOnClickListener(v-> openImageSelection());
 
 
         addProductButton.setOnClickListener(v -> {
@@ -225,10 +220,12 @@ public class AddProductFragment extends Fragment {
         return null;
     }
 
+
     public void upload(ArrayList<Bitmap> images_path) {
         MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM);
 
+        //todo image view
         for (int i = 0; i < images_path.size(); i++) {
             Bitmap file = images_path.get(i);
             String fileExtention = extentions.get(i);
@@ -268,12 +265,12 @@ public class AddProductFragment extends Fragment {
         Call call = client.newCall(request);
         call.enqueue(new okhttp3.Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 e.printStackTrace();
                 Log.e("error","onFailure called");
             }
             @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) {
             }
         });
     }

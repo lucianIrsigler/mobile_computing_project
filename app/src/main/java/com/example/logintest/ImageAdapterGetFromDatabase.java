@@ -1,5 +1,8 @@
 package com.example.logintest;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,15 +11,13 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 public class ImageAdapterGetFromDatabase extends RecyclerView.Adapter<ImageAdapterGetFromDatabase.ImageViewHolder> {
-    private final List<String> imageUrls;
+    private final List<String> base64ImageList;
 
-    public ImageAdapterGetFromDatabase(List<String> imageUrls) {
-        this.imageUrls = imageUrls;
+    public ImageAdapterGetFromDatabase(List<String> base64ImageList) {
+        this.base64ImageList = base64ImageList;
     }
 
     @NonNull
@@ -28,13 +29,15 @@ public class ImageAdapterGetFromDatabase extends RecyclerView.Adapter<ImageAdapt
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-        String imageUrl = imageUrls.get(position);
-        Picasso.get().load(imageUrl).into(holder.imageView);
+        String base64Image = base64ImageList.get(position);
+        byte[] decodedString = Base64.decode(base64Image, Base64.DEFAULT);
+        Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        holder.imageView.setImageBitmap(decodedBitmap);
     }
 
     @Override
     public int getItemCount() {
-        return imageUrls.size();
+        return base64ImageList.size();
     }
 
     static class ImageViewHolder extends RecyclerView.ViewHolder {
@@ -46,4 +49,3 @@ public class ImageAdapterGetFromDatabase extends RecyclerView.Adapter<ImageAdapt
         }
     }
 }
-

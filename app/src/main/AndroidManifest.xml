@@ -14,9 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RetailBunny"
         tools:targetApi="31">
-        <activity android:name=".HomePage" />
+        <activity android:name=".InitializationActivity" />
         <activity
-            android:name=".InitializationActivity"
+            android:name=".HomePage"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
