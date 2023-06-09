@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:text="Select Image"
             style="@style/blueButtonStyle"
-            android:backgroundTint="@color/lilac_2"
+
             android:layout_marginLeft="5dp"
             android:layout_marginTop="19dp"
             android:padding="5dp"

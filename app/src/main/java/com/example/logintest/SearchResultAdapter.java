@@ -1,6 +1,7 @@
 package com.example.logintest;
 
 import android.location.GnssAntennaInfo;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,13 +66,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
             tvNamePlaceholder = itemView.findViewById(R.id.tvNamePlaceholder);
             tvPricePlaceholder = itemView.findViewById(R.id.tvPricePlaceholder);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION && listener != null) {
-                        listener.onItemClick(productList.get(position));
-                    }
+            itemView.setOnClickListener(v -> {
+                Log.i("onclick","called");
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onItemClick(productList.get(position));
                 }
             });
         }
