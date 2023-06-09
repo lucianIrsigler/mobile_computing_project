@@ -112,16 +112,12 @@ public class SignUpPersonalDetailsFragment extends Fragment {
                 AtomicBoolean flag = new AtomicBoolean(false);
                 while(!flag.get())
                 {
-                    String url = "https://lamp.ms.wits.ac.za/home/s2571291/users/insert_users/insertUser.php";
-                    //String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/insertUser.php";
+                    //String url = "https://lamp.ms.wits.ac.za/home/s2571291/users/insert_users/insertUser.php";
+                    String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/insertUser.php";
                     String response = httpHandler.postRequest(url, params, String.class);
                     Toast.makeText(getContext(), response, Toast.LENGTH_LONG).show();
 
-                    if(response.equals("Username already exists")){
-                        editFirstName.setError("Username already exists");
-                        flag.set(true);
-                    }
-                    else if(response.equals("Salt already exists")){
+                    if(response.equals("Salt already exists")){
                         try {
                             params.put("salt", bytesToHex(generateSalt()));
                         } catch (JSONException e) {

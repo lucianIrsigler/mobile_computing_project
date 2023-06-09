@@ -21,6 +21,9 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.logintest.databinding.FragmentRegisterBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Objects;
 
 public class SignUpAccountDetailsFragment extends Fragment {
@@ -72,7 +75,19 @@ public class SignUpAccountDetailsFragment extends Fragment {
 
             UsersManager usersManager = new UsersManager();
 
-            Log.i("startup",usersManager.checkUsername(username).toString());
+            JSONObject isValid =  usersManager.checkUsername(username);
+
+            try {
+                if (isValid.getInt("valid")==0){
+                    String error = "Username already taken";
+                    errorText.setText(error);
+                    editUsername.setBackgroundResource(R.drawable.edterr);
+                    return;
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+
 
             if (!password.equals(confirmPassword)
                     || email.isEmpty()
