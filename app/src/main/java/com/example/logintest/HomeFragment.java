@@ -114,8 +114,9 @@ public class HomeFragment extends Fragment {
                     String name = jsonProduct.getString("productName");
                     String description = jsonProduct.getString("productDescription");
                     double price = jsonProduct.getDouble("price");
+                    int productID= Integer.parseInt(jsonProduct.getString("productID"));
 
-                    Product product = new Product(name, description, price);
+                    Product product = new Product(name, description, price, productID);
                     randomItems.add(product);
                 }
             }

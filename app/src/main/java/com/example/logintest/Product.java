@@ -7,11 +7,13 @@ public class Product {
     private double price;
     private String category;
     private Bitmap image;
+    private int productID;
 
-    public Product(String name, String description, double price) {
+    public Product(String name, String description, double price, int productID) {
         this.name = name;
         this.description = description;
         this.price = price;
+        this.productID=productID;
     }
 
     public String getName() {

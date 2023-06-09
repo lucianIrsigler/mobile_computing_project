@@ -78,10 +78,11 @@ public class ProductManager {
                 String name = jsonProduct.getString("productName");
                 String description = jsonProduct.getString("productDescription");
                 double price = jsonProduct.getDouble("price");
+                int productID= Integer.parseInt(jsonProduct.getString("productID"));
                 //get
 
 
-                Product product = new Product(name, description, price);
+                Product product = new Product(name, description, price,productID);
                 searchResults.add(product);
             }
         } catch (JSONException e) {
