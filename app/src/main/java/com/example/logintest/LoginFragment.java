@@ -86,11 +86,19 @@ public class LoginFragment extends Fragment {
                         if(editUsername.getText().toString().equals(resp_username) && resp_password.equals(p.hashedPassword(salt.getBytes(), Objects.requireNonNull(editPassword.getText()).toString()))){
                             Intent intent = new Intent(getActivity(), HomePage.class);
                             intent.putExtra("sourceActivity", "LoginPage");
+                            startActivity(intent);
+
+                            JSONObject params1 = new JSONObject();
+                            params1.put("username",resp_username);
+
+                            String response1 =
+                                    httpHandler.postRequest("https://lamp.ms.wits.ac.za/home/s2621933/php/getUserID.php",
+                                            params1,String.class
+                                    );
 
                             SharedPreferencesManager.initialize(getActivity());
-                            SharedPreferencesManager.storeUserId(657532);
+                            SharedPreferencesManager.storeUserId(Integer.parseInt(response1));
 
-                            startActivity(intent);
                         }
                         else{
                             Toast.makeText(getActivity(), "Incorrect Username or Password", Toast.LENGTH_LONG).show();

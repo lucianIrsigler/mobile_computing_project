@@ -60,6 +60,7 @@ public class ProductSearchIntermediateFragment extends Fragment {
                 List<Product> searchResults = productManager.searchProduct(query);
 
                 searchResultAdapter.setProducts(searchResults);
+
                 searchResultAdapter.setOnItemClickListener(product -> {
                     // item click event
                     //Log.d("Item Clicked", "Product: " + product.getName());

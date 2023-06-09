@@ -31,6 +31,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -90,7 +92,34 @@ public class SignUpPersonalDetailsFragment extends Fragment {
 
         initDatePicker();
 
-        alreadyHaveAccountlbl.setOnClickListener(view1 -> utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login"));
+        alreadyHaveAccountlbl.setOnClickListener(view1 -> utility.replaceFragment(manager,R.id.container,
+                new LoginFragment(manager),"login"));
+
+        datePickerDialog.setOnDateSetListener((datePicker, i, i1, i2) -> {
+            LocalDate today = LocalDate.now();
+
+            try {
+                LocalDate dob = LocalDate.of(i,i1,i2);
+
+                Period p = Period.between(dob, today);
+
+                assert p != null;
+                if(dob.isAfter(today)){
+                    errorText.setText(R.string.date_of_birth_cannot_be_in_the_future);
+                    editDOB.setBackgroundResource(R.drawable.edterr);
+                }
+                else if (p.getYears() < 16){
+                    errorText.setText(R.string.you_must_be_16_years_or_older_to_register);
+                    editDOB.setBackgroundResource(R.drawable.edterr);
+                }else{
+                    errorText.setText("");
+                    editDOB.setBackgroundResource(R.drawable.edtnormal);
+                }
+            }catch (DateTimeParseException e){
+                errorText.setText(R.string.invalid_date);
+                editDOB.setBackgroundResource(R.drawable.edterr);
+            }
+        });
 
         btnRegister.setOnClickListener(view1 -> {
             String firstName = Objects.requireNonNull(editFirstName.getText().toString());
@@ -101,7 +130,7 @@ public class SignUpPersonalDetailsFragment extends Fragment {
             HTTPHandler httpHandler = new HTTPHandler();
             JSONObject params = new JSONObject();
 
-            if (!validateDate()){
+            if (isInvalidDate()){
                 return;
             }
 
@@ -249,17 +278,8 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         });
     }
 
-    private boolean validateDate() {
-        if (DOBstorage.equals("00-00-0000")){
-            errorText.setText(R.string.please_enter_your_date_of_birth);
-            editDOB.setBackgroundResource(R.drawable.edterr);
-            return false;
-        }
-        //Gets selected date
-        String[] substrings = DOBstorage.split("-");
-        System.out.println(Arrays.toString(substrings));
-
-        return true;
+    private boolean isInvalidDate() {
+        return errorText.getText().toString().isEmpty();
     }
 
     @SuppressWarnings("deprecation")
