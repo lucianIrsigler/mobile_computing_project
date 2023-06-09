@@ -60,20 +60,19 @@ public class ProductSearchIntermediateFragment extends Fragment {
                 List<Product> searchResults = productManager.searchProduct(query);
 
                 searchResultAdapter.setProducts(searchResults);
-                searchResultAdapter.setOnItemClickListener(new SearchResultAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(Product product) {
-                        // item click event
-                        Log.d("Item Clicked", "Product: " + product.getName());
+                searchResultAdapter.setOnItemClickListener(product -> {
+                    // item click event
+                    //Log.d("Item Clicked", "Product: " + product.getName());
 
-                        // Navigate to FragmentViewProduct
-                        FragmentViewProduct fragmentViewProduct = new FragmentViewProduct(product);
-                        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.view_products_rv, fragmentViewProduct)
-                                .addToBackStack(null)
-                                .commit();
-                    }
+                    // Navigate to FragmentViewProduct
+                    FragmentViewProduct fragmentViewProduct = new FragmentViewProduct(product);
+                    utility.replaceFragment(manager,R.id.container,
+                            fragmentViewProduct,"productPage");
+
+                    /*fragmentManager.beginTransaction()
+                            .replace(R.id.view_products_rv, fragmentViewProduct)
+                            .addToBackStack(null)
+                            .commit();*/
                 });
                 return true;
             }
