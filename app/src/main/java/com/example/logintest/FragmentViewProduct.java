@@ -1,10 +1,14 @@
 package com.example.logintest;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +28,7 @@ import java.util.List;
 public class FragmentViewProduct extends Fragment {
     private Product product;
     final HTTPHandler handler = new HTTPHandler();
+    final UsersManager usersManager = new UsersManager();
     FragmentViewProductBinding binding;
     public FragmentViewProduct() {
         // Required empty public constructor
@@ -44,13 +49,17 @@ public class FragmentViewProduct extends Fragment {
         TextView productDescriptionTextView = binding.getRoot().findViewById(R.id.tvDescriptionViewProduct);
         TextView dateOfProduct = binding.getRoot().findViewById(R.id.tvDateViewProduct);
         RecyclerView showImageRecyclerView = binding.getRoot().findViewById(R.id.view_products_rv);
-
+        Button buyProduct = binding.getRoot().findViewById(R.id.btnBuyNow);
+        Button addRating = binding.getRoot().findViewById(R.id.btnAddRating);
+        RatingBar ratingBar = binding.getRoot().findViewById(R.id.ratingBar);
+        TextView avgStars = binding.getRoot().findViewById(R.id.tvAvgRating);
 
         productNameTextView.setText(product.getName());
         String price = String.format("R%.2f",product.getPrice());
         productPriceTextView.setText(price);
         productDescriptionTextView.setText(product.getDescription());
 
+        //sets text for views
         try {
             JSONArray productDetails = getProductDetails();
 
@@ -74,16 +83,49 @@ public class FragmentViewProduct extends Fragment {
                     getContext(), LinearLayoutManager.HORIZONTAL, false));
             showImageRecyclerView.setAdapter(imageAdapterGetFromDatabase);
 
-            return binding.getRoot();
+            //set rating bar and avg star textview
+            RatingManager ratingManager = new RatingManager();
+
+            float avg_stars = ratingManager.getAverageRating(product.getProductID());
+
+            if (avg_stars==0){
+                avgStars.setText("0");
+            }else{
+                avgStars.setText(Float.toString(avg_stars));
+            }
+
+            ratingBar.setRating(avg_stars);
+
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+
+
+        //set onclicks
+
+        buyProduct.setOnClickListener(view -> {});
+
+        addRating.setOnClickListener(view -> {
+            TransactionManager transactionManager = new TransactionManager();
+            int productID = product.getProductID();
+            long userID = usersManager.getCurrentUserID();
+
+            if (transactionManager.checkTransaction(userID,productID)){
+                //add rating now
+            }else{
+                Toast.makeText(getContext(),
+                        "You must buy the item before you can leave a review",
+                        Toast.LENGTH_LONG).show();
+            }
+
+        });
+        return binding.getRoot();
     }
 
     /**
      * Search a products details
      * @return the JSONArray of the product details
-     * @throws JSONException
+     * @throws JSONException incase JSONObject creation dies
      */
     private JSONArray getProductDetails() throws JSONException {
         JSONObject params = new JSONObject();
@@ -101,7 +143,6 @@ public class FragmentViewProduct extends Fragment {
      * @throws JSONException if something goes wrong with JSONObject
      */
     private String getUsername(long userID) throws JSONException {
-        UsersManager usersManager = new UsersManager();
         JSONObject userName = usersManager.searchUserInfo(userID);
         return userName.getString("username");
     }

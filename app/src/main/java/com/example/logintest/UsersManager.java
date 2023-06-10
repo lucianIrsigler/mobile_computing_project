@@ -13,12 +13,16 @@ public class UsersManager extends AppCompatActivity {
     final HTTPHandler handler = new HTTPHandler();
     public UsersManager(){}
 
-    public JSONObject getUserInformation(){
+    public long getCurrentUserID(){
         Context context = this;
-
-        //get saved user id
         SharedPreferencesManager.initialize(context);
-        long userID = SharedPreferencesManager.retrieveUserId();
+        return SharedPreferencesManager.retrieveUserId();
+
+    }
+
+    public JSONObject getUserInformation(){
+        //get saved user id
+        long userID = getCurrentUserID();
 
         //assign params
         JSONObject params = new JSONObject();
@@ -35,8 +39,6 @@ public class UsersManager extends AppCompatActivity {
     }
 
     public JSONObject searchUserInfo(long userID){
-        Context context = this;
-
         //assign params
         JSONObject params = new JSONObject();
         try {

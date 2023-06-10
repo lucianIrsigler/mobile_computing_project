@@ -79,32 +79,19 @@ public class RatingManager {
      * @param productID productID of product
      * @return  -1.0 if product not found otherwise returns the rating
      */
-    public double getAverageRating(Integer productID){
+    public float getAverageRating(Integer productID) throws JSONException {
         JSONObject array = new JSONObject();
 
-        try {
-            array.put("productID", productID);
-        }catch (JSONException e){
-            System.out.println("error");
-        }
+        array.put("productID", productID);
 
         String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/getaveragerating.php";
         JSONObject response = handler.getRequest(url,array,JSONObject.class);
 
         if (response.has("error")){
-            try {
-                System.out.println(response.getString("error"));
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-            return -1.0;
+            return 0;
         }else{
-            try {
-                String rating = response.getString("average_rating");
-                return Double.parseDouble(rating);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+            String rating = response.getString("average_rating");
+            return Float.parseFloat(rating);
             }
         }
-    }
 }
