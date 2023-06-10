@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,6 +46,8 @@ public class HomeFragment extends Fragment {
         searchView = binding.getRoot().findViewById(R.id.searchBar);
         recommendedRecyclerView = binding.getRoot().findViewById(R.id.recommendedRecyclerView);
         searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
+
+
 
         //recycler for recommended products
         recommendedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
