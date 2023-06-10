@@ -49,23 +49,18 @@ public class HomePage extends AppCompatActivity {
         Fragment botNavFragment = manager.findFragmentById(R.id.container1);
         Fragment mainFragment = manager.findFragmentById(R.id.container);
 
-        if (botNavFragment instanceof EmptyFragment) {
+        if (botNavFragment instanceof EmptyFragment ) {
             //in search screen goes back to main
-            if (mainFragment instanceof ProductSearchIntermediateFragment){
-                utility.replaceFragment(getSupportFragmentManager(),
-                        R.id.container,new HomeFragment(manager),"home");
-
-                utility.replaceFragment(getSupportFragmentManager(),R.id.container1,
-                        new BottomNavigationFragment(manager),"bottomNav");
+            if (mainFragment instanceof HomeFragment) {
+                ((HomeFragment) mainFragment).unHide();
             }else if (mainFragment instanceof FragmentViewProduct){
-                //in product page
-                utility.replaceFragment(getSupportFragmentManager(),
-                        R.id.container,new ProductSearchIntermediateFragment(),"search");
-                //todo add query
+                utility.replaceFragment(manager,R.id.container,new HomeFragment(manager),"home");
+                utility.replaceFragment(manager,R.id.container1,
+                        new BottomNavigationFragment(manager),"bottomNavigation");
             }
+
         }else if (botNavFragment instanceof BottomNavigationFragment){
             //app goes to home tab before showing log out alert
-
             if (mainFragment instanceof HomeFragment) {
                 showAlert();
             }else{
