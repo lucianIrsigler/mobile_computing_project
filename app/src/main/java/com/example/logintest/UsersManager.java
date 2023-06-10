@@ -19,7 +19,11 @@ public class UsersManager extends AppCompatActivity {
         return SharedPreferencesManager.retrieveUserId();
 
     }
-
+    /**
+     * Retrieves the user information for the current user.
+     *
+     * @return a JSONObject containing the user information
+     */
     public JSONObject getUserInformation(){
         //get saved user id
         long userID = getCurrentUserID();
@@ -37,7 +41,12 @@ public class UsersManager extends AppCompatActivity {
 
         return handler.getRequest(url,params,JSONObject.class);
     }
-
+    /**
+     * Searches for user information based on the provided user ID.
+     *
+     * @param userID the ID of the user to search for
+     * @return a JSONObject containing the user information
+     */
     public JSONObject searchUserInfo(long userID){
         //assign params
         JSONObject params = new JSONObject();
@@ -52,7 +61,12 @@ public class UsersManager extends AppCompatActivity {
 
         return handler.getRequest(url,params,JSONObject.class);
     }
-
+    /**
+     * Checks if the provided username is available.
+     *
+     * @param username the username to check
+     * @return a JSONObject containing the result of the username check
+     */
     public JSONObject checkUsername(String username){
         JSONObject params = new JSONObject();
         try {

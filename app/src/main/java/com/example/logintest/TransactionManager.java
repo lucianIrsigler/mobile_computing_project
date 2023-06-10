@@ -32,7 +32,12 @@ public class TransactionManager{
             throw new RuntimeException(e);
         }
     }
-
+    /**
+     * Inserts a transaction record for a user and a product.
+     *
+     * @param userID    the ID of the user
+     * @param productID the ID of the product
+     */
     void insertTransaction(long userID,int productID){
         JSONObject params = new JSONObject();
         try {
