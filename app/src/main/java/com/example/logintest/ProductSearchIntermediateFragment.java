@@ -30,7 +30,6 @@ public class ProductSearchIntermediateFragment extends Fragment {
     public ProductSearchIntermediateFragment(FragmentManager manager,String query) {
         this.manager = manager;
         this.query=query;
-        // Required empty public constructor
     }
 
     @Nullable
@@ -71,8 +70,6 @@ public class ProductSearchIntermediateFragment extends Fragment {
                             .replace(R.id.container, fragmentViewProduct)
                             .addToBackStack(null)
                             .commit();
-
-
                 });
                 return true;
             }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,12 +18,29 @@ public class UsersManager extends AppCompatActivity {
 
         //get saved user id
         SharedPreferencesManager.initialize(context);
-        long userId = SharedPreferencesManager.retrieveUserId();
+        long userID = SharedPreferencesManager.retrieveUserId();
 
         //assign params
         JSONObject params = new JSONObject();
         try {
-            params.put("userID",userId);
+            params.put("userID",userID);
+        }catch (JSONException e){
+            System.out.println("error");
+        }
+
+        //url to get request
+        String url = "https://lamp.ms.wits.ac.za/~s2621933/php/getuserinfo.php";
+
+        return handler.getRequest(url,params,JSONObject.class);
+    }
+
+    public JSONObject searchUserInfo(long userID){
+        Context context = this;
+
+        //assign params
+        JSONObject params = new JSONObject();
+        try {
+            params.put("userID",userID);
         }catch (JSONException e){
             System.out.println("error");
         }

@@ -21,26 +21,25 @@ public class ProductManager {
     public ProductManager() {
         httpHandler = new HTTPHandler();
     }
+
     /**
-     * Adding a product
-     * @param productName name of product
-     * @param productDescription description of the product being added
-     * @param productPrice price
-     * @param category category of product
+     * Adds a product
+     * @param product Product to add
+     * @param userID userID of seller
+     * @param category category of the product
      */
-    public /*String*/void addProduct(int productID,String productName, String productDescription, double productPrice, String category) {
+    public /*String*/void addProduct(Product product,long userID, String category) {
         JSONObject params = new JSONObject();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String currentDate = sdf.format(new Date());
         try {
-            params.put("productID",productID);
-            params.put("name", productName);
-            params.put("description", productDescription);
-            params.put("price", productPrice);
+            params.put("userID",userID);
+            params.put("productID",product.getProductID());
+            params.put("name", product.getName());
+            params.put("description", product.getDescription());
+            params.put("price", product.getPrice());
             params.put("category", category);
-            //params.put("image", bitmapToBase64(bitmap));
             params.put("date_added", currentDate);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

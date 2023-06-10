@@ -75,8 +75,6 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                 "https://lamp.ms.wits.ac.za/home/s2621933/php/selectoneproductimage.php",
                 newParams, String.class);
 
-        Log.i("search",response);
-
         byte[] decodedString = Base64.decode(response, Base64.DEFAULT);
         Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         holder.ivPhotoPlaceholder.setImageBitmap(decodedBitmap);

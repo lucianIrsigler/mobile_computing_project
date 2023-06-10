@@ -117,6 +117,7 @@ public class AddProductFragment extends Fragment {
             String productPriceText = productPriceEditText.getText().toString();
             String productCategory = productCategorySpinner.getSelectedItem().toString();
 
+
             if (productName.isEmpty() || productDescription.isEmpty() || productPriceText.isEmpty()) {
                 Toast.makeText(getActivity(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
                 return; // Exit the onClickListener without adding the product
@@ -130,11 +131,18 @@ public class AddProductFragment extends Fragment {
                 return; // Exit the onClickListener without adding the product
             }
 
-            //uploads images
-            upload(imagesToBeUploaded);
             try {
+                Product product = new Product(productName, productDescription, productPrice,productID);
+
+                SharedPreferencesManager.initialize(getActivity());
+                long userID = SharedPreferencesManager.retrieveUserId();
+
                 // Call the addProduct method of the product manager to add the product
-                productManager.addProduct(productID,productName, productDescription, productPrice, productCategory);
+                productManager.addProduct(product,userID,productCategory);
+
+                //uploads images
+                upload(imagesToBeUploaded);
+
                 Toast.makeText(getActivity(), "Product added successfully", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 e.printStackTrace();

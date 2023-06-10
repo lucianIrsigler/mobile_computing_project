@@ -1,6 +1,6 @@
 package com.example.logintest;
+
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.logintest.Product;
 import com.example.logintest.databinding.FragmentViewProductBinding;
 
 import org.json.JSONArray;
@@ -24,7 +23,7 @@ import java.util.List;
 
 public class FragmentViewProduct extends Fragment {
     private Product product;
-
+    final HTTPHandler handler = new HTTPHandler();
     FragmentViewProductBinding binding;
     public FragmentViewProduct() {
         // Required empty public constructor
@@ -36,10 +35,10 @@ public class FragmentViewProduct extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = FragmentViewProductBinding.inflate(inflater, container, false);
 
         // Access the views in the fragment layout and update them with the product details
+        TextView userNameTextView = binding.getRoot().findViewById(R.id.tvUsernameViewProduct);
         TextView productNameTextView = binding.getRoot().findViewById(R.id.tvProductNameViewProduct);
         TextView productPriceTextView = binding.getRoot().findViewById(R.id.tvPriceViewProduct);
         TextView productDescriptionTextView = binding.getRoot().findViewById(R.id.tvDescriptionViewProduct);
@@ -52,61 +51,25 @@ public class FragmentViewProduct extends Fragment {
         productPriceTextView.setText(price);
         productDescriptionTextView.setText(product.getDescription());
 
-        HTTPHandler handler = new HTTPHandler();
-
-        JSONObject params = new JSONObject();
-
         try {
-            params.put("productID", product.getProductID());
+            JSONArray productDetails = getProductDetails();
 
-
-            JSONArray productDetails = handler.getRequest(
-                "https://lamp.ms.wits.ac.za/home/s2621933/php/searchoneproduct.php",
-                params, JSONArray.class);
-
-
-            String dateAdded = productDetails.getJSONObject(0).getString("dateAdded");
-            String[] substrings = dateAdded.split("-");
-            String day = substrings[2];
-            String month = substrings[1];
-            String year = substrings[0];
-
-            String dateOutput = day + "/" + month + "/" + year;
+            //set date
+            String dateOutput = formatDate(productDetails);
             dateOfProduct.setText(dateOutput);
 
-            //todo USERNAME
+            //get userID and set username
+            int userID = productDetails.getJSONObject(0).getInt("userID");
+            userNameTextView.setText(getUsername(userID));
 
-            JSONObject params1 = new JSONObject();
+            //get image paths
+            JSONArray imagePathResponse = getImagePaths();
 
-            params1.put("productID", 5);
+            //get base64
+            List<String> base64ImageList = getBase64Strings(imagePathResponse);
 
-            JSONArray imagePathResponse = handler.getRequest(
-                    "https://lamp.ms.wits.ac.za/home/s2621933/php/imageReader.php",
-                    params1, JSONArray.class);
-
-
-            JSONObject newParams = new JSONObject();
-
-            for (int i = 0; i < imagePathResponse.length(); i++) {
-                String imagePath = imagePathResponse.getJSONObject(i).getString("imagePath");
-                newParams.put("image" + i, imagePath);
-            }
-
-            newParams.put("imageCount", imagePathResponse.length());
-
-            List<String> base64ImageList = new ArrayList<>();
-            Log.i("test", newParams.toString());
-
-            JSONArray base64fileResponse = handler.postRequest(
-                    "https://lamp.ms.wits.ac.za/home/s2621933/php/base64_files.php",
-                    newParams, JSONArray.class);
-
-            for (int i = 0; i < base64fileResponse.length(); i++) {
-                base64ImageList.add(base64fileResponse.getJSONObject(i).getString("base64"));
-            }
-
+            //set recycler view
             ImageAdapterGetFromDatabase imageAdapterGetFromDatabase = new ImageAdapterGetFromDatabase(base64ImageList);
-
             showImageRecyclerView.setLayoutManager(new LinearLayoutManager(
                     getContext(), LinearLayoutManager.HORIZONTAL, false));
             showImageRecyclerView.setAdapter(imageAdapterGetFromDatabase);
@@ -115,5 +78,88 @@ public class FragmentViewProduct extends Fragment {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Search a products details
+     * @return the JSONArray of the product details
+     * @throws JSONException
+     */
+    private JSONArray getProductDetails() throws JSONException {
+        JSONObject params = new JSONObject();
+        params.put("productID", product.getProductID());
+
+        return handler.getRequest(
+                "https://lamp.ms.wits.ac.za/home/s2621933/php/searchoneproduct.php",
+                params, JSONArray.class);
+    }
+
+    /**
+     * Searches user table to retreive a username
+     * @param userID userID to check
+     * @return the username for the userID
+     * @throws JSONException if something goes wrong with JSONObject
+     */
+    private String getUsername(long userID) throws JSONException {
+        UsersManager usersManager = new UsersManager();
+        JSONObject userName = usersManager.searchUserInfo(userID);
+        return userName.getString("username");
+    }
+
+    /**
+     *  formats the date output for the textview
+     * @param productDetails product details includes "dateAdded"
+     * @return the date formated
+     * @throws JSONException if something goes wrong with getJSONObject
+     */
+    private String formatDate(JSONArray productDetails) throws JSONException {
+        String dateAdded = productDetails.getJSONObject(0).getString("dateAdded");
+        String[] substrings = dateAdded.split("-");
+        String day = substrings[2];
+        String month = substrings[1];
+        String year = substrings[0];
+        return day + "/" + month + "/" + year;
+    }
+
+    /**
+     * Gets image paths for the product
+     * @return JSONArray including the image paths
+     * @throws JSONException if the params is unable to put "productID"
+     */
+    private JSONArray getImagePaths() throws JSONException {
+        JSONObject params = new JSONObject();
+        params.put("productID", product.getProductID());
+        return handler.getRequest(
+                "https://lamp.ms.wits.ac.za/home/s2621933/php/imageReader.php",
+                params, JSONArray.class);
+    }
+
+    /**
+     * Using the image paths, returns the base64 strings from the disk on the server
+     * @param imagePathResponse JSONArray with paths
+     * @return the base64 strings in a list
+     * @throws JSONException if params fails/JSONObject creation fails
+     */
+    private List<String> getBase64Strings(JSONArray imagePathResponse) throws JSONException {
+        JSONObject newParams = new JSONObject();
+
+        for (int i = 0; i < imagePathResponse.length(); i++) {
+            String imagePath = imagePathResponse.getJSONObject(i).getString("imagePath");
+            newParams.put("image" + i, imagePath);
+        }
+
+        newParams.put("imageCount", imagePathResponse.length());
+
+        List<String> base64ImageList = new ArrayList<>();
+
+        JSONArray base64fileResponse = handler.postRequest(
+                "https://lamp.ms.wits.ac.za/home/s2621933/php/base64_files.php",
+                newParams, JSONArray.class);
+
+        for (int i = 0; i < base64fileResponse.length(); i++) {
+            base64ImageList.add(base64fileResponse.getJSONObject(i).getString("base64"));
+        }
+
+        return base64ImageList;
     }
 }
