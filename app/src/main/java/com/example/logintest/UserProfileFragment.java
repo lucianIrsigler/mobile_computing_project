@@ -10,6 +10,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.logintest.databinding.FragmentUserProfileBinding;
 
@@ -17,9 +20,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.util.List;
+
 public class UserProfileFragment extends Fragment {
     private FragmentUserProfileBinding binding;
-    UsersManager usersManager = new UsersManager();
+    final UsersManager usersManager = new UsersManager();
+    final ProductManager productManager = new ProductManager();
 
     TextView textUsername;
     TextView textID;
@@ -27,7 +33,11 @@ public class UserProfileFragment extends Fragment {
     TextView textItems;
     TextView textReviews;
 
-    public UserProfileFragment() {}
+    private FragmentManager manager;
+
+    public UserProfileFragment(FragmentManager manager) {
+        this.manager = manager;
+    }
 
     @Nullable
     @Override
@@ -38,6 +48,26 @@ public class UserProfileFragment extends Fragment {
         textEmail = binding.getRoot().findViewById(R.id.tvEmailUP);
         textItems = binding.getRoot().findViewById(R.id.tvItemCount);
         textReviews = binding.getRoot().findViewById(R.id.tvReviewCount);
+        RecyclerView productsListed = binding.getRoot().findViewById(R.id.products_rv);
+        RecyclerView productsReviewed = binding.getRoot().findViewById(R.id.reviews_rv);
+
+        //listed products (get 20 of the users posted)
+        productsListed.setLayoutManager(new LinearLayoutManager(requireContext(),
+                LinearLayoutManager.HORIZONTAL, false));
+
+        SearchResultAdapter productsListedAdapter = new SearchResultAdapter();
+        productsListedAdapter.setManager(manager);
+
+        productsListed.setAdapter(productsListedAdapter);
+        List<Product> products= productManager.searchProductUserID(usersManager.getCurrentUserID());
+
+        productsListedAdapter.setProducts(products);
+
+        //listed reviews
+        productsReviewed.setLayoutManager(new LinearLayoutManager(requireContext(),
+                LinearLayoutManager.HORIZONTAL, false));
+
+
         updateUserProfile();
 
         return binding.getRoot();

@@ -20,10 +20,10 @@ public class FragmentAddress extends Fragment {
     FragmentAddressBinding binding;
     FragmentManager manager;
 
-    public int productID;
+    public Product product;
 
-    public void setArguments(int productID){
-        this.productID=productID;
+    public void setArguments(Product product){
+        this.product=product;
     }
 
     public FragmentAddress(FragmentManager manager){
@@ -60,7 +60,7 @@ public class FragmentAddress extends Fragment {
             }
 
             PaymentFragment fragment = new PaymentFragment(manager);
-            fragment.setArguments(productID);
+            fragment.setArguments(product);
 
             utility.replaceFragment(manager,R.id.container, fragment,"payment");
         });

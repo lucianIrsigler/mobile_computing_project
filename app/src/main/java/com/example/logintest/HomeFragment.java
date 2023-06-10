@@ -49,7 +49,6 @@ public class HomeFragment extends Fragment {
 
     public HomeFragment(FragmentManager manager) {
         this.manager = manager;
-        // Required empty public constructor
     }
     @Nullable
     @Override
@@ -60,19 +59,29 @@ public class HomeFragment extends Fragment {
         searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
         ImageView imageView = binding.getRoot().findViewById(R.id.imageView);
         TextView recommendedText = binding.getRoot().findViewById(R.id.tvRecommendedHeading);
+        TextView userName = binding.getRoot().findViewById(R.id.tvWelcomeUser);
 
+        //set username
+        UsersManager usersManager = new UsersManager();
+        JSONObject userInfo = usersManager.getUserInformation();
 
+        try {
+            String username = userInfo.getString("username");
+            userName.setText(String.format("Welcome %s",username));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
 
         //recycler for recommended products
         recommendedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         recommendedProductAdapter = new SearchResultAdapter();
+        recommendedProductAdapter.setManager(manager);
         recommendedRecyclerView.setAdapter(recommendedProductAdapter);
 
         // reco products
         List<Product> recommendedProducts = getRecommendedProducts();
         recommendedProductAdapter.setProducts(recommendedProducts);
         if (recommendedProducts.isEmpty()) {
-
             Toast.makeText(getActivity(), "No Recommendations at this time", Toast.LENGTH_LONG).show();
         } else {
             recommendedProductAdapter.setProducts(recommendedProducts);
@@ -83,51 +92,52 @@ public class HomeFragment extends Fragment {
         searchResultAdapter = new SearchResultAdapter();
         searchResultAdapter.setManager(manager);
         searchRecyclerView.setAdapter(searchResultAdapter);
-        //searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         searchRecyclerView.setLayoutManager(new LinearLayoutManager(
                 requireContext(), LinearLayoutManager.VERTICAL, false));
 
-        //todo maybe add onclick if java allows it
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                if (!isHidden){
-                    imageView.setVisibility(View.GONE);
-                    recommendedRecyclerView.setVisibility(View.GONE);
-                    recommendedText.setVisibility(View.GONE);
-                    searchRecyclerView.setVisibility(View.VISIBLE);
-                    utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
-                }
+                handler.removeCallbacks(runnable);
+                runnable = () -> {
+                    if (!isHidden){
+                        userName.setVisibility(View.GONE);
+                        imageView.setVisibility(View.GONE);
+                        recommendedRecyclerView.setVisibility(View.GONE);
+                        recommendedText.setVisibility(View.GONE);
+                        searchRecyclerView.setVisibility(View.VISIBLE);
+                        utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
+                    }
+                    searchResults = productManager.searchProduct(query);
+                    searchResultAdapter.setProducts(searchResults);
+                };
 
-                searchResults = productManager.searchProduct(query);
-                searchResultAdapter.setProducts(searchResults);
+                handler.postDelayed(runnable, 200);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (!isHidden){
-                    imageView.setVisibility(View.GONE);
-                    recommendedRecyclerView.setVisibility(View.GONE);
-                    recommendedText.setVisibility(View.GONE);
-                    searchRecyclerView.setVisibility(View.VISIBLE);
-                    utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
-                }
                 handler.removeCallbacks(runnable);
-                runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        // Perform your action here
-                        searchResults = productManager.searchProduct(newText);
-                        searchResultAdapter.setProducts(searchResults);
+                runnable = () -> {
+                    if (!isHidden){
+                        userName.setVisibility(View.GONE);
+                        imageView.setVisibility(View.GONE);
+                        recommendedRecyclerView.setVisibility(View.GONE);
+                        recommendedText.setVisibility(View.GONE);
+                        searchRecyclerView.setVisibility(View.VISIBLE);
+                        utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
                     }
+
+                    searchResults = productManager.searchProduct(newText);
+                    searchResultAdapter.setProducts(searchResults);
                 };
 
-                handler.postDelayed(runnable, 500);
+                handler.postDelayed(runnable, 200);
                 return true;
             }
         });
-
 
         return binding.getRoot();
     }
@@ -138,10 +148,12 @@ public class HomeFragment extends Fragment {
         searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
         ImageView imageView = binding.getRoot().findViewById(R.id.imageView);
         TextView recommendedText = binding.getRoot().findViewById(R.id.tvRecommendedHeading);
+        TextView userName = binding.getRoot().findViewById(R.id.tvWelcomeUser);
 
         imageView.setVisibility(View.VISIBLE);
         recommendedRecyclerView.setVisibility(View.VISIBLE);
         recommendedText.setVisibility(View.VISIBLE);
+        userName.setVisibility(View.VISIBLE);
         searchRecyclerView.setVisibility(View.GONE);
 
         utility.replaceFragment(manager, R.id.container1
@@ -153,38 +165,26 @@ public class HomeFragment extends Fragment {
     }
 
     private List<Product> getRecommendedProducts() {
-        //todo can use FragmentViewProduct here as well once working so recommned prod can be clickable
         List<Product> randomItems = new ArrayList<>();
-        int numberOfItems = 2;//doesnt work
-        String productName="";
+
         try {
             JSONObject params = new JSONObject();
-            params.put("search", productName);
-
-            String randomItemsUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php";
+            String randomItemsUrl =
+                    "https://lamp.ms.wits.ac.za/home/s2621933/php/selectRandomProducts.php";
 
             HTTPHandler httpHandler = new HTTPHandler();
             String response = httpHandler.getRequest(randomItemsUrl, params, String.class);
-
             // Parse the response and populate the randomItems list
             JSONArray jsonArray = new JSONArray(response);
-            int totalItems = jsonArray.length();
 
-
-            if (totalItems >= numberOfItems) {
-
-                List<Integer> indices = getRandomIndices(totalItems, numberOfItems);
-
-                for (int i = 0; i < indices.size(); i++) {
-                    JSONObject jsonProduct = jsonArray.getJSONObject(indices.get(i));
-                    String name = jsonProduct.getString("productName");
-                    String description = jsonProduct.getString("productDescription");
-                    double price = jsonProduct.getDouble("price");
-                    int productID= Integer.parseInt(jsonProduct.getString("productID"));
-
-                    Product product = new Product(name, description, price, productID);
-                    randomItems.add(product);
-                }
+            for (int i = 0; i < 2; i++) {
+                JSONObject jsonProduct = jsonArray.getJSONObject(i);
+                String name = jsonProduct.getString("productName");
+                String description = jsonProduct.getString("productDescription");
+                double price = jsonProduct.getDouble("price");
+                int productID= Integer.parseInt(jsonProduct.getString("productID"));
+                Product product = new Product(name, description, price, productID);
+                randomItems.add(product);
             }
         } catch (JSONException e) {
             Log.e("getRandomItems", e.getMessage());
@@ -193,20 +193,5 @@ public class HomeFragment extends Fragment {
         return randomItems;
 
     }
-
-    private List<Integer> getRandomIndices(int totalItems, int numberOfItems) {
-        List<Integer> indices = new ArrayList<>();
-        int count = 0;
-        while (count < numberOfItems) {
-            int index = (int) (Math.random() * totalItems) + 2;
-            if (!indices.contains(index)) {
-                indices.add(index);
-                count++;
-            }
-        }
-        return indices;
-    }
-
-
 }
 

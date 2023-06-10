@@ -38,7 +38,7 @@ public class BottomNavigationFragment extends Fragment {
                 utility.replaceFragment(manager,R.id.container, new AddProductFragment(), "addProduct");
             }else{
                 //R.id.userProfileNav
-                utility.replaceFragment(manager,R.id.container, new UserProfileFragment(), "userProfile");
+                utility.replaceFragment(manager,R.id.container, new UserProfileFragment(manager), "userProfile");
             }
             return false;
         });

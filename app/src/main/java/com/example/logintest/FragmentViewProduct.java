@@ -57,7 +57,6 @@ public class FragmentViewProduct extends Fragment {
         Button addRating = binding.getRoot().findViewById(R.id.btnAddRating);
         RatingBar ratingBar = binding.getRoot().findViewById(R.id.ratingBar);
         TextView avgStars = binding.getRoot().findViewById(R.id.tvAvgRating);
-
         ImageSlider showImageSlider = binding.getRoot().findViewById(R.id.view_products_rv);
 
 
@@ -93,18 +92,13 @@ public class FragmentViewProduct extends Fragment {
             showImageSlider.setImageList(slideModels);
 
             //set rating bar and avg star textview
-            RatingManager ratingManager = new RatingManager();
-
-            float avg_stars = ratingManager.getAverageRating(product.getProductID());
-
-            if (avg_stars==0){
-                avgStars.setText("0");
-            }else{
-                avgStars.setText(Float.toString(avg_stars));
+            float avg_stars= getAvgStars();
+            try {
+                ratingBar.setRating(getAvgStars());
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
             }
-
-            ratingBar.setRating(avg_stars);
-
+            avgStars.setText(Float.toString(avg_stars));
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -112,40 +106,33 @@ public class FragmentViewProduct extends Fragment {
 
 
         //set onclicks
-
         buyProduct.setOnClickListener(view -> {
             FragmentAddress fragment = new FragmentAddress(manager);
-            fragment.setArguments(product.getProductID());
+            fragment.setArguments(product);
             utility.replaceFragment(manager,R.id.container,fragment,"address");
 
         });
 
         addRating.setOnClickListener(view -> {
             TransactionManager transactionManager = new TransactionManager();
+            ProductManager productManager = new ProductManager();
+
             int productID = product.getProductID();
             long userID = usersManager.getCurrentUserID();
-            Log.i("rating", Integer.toString(productID));
-            Log.i("rating",Long.toString(userID));
 
-            if (transactionManager.checkTransaction(userID,productID)) {
+
+            if (productManager.isSeller(userID,productID)){
+                Toast.makeText(getContext(),
+                        "Seller can not leave a review",
+                        Toast.LENGTH_LONG).show();
+            }
+            else if (transactionManager.checkTransaction(userID,productID)) {
                 showAlert();
-
-                //update stars
-                RatingManager ratingManager = new RatingManager();
-
-                float avg_stars = 0;
                 try {
-                    avg_stars = ratingManager.getAverageRating(product.getProductID());
+                    ratingBar.setRating(getAvgStars());
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-                if (avg_stars == 0) {
-                    avgStars.setText("0");
-                } else {
-                    avgStars.setText(Float.toString(avg_stars));
-                }
-                ratingBar.setRating(avg_stars);
-
             }else{
                 Toast.makeText(getContext(),
                         "You must buy the item before you can leave a review",
@@ -277,6 +264,9 @@ public class FragmentViewProduct extends Fragment {
         alertDialog.show();
     }
 
-
+    public float getAvgStars() throws JSONException {
+        RatingManager ratingManager = new RatingManager();
+        return ratingManager.getAverageRating(product.getProductID());
+    }
 
 }

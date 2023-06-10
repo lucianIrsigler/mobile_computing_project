@@ -57,6 +57,14 @@ public class HomePage extends AppCompatActivity {
                 utility.replaceFragment(manager,R.id.container,new HomeFragment(manager),"home");
                 utility.replaceFragment(manager,R.id.container1,
                         new BottomNavigationFragment(manager),"bottomNavigation");
+            }else if (mainFragment instanceof FragmentAddress){
+                Product product = ((FragmentAddress) mainFragment).product;
+                utility.replaceFragment(manager,R.id.container,
+                        new FragmentViewProduct(product,manager),"viewProduct");
+            }else if (mainFragment instanceof PaymentFragment){
+                Product product = ((PaymentFragment) mainFragment).product;
+                utility.replaceFragment(manager,R.id.container,
+                        new FragmentViewProduct(product,manager),"viewProduct");
             }
 
         }else if (botNavFragment instanceof BottomNavigationFragment){
@@ -88,7 +96,6 @@ public class HomePage extends AppCompatActivity {
 
         Button buttonYes = dialogView.findViewById(R.id.btnYes);
         buttonYes.setOnClickListener(v -> {
-            //todo check if userID is reset
             SharedPreferencesManager.initialize(this);
             SharedPreferencesManager.resetUserID();
             Intent intent = new Intent(HomePage.this,AccountActivity.class);

@@ -258,7 +258,6 @@ public class AddProductFragment extends Fragment {
         MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM);
 
-        //todo image view
         for (int i = 0; i < images_path.size(); i++) {
             Bitmap file = images_path.get(i);
             String fileExtention = extentions.get(i);
@@ -284,7 +283,6 @@ public class AddProductFragment extends Fragment {
                     RequestBody.create(mediaType, base64Image));
         }
 
-        //todo put the proper product id
         builder.addFormDataPart("productID", Integer.toString(productID));
 
         RequestBody requestBody = builder.build();

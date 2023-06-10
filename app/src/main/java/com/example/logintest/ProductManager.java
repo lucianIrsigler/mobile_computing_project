@@ -17,7 +17,6 @@ import java.util.Locale;
 
 public class ProductManager {
     private final HTTPHandler httpHandler;
-//TODO reponses in the activity screen
     public ProductManager() {
         httpHandler = new HTTPHandler();
     }
@@ -49,12 +48,7 @@ public class ProductManager {
         /*return*/ httpHandler.postRequest(addProductUrl, params, String.class);
     }
 
-    private String bitmapToBase64(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
+
     /**
      * searching a product
      * @param productName name of product being searched for
@@ -89,6 +83,52 @@ public class ProductManager {
         return searchResults;
 
     }
+
+    public /*void*/List<Product> searchProductUserID(long userID) {
+        List<Product> searchResults = new ArrayList<>();
+
+        try {
+            JSONObject params = new JSONObject();
+            params.put("userID", userID);
+
+            String searchUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/getProductsUserID.php";
+            String response = httpHandler.getRequest(searchUrl, params, String.class);
+
+            // populate the searchResults list
+            JSONArray jsonArray = new JSONArray(response);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonProduct = jsonArray.getJSONObject(i);
+                int productID= Integer.parseInt(jsonProduct.getString("productID"));
+                String name = jsonProduct.getString("productName");
+                String description = jsonProduct.getString("productDescription");
+                double price = jsonProduct.getDouble("price");
+
+                Product product = new Product(name, description, price,productID);
+                searchResults.add(product);
+            }
+        } catch (JSONException e) {
+            Log.e("searchProduct",e.getMessage());
+        }
+        return searchResults;
+    }
+
+    public boolean isSeller(long userID,int productID) {
+        JSONObject params = new JSONObject();
+
+        try {
+            params.put("userID",userID);
+            params.put("productID",productID);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+        String response = httpHandler.postRequest("https://lamp.ms.wits.ac.za/home/s2621933/php/isSeller.php",
+                params,String.class);
+
+        return response.equals("true");
+    }
+
     /**
      * searching for all products from a catergory
      * @param category name of products looking for
@@ -127,6 +167,7 @@ public class ProductManager {
 
         return searchResults;
     }
+
 
 
 }

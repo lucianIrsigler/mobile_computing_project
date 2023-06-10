@@ -20,10 +20,10 @@ public class PaymentFragment extends Fragment {
     FragmentPaymentBinding binding;
     FragmentManager manager;
 
-    int productID;
+    public Product product;
 
-    public void setArguments(int productID){
-        this.productID=productID;
+    public void setArguments(Product product){
+        this.product=product;
     }
 
     public PaymentFragment(FragmentManager manager){
@@ -65,8 +65,7 @@ public class PaymentFragment extends Fragment {
             UsersManager usersManager = new UsersManager();
             long userID = usersManager.getCurrentUserID();
 
-
-            transactionManager.insertTransaction(userID,productID);
+            transactionManager.insertTransaction(userID,product.getProductID());
 
         });
 

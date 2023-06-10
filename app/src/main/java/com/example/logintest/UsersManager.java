@@ -37,7 +37,7 @@ public class UsersManager extends AppCompatActivity {
         }
 
         //url to get request
-        String url = "https://lamp.ms.wits.ac.za/~s2621933/php/getuserinfo.php";
+        String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/getuserinfo.php";
 
         return handler.getRequest(url,params,JSONObject.class);
     }
@@ -57,7 +57,7 @@ public class UsersManager extends AppCompatActivity {
         }
 
         //url to get request
-        String url = "https://lamp.ms.wits.ac.za/~s2621933/php/getuserinfo.php";
+        String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/getuserinfo.php";
 
         return handler.getRequest(url,params,JSONObject.class);
     }

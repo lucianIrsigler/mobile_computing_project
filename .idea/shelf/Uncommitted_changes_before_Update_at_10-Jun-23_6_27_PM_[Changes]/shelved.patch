@@ -1,0 +1,796 @@
+Index: app/src/main/java/com/example/logintest/UserProfileFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.example.logintest.databinding.FragmentUserProfileBinding;\r\n\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\nimport org.w3c.dom.Text;\r\n\r\npublic class UserProfileFragment extends Fragment {\r\n    private FragmentUserProfileBinding binding;\r\n    UsersManager usersManager = new UsersManager();\r\n\r\n    TextView textUsername;\r\n    TextView textID;\r\n    TextView textEmail;\r\n    TextView textItems;\r\n    TextView textReviews;\r\n\r\n    public UserProfileFragment() {}\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        binding = FragmentUserProfileBinding.inflate(inflater, container, false);\r\n        textUsername = binding.getRoot().findViewById(R.id.tvUsernameUP);\r\n        textID = binding.getRoot().findViewById(R.id.tvIDUP);\r\n        textEmail = binding.getRoot().findViewById(R.id.tvEmailUP);\r\n        textItems = binding.getRoot().findViewById(R.id.tvItemCount);\r\n        textReviews = binding.getRoot().findViewById(R.id.tvReviewCount);\r\n        updateUserProfile();\r\n\r\n        return binding.getRoot();\r\n    }\r\n\r\n    private void updateUserProfile(){\r\n        //TODO get userid to set things\r\n        SharedPreferencesManager.initialize(getActivity());\r\n        long userId = SharedPreferencesManager.retrieveUserId();\r\n        JSONObject userInfo = usersManager.getUserInformation();\r\n\r\n        try {\r\n            textUsername.setText(userInfo.getString(\"username\"));\r\n            textID.setText(Long.toString(userId));\r\n            textEmail.setText(userInfo.getString(\"email\"));\r\n            textItems.setText(userInfo.getString(\"numProducts\"));\r\n            textReviews.setText(userInfo.getString(\"numReviews\"));\r\n        }catch (JSONException e){\r\n            Toast.makeText(getActivity(),\"Invalid user\",Toast.LENGTH_SHORT).show();\r\n        }\r\n\r\n    }\r\n\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/UserProfileFragment.java b/app/src/main/java/com/example/logintest/UserProfileFragment.java
+--- a/app/src/main/java/com/example/logintest/UserProfileFragment.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/java/com/example/logintest/UserProfileFragment.java	(date 1686413583458)
+@@ -10,6 +10,9 @@
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.fragment.app.Fragment;
++import androidx.fragment.app.FragmentManager;
++import androidx.recyclerview.widget.LinearLayoutManager;
++import androidx.recyclerview.widget.RecyclerView;
+ 
+ import com.example.logintest.databinding.FragmentUserProfileBinding;
+ 
+@@ -17,9 +20,12 @@
+ import org.json.JSONObject;
+ import org.w3c.dom.Text;
+ 
++import java.util.List;
++
+ public class UserProfileFragment extends Fragment {
+     private FragmentUserProfileBinding binding;
+-    UsersManager usersManager = new UsersManager();
++    final UsersManager usersManager = new UsersManager();
++    final ProductManager productManager = new ProductManager();
+ 
+     TextView textUsername;
+     TextView textID;
+@@ -27,7 +33,11 @@
+     TextView textItems;
+     TextView textReviews;
+ 
+-    public UserProfileFragment() {}
++    private FragmentManager manager;
++
++    public UserProfileFragment(FragmentManager manager) {
++        this.manager = manager;
++    }
+ 
+     @Nullable
+     @Override
+@@ -38,6 +48,26 @@
+         textEmail = binding.getRoot().findViewById(R.id.tvEmailUP);
+         textItems = binding.getRoot().findViewById(R.id.tvItemCount);
+         textReviews = binding.getRoot().findViewById(R.id.tvReviewCount);
++        RecyclerView productsListed = binding.getRoot().findViewById(R.id.products_rv);
++        RecyclerView productsReviewed = binding.getRoot().findViewById(R.id.reviews_rv);
++
++        //listed products (get 20 of the users posted)
++        productsListed.setLayoutManager(new LinearLayoutManager(requireContext(),
++                LinearLayoutManager.HORIZONTAL, false));
++
++        SearchResultAdapter productsListedAdapter = new SearchResultAdapter();
++        productsListedAdapter.setManager(manager);
++
++        productsListed.setAdapter(productsListedAdapter);
++        List<Product> products= productManager.searchProductUserID(usersManager.getCurrentUserID());
++
++        productsListedAdapter.setProducts(products);
++
++        //listed reviews
++        productsReviewed.setLayoutManager(new LinearLayoutManager(requireContext(),
++                LinearLayoutManager.HORIZONTAL, false));
++
++
+         updateUserProfile();
+ 
+         return binding.getRoot();
+Index: app/src/main/java/com/example/logintest/FragmentViewProduct.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Intent;\r\nimport android.graphics.Bitmap;\r\nimport android.graphics.BitmapFactory;\r\nimport android.os.Bundle;\r\nimport android.text.Editable;\r\nimport android.text.TextWatcher;\r\nimport android.transition.Slide;\r\nimport android.util.Base64;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\nimport android.widget.RatingBar;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AlertDialog;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentActivity;\r\nimport androidx.fragment.app.FragmentManager;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.denzcoskun.imageslider.ImageSlider;\r\nimport com.denzcoskun.imageslider.constants.ScaleTypes;\r\nimport com.denzcoskun.imageslider.models.SlideModel;\r\nimport com.example.logintest.databinding.FragmentViewProductBinding;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\nimport org.w3c.dom.Text;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\nimport java.util.Objects;\r\n\r\npublic class FragmentViewProduct extends Fragment {\r\n    private Product product;\r\n    final HTTPHandler handler = new HTTPHandler();\r\n    final UsersManager usersManager = new UsersManager();\r\n    FragmentViewProductBinding binding;\r\n    FragmentManager manager;\r\n\r\n    public FragmentViewProduct(Product product,FragmentManager manager) {\r\n        this.product = product;\r\n        this.manager = manager;\r\n    }\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        binding = FragmentViewProductBinding.inflate(inflater, container, false);\r\n\r\n        // Access the views in the fragment layout and update them with the product details\r\n        TextView userNameTextView = binding.getRoot().findViewById(R.id.tvUsernameViewProduct);\r\n        TextView productNameTextView = binding.getRoot().findViewById(R.id.tvProductNameViewProduct);\r\n        TextView productPriceTextView = binding.getRoot().findViewById(R.id.tvPriceViewProduct);\r\n        TextView productDescriptionTextView = binding.getRoot().findViewById(R.id.tvDescriptionViewProduct);\r\n        TextView dateOfProduct = binding.getRoot().findViewById(R.id.tvDateViewProduct);\r\n        //RecyclerView showImageRecyclerView = binding.getRoot().findViewById(R.id.view_products_rv);\r\n        Button buyProduct = binding.getRoot().findViewById(R.id.btnBuyNow);\r\n        Button addRating = binding.getRoot().findViewById(R.id.btnAddRating);\r\n        RatingBar ratingBar = binding.getRoot().findViewById(R.id.ratingBar);\r\n        TextView avgStars = binding.getRoot().findViewById(R.id.tvAvgRating);\r\n\r\n        ImageSlider showImageSlider = binding.getRoot().findViewById(R.id.view_products_rv);\r\n\r\n\r\n        productNameTextView.setText(product.getName());\r\n        String price = String.format(\"R%.2f\",product.getPrice());\r\n        productPriceTextView.setText(price);\r\n        productDescriptionTextView.setText(product.getDescription());\r\n\r\n        //sets text for views\r\n        try {\r\n            JSONArray productDetails = getProductDetails();\r\n\r\n            //set date\r\n            String dateOutput = formatDate(productDetails);\r\n            dateOfProduct.setText(dateOutput);\r\n\r\n            //get userID and set username\r\n            int userID = productDetails.getJSONObject(0).getInt(\"userID\");\r\n            userNameTextView.setText(getUsername(userID));\r\n\r\n            //get image paths\r\n            JSONArray imagePathResponse = getImagePaths();\r\n\r\n            List<SlideModel> slideModels = new ArrayList<SlideModel>();\r\n\r\n            for (int i = 0; i < imagePathResponse.length(); i++) {\r\n                String imagePath = imagePathResponse.getJSONObject(i).getString(\"imagePath\");\r\n                String url = \"https://lamp.ms.wits.ac.za/home/s2621933/php/getimage.php?imagepath=\"+imagePath;\r\n                SlideModel slide = new SlideModel(url,ScaleTypes.FIT);\r\n                slideModels.add(slide);\r\n            }\r\n\r\n            showImageSlider.setImageList(slideModels);\r\n\r\n            //set rating bar and avg star textview\r\n            RatingManager ratingManager = new RatingManager();\r\n\r\n            float avg_stars = ratingManager.getAverageRating(product.getProductID());\r\n\r\n            if (avg_stars==0){\r\n                avgStars.setText(\"0\");\r\n            }else{\r\n                avgStars.setText(Float.toString(avg_stars));\r\n            }\r\n\r\n            ratingBar.setRating(avg_stars);\r\n\r\n\r\n        } catch (JSONException e) {\r\n            throw new RuntimeException(e);\r\n        }\r\n\r\n\r\n        //set onclicks\r\n\r\n        buyProduct.setOnClickListener(view -> {\r\n            FragmentAddress fragment = new FragmentAddress(manager);\r\n            fragment.setArguments(product.getProductID());\r\n            utility.replaceFragment(manager,R.id.container,fragment,\"address\");\r\n\r\n        });\r\n\r\n        addRating.setOnClickListener(view -> {\r\n            TransactionManager transactionManager = new TransactionManager();\r\n            int productID = product.getProductID();\r\n            long userID = usersManager.getCurrentUserID();\r\n            Log.i(\"rating\", Integer.toString(productID));\r\n            Log.i(\"rating\",Long.toString(userID));\r\n\r\n            if (transactionManager.checkTransaction(userID,productID)) {\r\n                showAlert();\r\n\r\n                //update stars\r\n                RatingManager ratingManager = new RatingManager();\r\n\r\n                float avg_stars = 0;\r\n                try {\r\n                    avg_stars = ratingManager.getAverageRating(product.getProductID());\r\n                } catch (JSONException e) {\r\n                    throw new RuntimeException(e);\r\n                }\r\n                if (avg_stars == 0) {\r\n                    avgStars.setText(\"0\");\r\n                } else {\r\n                    avgStars.setText(Float.toString(avg_stars));\r\n                }\r\n                ratingBar.setRating(avg_stars);\r\n\r\n            }else{\r\n                Toast.makeText(getContext(),\r\n                        \"You must buy the item before you can leave a review\",\r\n                        Toast.LENGTH_LONG).show();\r\n            }\r\n        });\r\n        return binding.getRoot();\r\n    }\r\n\r\n    /**\r\n     * Search a products details\r\n     * @return the JSONArray of the product details\r\n     * @throws JSONException incase JSONObject creation dies\r\n     */\r\n    private JSONArray getProductDetails() throws JSONException {\r\n        JSONObject params = new JSONObject();\r\n        params.put(\"productID\", product.getProductID());\r\n\r\n        return handler.getRequest(\r\n                \"https://lamp.ms.wits.ac.za/home/s2621933/php/searchoneproduct.php\",\r\n                params, JSONArray.class);\r\n    }\r\n\r\n    /**\r\n     * Searches user table to retreive a username\r\n     * @param userID userID to check\r\n     * @return the username for the userID\r\n     * @throws JSONException if something goes wrong with JSONObject\r\n     */\r\n    private String getUsername(long userID) throws JSONException {\r\n        JSONObject userName = usersManager.searchUserInfo(userID);\r\n        return userName.getString(\"username\");\r\n    }\r\n\r\n    /**\r\n     *  formats the date output for the textview\r\n     * @param productDetails product details includes \"dateAdded\"\r\n     * @return the date formated\r\n     * @throws JSONException if something goes wrong with getJSONObject\r\n     */\r\n    private String formatDate(JSONArray productDetails) throws JSONException {\r\n        String dateAdded = productDetails.getJSONObject(0).getString(\"dateAdded\");\r\n        String[] substrings = dateAdded.split(\"-\");\r\n        String day = substrings[2];\r\n        String month = substrings[1];\r\n        String year = substrings[0];\r\n        return day + \"/\" + month + \"/\" + year;\r\n    }\r\n\r\n    /**\r\n     * Gets image paths for the product\r\n     * @return JSONArray including the image paths\r\n     * @throws JSONException if the params is unable to put \"productID\"\r\n     */\r\n    private JSONArray getImagePaths() throws JSONException {\r\n        JSONObject params = new JSONObject();\r\n        params.put(\"productID\", product.getProductID());\r\n        return handler.getRequest(\r\n                \"https://lamp.ms.wits.ac.za/home/s2621933/php/imageReader.php\",\r\n                params, JSONArray.class);\r\n    }\r\n\r\n    public void showAlert(){\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());\r\n        LayoutInflater inflater = getLayoutInflater();\r\n        View dialogView = inflater.inflate(R.layout.review_product_dialog, null);\r\n        builder.setView(dialogView);\r\n\r\n        TextView ratingNum = dialogView.findViewById(R.id.dialog_rating);\r\n        Button submit = dialogView.findViewById(R.id.btnSubmit);\r\n        Button cancel = dialogView.findViewById(R.id.btnCancel);\r\n        RatingBar bar = dialogView.findViewById(R.id.rbRateYourPurchase);\r\n        final AlertDialog alertDialog = builder.create();\r\n\r\n        ratingNum.addTextChangedListener(new TextWatcher() {\r\n         @Override\r\n         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n         }\r\n\r\n         @Override\r\n         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {\r\n             if (charSequence.toString().isEmpty()) {\r\n                 bar.setRating(0);\r\n                 return;\r\n             }\r\n\r\n             float stars = Float.parseFloat(charSequence.toString());\r\n\r\n             if (stars<=5){\r\n                 bar.setRating(stars);\r\n             }else{\r\n                 bar.setRating(0);\r\n             }\r\n         }\r\n         @Override\r\n         public void afterTextChanged(Editable editable) {\r\n\r\n         }});\r\n\r\n        submit.setOnClickListener(v -> {\r\n            float stars = Float.parseFloat(ratingNum.getText().toString());\r\n\r\n            if (stars > 5 || stars<0){\r\n                Toast.makeText(getActivity(), \"Invalid rating\", Toast.LENGTH_SHORT).show();\r\n                alertDialog.dismiss();\r\n            }\r\n            RatingManager ratingManager = new RatingManager();\r\n\r\n            ratingManager.addRating(usersManager.getCurrentUserID(),\r\n                    product.getProductID(),stars);\r\n\r\n            alertDialog.dismiss();\r\n        });\r\n\r\n        cancel.setOnClickListener(v -> alertDialog.dismiss());\r\n        alertDialog.show();\r\n    }\r\n\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/FragmentViewProduct.java b/app/src/main/java/com/example/logintest/FragmentViewProduct.java
+--- a/app/src/main/java/com/example/logintest/FragmentViewProduct.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/java/com/example/logintest/FragmentViewProduct.java	(date 1686413916627)
+@@ -67,7 +67,6 @@
+         Button addRating = binding.getRoot().findViewById(R.id.btnAddRating);
+         RatingBar ratingBar = binding.getRoot().findViewById(R.id.ratingBar);
+         TextView avgStars = binding.getRoot().findViewById(R.id.tvAvgRating);
+-
+         ImageSlider showImageSlider = binding.getRoot().findViewById(R.id.view_products_rv);
+ 
+ 
+@@ -103,18 +102,13 @@
+             showImageSlider.setImageList(slideModels);
+ 
+             //set rating bar and avg star textview
+-            RatingManager ratingManager = new RatingManager();
+-
+-            float avg_stars = ratingManager.getAverageRating(product.getProductID());
+-
+-            if (avg_stars==0){
+-                avgStars.setText("0");
+-            }else{
+-                avgStars.setText(Float.toString(avg_stars));
+-            }
+-
+-            ratingBar.setRating(avg_stars);
+-
++            float avg_stars= getAvgStars();
++            try {
++                ratingBar.setRating(getAvgStars());
++            } catch (JSONException e) {
++                throw new RuntimeException(e);
++            }
++            avgStars.setText(Float.toString(avg_stars));
+ 
+         } catch (JSONException e) {
+             throw new RuntimeException(e);
+@@ -122,10 +116,9 @@
+ 
+ 
+         //set onclicks
+-
+         buyProduct.setOnClickListener(view -> {
+             FragmentAddress fragment = new FragmentAddress(manager);
+-            fragment.setArguments(product.getProductID());
++            fragment.setArguments(product);
+             utility.replaceFragment(manager,R.id.container,fragment,"address");
+ 
+         });
+@@ -134,28 +127,15 @@
+             TransactionManager transactionManager = new TransactionManager();
+             int productID = product.getProductID();
+             long userID = usersManager.getCurrentUserID();
+-            Log.i("rating", Integer.toString(productID));
+-            Log.i("rating",Long.toString(userID));
++
+ 
+             if (transactionManager.checkTransaction(userID,productID)) {
+                 showAlert();
+-
+-                //update stars
+-                RatingManager ratingManager = new RatingManager();
+-
+-                float avg_stars = 0;
+                 try {
+-                    avg_stars = ratingManager.getAverageRating(product.getProductID());
++                    ratingBar.setRating(getAvgStars());
+                 } catch (JSONException e) {
+                     throw new RuntimeException(e);
+                 }
+-                if (avg_stars == 0) {
+-                    avgStars.setText("0");
+-                } else {
+-                    avgStars.setText(Float.toString(avg_stars));
+-                }
+-                ratingBar.setRating(avg_stars);
+-
+             }else{
+                 Toast.makeText(getContext(),
+                         "You must buy the item before you can leave a review",
+@@ -274,6 +254,9 @@
+         alertDialog.show();
+     }
+ 
+-
++    public float getAvgStars() throws JSONException {
++        RatingManager ratingManager = new RatingManager();
++        return ratingManager.getAverageRating(product.getProductID());
++    }
+ 
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/logintest/ProductManager.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.graphics.Bitmap;\r\nimport android.util.Base64;\r\nimport android.util.Log;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.io.ByteArrayOutputStream;\r\nimport java.text.SimpleDateFormat;\r\nimport java.util.ArrayList;\r\nimport java.util.Date;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\n\r\npublic class ProductManager {\r\n    private final HTTPHandler httpHandler;\r\n//TODO reponses in the activity screen\r\n    public ProductManager() {\r\n        httpHandler = new HTTPHandler();\r\n    }\r\n\r\n    /**\r\n     * Adds a product\r\n     * @param product Product to add\r\n     * @param userID userID of seller\r\n     * @param category category of the product\r\n     */\r\n    public /*String*/void addProduct(Product product,long userID, String category) {\r\n        JSONObject params = new JSONObject();\r\n        SimpleDateFormat sdf = new SimpleDateFormat(\"yyyy-MM-dd\", Locale.getDefault());\r\n        String currentDate = sdf.format(new Date());\r\n        try {\r\n            params.put(\"userID\",userID);\r\n            params.put(\"productID\",product.getProductID());\r\n            params.put(\"name\", product.getName());\r\n            params.put(\"description\", product.getDescription());\r\n            params.put(\"price\", product.getPrice());\r\n            params.put(\"category\", category);\r\n            params.put(\"date_added\", currentDate);\r\n        } catch (JSONException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n\r\n        String addProductUrl = \"https://lamp.ms.wits.ac.za/home/s2621933/php/addproduct.php\";\r\n        /*return*/ httpHandler.postRequest(addProductUrl, params, String.class);\r\n    }\r\n\r\n    private String bitmapToBase64(Bitmap bitmap) {\r\n        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();\r\n        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);\r\n        byte[] byteArray = byteArrayOutputStream.toByteArray();\r\n        return Base64.encodeToString(byteArray, Base64.DEFAULT);\r\n    }\r\n    /**\r\n     * searching a product\r\n     * @param productName name of product being searched for\r\n     */\r\n    public /*void*/List<Product> searchProduct(String productName) {\r\n        List<Product> searchResults = new ArrayList<>();\r\n\r\n        try {\r\n            JSONObject params = new JSONObject();\r\n            params.put(\"search\", productName);\r\n\r\n            String searchUrl = \"https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php\";\r\n            String response = httpHandler.getRequest(searchUrl, params, String.class);\r\n\r\n            // populate the searchResults list\r\n            JSONArray jsonArray = new JSONArray(response);\r\n\r\n            for (int i = 0; i < jsonArray.length(); i++) {\r\n                JSONObject jsonProduct = jsonArray.getJSONObject(i);\r\n                int productID= Integer.parseInt(jsonProduct.getString(\"productID\"));\r\n                String name = jsonProduct.getString(\"productName\");\r\n                String description = jsonProduct.getString(\"productDescription\");\r\n                double price = jsonProduct.getDouble(\"price\");\r\n\r\n                Product product = new Product(name, description, price,productID);\r\n                searchResults.add(product);\r\n            }\r\n        } catch (JSONException e) {\r\n            Log.e(\"searchProduct\",e.getMessage());\r\n        }\r\n\r\n        return searchResults;\r\n\r\n    }\r\n    /**\r\n     * searching for all products from a catergory\r\n     * @param category name of products looking for\r\n     */\r\n    public List<Product> findAllInCategory(String category) {\r\n        List<Product> searchResults = new ArrayList<>();\r\n        JSONObject params = new JSONObject();\r\n\r\n        try {\r\n            params.put(\"category\", category); //\r\n        } catch (JSONException e) {\r\n            e.printStackTrace();\r\n        }\r\n\r\n        String searchUrl = \"https://lamp.ms.wits.ac.za/home/s2621933/php/searchcategory.php\";\r\n\r\n        String response = httpHandler.getRequest(searchUrl, params, String.class);\r\n\r\n        try {\r\n            // populate the searchResults list\r\n            JSONArray jsonArray = new JSONArray(response);\r\n\r\n            for (int i = 0; i < jsonArray.length(); i++) {\r\n                JSONObject jsonProduct = jsonArray.getJSONObject(i);\r\n                int productID = Integer.parseInt(jsonProduct.getString(\"productID\"));\r\n                String name = jsonProduct.getString(\"productName\");\r\n                String description = jsonProduct.getString(\"productDescription\");\r\n                double price = jsonProduct.getDouble(\"price\");\r\n\r\n                Product product = new Product(name, description, price, productID);\r\n                searchResults.add(product);\r\n            }\r\n        }catch (JSONException ex) {\r\n            throw new RuntimeException(ex);\r\n        }\r\n\r\n        return searchResults;\r\n    }\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/ProductManager.java b/app/src/main/java/com/example/logintest/ProductManager.java
+--- a/app/src/main/java/com/example/logintest/ProductManager.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/java/com/example/logintest/ProductManager.java	(date 1686414409215)
+@@ -17,7 +17,6 @@
+ 
+ public class ProductManager {
+     private final HTTPHandler httpHandler;
+-//TODO reponses in the activity screen
+     public ProductManager() {
+         httpHandler = new HTTPHandler();
+     }
+@@ -49,12 +48,7 @@
+         /*return*/ httpHandler.postRequest(addProductUrl, params, String.class);
+     }
+ 
+-    private String bitmapToBase64(Bitmap bitmap) {
+-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+-        byte[] byteArray = byteArrayOutputStream.toByteArray();
+-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+-    }
++
+     /**
+      * searching a product
+      * @param productName name of product being searched for
+@@ -86,9 +80,51 @@
+             Log.e("searchProduct",e.getMessage());
+         }
+ 
++        return searchResults;
++
++    }
++
++    public /*void*/List<Product> searchProductUserID(long userID) {
++        List<Product> searchResults = new ArrayList<>();
++
++        try {
++            JSONObject params = new JSONObject();
++            params.put("userID", userID);
++
++            String searchUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/getProductsUserID.php";
++            String response = httpHandler.getRequest(searchUrl, params, String.class);
++
++            // populate the searchResults list
++            JSONArray jsonArray = new JSONArray(response);
++
++            for (int i = 0; i < jsonArray.length(); i++) {
++                JSONObject jsonProduct = jsonArray.getJSONObject(i);
++                int productID= Integer.parseInt(jsonProduct.getString("productID"));
++                String name = jsonProduct.getString("productName");
++                String description = jsonProduct.getString("productDescription");
++                double price = jsonProduct.getDouble("price");
++
++                Product product = new Product(name, description, price,productID);
++                searchResults.add(product);
++            }
++        } catch (JSONException e) {
++            Log.e("searchProduct",e.getMessage());
++        }
+         return searchResults;
++    }
+ 
++    public boolean isSeller(long userID,int productID) throws JSONException {
++        JSONObject params = new JSONObject();
++
++        params.put("userID",userID);
++        params.put("productID",productID);
++
++        String response = httpHandler.postRequest("https://lamp.ms.wits.ac.za/home/s2621933/php/isSeller.php",
++                params,String.class);
++
++        return response.equals("true");
+     }
++
+     /**
+      * searching for all products from a catergory
+      * @param category name of products looking for
+@@ -129,4 +165,5 @@
+     }
+ 
+ 
++
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/logintest/HomeFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.os.Bundle;\r\nimport android.os.Handler;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.widget.SearchView;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentManager;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.example.logintest.databinding.FragmentHomeBinding;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.List;\r\n\r\n//visibility -> 0 (visible) , 1(gone but still space), 2-> (gone and no space)\r\n\r\npublic class HomeFragment extends Fragment {\r\n    private final FragmentManager manager;\r\n    public androidx.appcompat.widget.SearchView searchView;\r\n    private FragmentHomeBinding binding;\r\n\r\n    private RecyclerView recommendedRecyclerView;\r\n    private SearchResultAdapter recommendedProductAdapter;\r\n    private RecyclerView searchRecyclerView;\r\n    private SearchResultAdapter searchResultAdapter;\r\n\r\n    private List<Product> searchResults;\r\n\r\n    private final ProductManager productManager = new ProductManager();\r\n\r\n    //add delay to search\r\n    private Handler handler = new Handler();\r\n    private Runnable runnable;\r\n\r\n    public HomeFragment(FragmentManager manager) {\r\n        this.manager = manager;\r\n        // Required empty public constructor\r\n    }\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        binding = FragmentHomeBinding.inflate(inflater, container, false);\r\n        searchView = binding.getRoot().findViewById(R.id.searchBar);\r\n        recommendedRecyclerView = binding.getRoot().findViewById(R.id.recommendedRecyclerView);\r\n        searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);\r\n        ImageView imageView = binding.getRoot().findViewById(R.id.imageView);\r\n        TextView recommendedText = binding.getRoot().findViewById(R.id.tvRecommendedHeading);\r\n\r\n\r\n\r\n        //recycler for recommended products\r\n        recommendedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));\r\n        recommendedProductAdapter = new SearchResultAdapter();\r\n        recommendedRecyclerView.setAdapter(recommendedProductAdapter);\r\n\r\n        // reco products\r\n        List<Product> recommendedProducts = getRecommendedProducts();\r\n        recommendedProductAdapter.setProducts(recommendedProducts);\r\n        if (recommendedProducts.isEmpty()) {\r\n\r\n            Toast.makeText(getActivity(), \"No Recommendations at this time\", Toast.LENGTH_LONG).show();\r\n        } else {\r\n            recommendedProductAdapter.setProducts(recommendedProducts);\r\n        }\r\n\r\n        boolean isHidden = false;\r\n\r\n        searchResultAdapter = new SearchResultAdapter();\r\n        searchResultAdapter.setManager(manager);\r\n        searchRecyclerView.setAdapter(searchResultAdapter);\r\n        //searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));\r\n        searchRecyclerView.setLayoutManager(new LinearLayoutManager(\r\n                requireContext(), LinearLayoutManager.VERTICAL, false));\r\n\r\n        //todo maybe add onclick if java allows it\r\n        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {\r\n            @Override\r\n            public boolean onQueryTextSubmit(String query) {\r\n                if (!isHidden){\r\n                    imageView.setVisibility(View.GONE);\r\n                    recommendedRecyclerView.setVisibility(View.GONE);\r\n                    recommendedText.setVisibility(View.GONE);\r\n                    searchRecyclerView.setVisibility(View.VISIBLE);\r\n                    utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),\"empty\");\r\n                }\r\n\r\n                searchResults = productManager.searchProduct(query);\r\n                searchResultAdapter.setProducts(searchResults);\r\n                return true;\r\n            }\r\n\r\n            @Override\r\n            public boolean onQueryTextChange(String newText) {\r\n                if (!isHidden){\r\n                    imageView.setVisibility(View.GONE);\r\n                    recommendedRecyclerView.setVisibility(View.GONE);\r\n                    recommendedText.setVisibility(View.GONE);\r\n                    searchRecyclerView.setVisibility(View.VISIBLE);\r\n                    utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),\"empty\");\r\n                }\r\n                handler.removeCallbacks(runnable);\r\n                runnable = new Runnable() {\r\n                    @Override\r\n                    public void run() {\r\n                        // Perform your action here\r\n                        searchResults = productManager.searchProduct(newText);\r\n                        searchResultAdapter.setProducts(searchResults);\r\n                    }\r\n                };\r\n\r\n                handler.postDelayed(runnable, 500);\r\n                return true;\r\n            }\r\n        });\r\n\r\n\r\n        return binding.getRoot();\r\n    }\r\n\r\n    public void unHide(){\r\n        searchView = binding.getRoot().findViewById(R.id.searchBar);\r\n        recommendedRecyclerView = binding.getRoot().findViewById(R.id.recommendedRecyclerView);\r\n        searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);\r\n        ImageView imageView = binding.getRoot().findViewById(R.id.imageView);\r\n        TextView recommendedText = binding.getRoot().findViewById(R.id.tvRecommendedHeading);\r\n\r\n        imageView.setVisibility(View.VISIBLE);\r\n        recommendedRecyclerView.setVisibility(View.VISIBLE);\r\n        recommendedText.setVisibility(View.VISIBLE);\r\n        searchRecyclerView.setVisibility(View.GONE);\r\n\r\n        utility.replaceFragment(manager, R.id.container1\r\n                ,new BottomNavigationFragment(manager)\r\n                ,\"bottomNavigation\");\r\n\r\n        searchResults.clear();\r\n        searchResultAdapter.setProducts(searchResults);\r\n    }\r\n\r\n    private List<Product> getRecommendedProducts() {\r\n        //todo can use FragmentViewProduct here as well once working so recommned prod can be clickable\r\n        List<Product> randomItems = new ArrayList<>();\r\n        int numberOfItems = 2;//doesnt work\r\n        String productName=\"\";\r\n        try {\r\n            JSONObject params = new JSONObject();\r\n            params.put(\"search\", productName);\r\n\r\n            String randomItemsUrl = \"https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php\";\r\n\r\n            HTTPHandler httpHandler = new HTTPHandler();\r\n            String response = httpHandler.getRequest(randomItemsUrl, params, String.class);\r\n\r\n            // Parse the response and populate the randomItems list\r\n            JSONArray jsonArray = new JSONArray(response);\r\n            int totalItems = jsonArray.length();\r\n\r\n\r\n            if (totalItems >= numberOfItems) {\r\n\r\n                List<Integer> indices = getRandomIndices(totalItems, numberOfItems);\r\n\r\n                for (int i = 0; i < indices.size(); i++) {\r\n                    JSONObject jsonProduct = jsonArray.getJSONObject(indices.get(i));\r\n                    String name = jsonProduct.getString(\"productName\");\r\n                    String description = jsonProduct.getString(\"productDescription\");\r\n                    double price = jsonProduct.getDouble(\"price\");\r\n                    int productID= Integer.parseInt(jsonProduct.getString(\"productID\"));\r\n\r\n                    Product product = new Product(name, description, price, productID);\r\n                    randomItems.add(product);\r\n                }\r\n            }\r\n        } catch (JSONException e) {\r\n            Log.e(\"getRandomItems\", e.getMessage());\r\n        }\r\n\r\n        return randomItems;\r\n\r\n    }\r\n\r\n    private List<Integer> getRandomIndices(int totalItems, int numberOfItems) {\r\n        List<Integer> indices = new ArrayList<>();\r\n        int count = 0;\r\n        while (count < numberOfItems) {\r\n            int index = (int) (Math.random() * totalItems) + 2;\r\n            if (!indices.contains(index)) {\r\n                indices.add(index);\r\n                count++;\r\n            }\r\n        }\r\n        return indices;\r\n    }\r\n\r\n\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/HomeFragment.java b/app/src/main/java/com/example/logintest/HomeFragment.java
+--- a/app/src/main/java/com/example/logintest/HomeFragment.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/java/com/example/logintest/HomeFragment.java	(date 1686411999827)
+@@ -49,7 +49,6 @@
+ 
+     public HomeFragment(FragmentManager manager) {
+         this.manager = manager;
+-        // Required empty public constructor
+     }
+     @Nullable
+     @Override
+@@ -60,8 +59,18 @@
+         searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
+         ImageView imageView = binding.getRoot().findViewById(R.id.imageView);
+         TextView recommendedText = binding.getRoot().findViewById(R.id.tvRecommendedHeading);
++        TextView userName = binding.getRoot().findViewById(R.id.tvWelcomeUser);
+ 
++        //set username
++        UsersManager usersManager = new UsersManager();
++        JSONObject userInfo = usersManager.getUserInformation();
+ 
++        try {
++            String username = userInfo.getString("username");
++            userName.setText(String.format("Welcome %s",username));
++        } catch (JSONException e) {
++            throw new RuntimeException(e);
++        }
+ 
+         //recycler for recommended products
+         recommendedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+@@ -72,7 +81,6 @@
+         List<Product> recommendedProducts = getRecommendedProducts();
+         recommendedProductAdapter.setProducts(recommendedProducts);
+         if (recommendedProducts.isEmpty()) {
+-
+             Toast.makeText(getActivity(), "No Recommendations at this time", Toast.LENGTH_LONG).show();
+         } else {
+             recommendedProductAdapter.setProducts(recommendedProducts);
+@@ -83,52 +91,53 @@
+         searchResultAdapter = new SearchResultAdapter();
+         searchResultAdapter.setManager(manager);
+         searchRecyclerView.setAdapter(searchResultAdapter);
+-        //searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+         searchRecyclerView.setLayoutManager(new LinearLayoutManager(
+                 requireContext(), LinearLayoutManager.VERTICAL, false));
+ 
+-        //todo maybe add onclick if java allows it
++
+         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+             @Override
+             public boolean onQueryTextSubmit(String query) {
+-                if (!isHidden){
+-                    imageView.setVisibility(View.GONE);
+-                    recommendedRecyclerView.setVisibility(View.GONE);
+-                    recommendedText.setVisibility(View.GONE);
+-                    searchRecyclerView.setVisibility(View.VISIBLE);
+-                    utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
+-                }
+-
+-                searchResults = productManager.searchProduct(query);
+-                searchResultAdapter.setProducts(searchResults);
++                handler.removeCallbacks(runnable);
++                runnable = () -> {
++                    if (!isHidden){
++                        userName.setVisibility(View.GONE);
++                        imageView.setVisibility(View.GONE);
++                        recommendedRecyclerView.setVisibility(View.GONE);
++                        recommendedText.setVisibility(View.GONE);
++                        searchRecyclerView.setVisibility(View.VISIBLE);
++                        utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
++                    }
++                    searchResults = productManager.searchProduct(query);
++                    searchResultAdapter.setProducts(searchResults);
++                };
++
++                handler.postDelayed(runnable, 200);
+                 return true;
+             }
+ 
+             @Override
+             public boolean onQueryTextChange(String newText) {
+-                if (!isHidden){
+-                    imageView.setVisibility(View.GONE);
+-                    recommendedRecyclerView.setVisibility(View.GONE);
+-                    recommendedText.setVisibility(View.GONE);
+-                    searchRecyclerView.setVisibility(View.VISIBLE);
+-                    utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
+-                }
+-                handler.removeCallbacks(runnable);
+-                runnable = new Runnable() {
+-                    @Override
+-                    public void run() {
+-                        // Perform your action here
+-                        searchResults = productManager.searchProduct(newText);
+-                        searchResultAdapter.setProducts(searchResults);
+-                    }
++                handler.removeCallbacks(runnable);
++                runnable = () -> {
++                    if (!isHidden){
++                        userName.setVisibility(View.GONE);
++                        imageView.setVisibility(View.GONE);
++                        recommendedRecyclerView.setVisibility(View.GONE);
++                        recommendedText.setVisibility(View.GONE);
++                        searchRecyclerView.setVisibility(View.VISIBLE);
++                        utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
++                    }
++
++                    searchResults = productManager.searchProduct(newText);
++                    searchResultAdapter.setProducts(searchResults);
+                 };
+ 
+-                handler.postDelayed(runnable, 500);
++                handler.postDelayed(runnable, 200);
+                 return true;
+             }
+         });
+ 
+-
+         return binding.getRoot();
+     }
+ 
+@@ -138,10 +147,12 @@
+         searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
+         ImageView imageView = binding.getRoot().findViewById(R.id.imageView);
+         TextView recommendedText = binding.getRoot().findViewById(R.id.tvRecommendedHeading);
++        TextView userName = binding.getRoot().findViewById(R.id.tvWelcomeUser);
+ 
+         imageView.setVisibility(View.VISIBLE);
+         recommendedRecyclerView.setVisibility(View.VISIBLE);
+         recommendedText.setVisibility(View.VISIBLE);
++        userName.setVisibility(View.VISIBLE);
+         searchRecyclerView.setVisibility(View.GONE);
+ 
+         utility.replaceFragment(manager, R.id.container1
+@@ -153,38 +164,26 @@
+     }
+ 
+     private List<Product> getRecommendedProducts() {
+-        //todo can use FragmentViewProduct here as well once working so recommned prod can be clickable
+         List<Product> randomItems = new ArrayList<>();
+-        int numberOfItems = 2;//doesnt work
+-        String productName="";
++
+         try {
+             JSONObject params = new JSONObject();
+-            params.put("search", productName);
+-
+-            String randomItemsUrl = "https://lamp.ms.wits.ac.za/home/s2621933/php/searchproduct.php";
++            String randomItemsUrl =
++                    "https://lamp.ms.wits.ac.za/home/s2621933/php/selectRandomProducts.php";
+ 
+             HTTPHandler httpHandler = new HTTPHandler();
+             String response = httpHandler.getRequest(randomItemsUrl, params, String.class);
+-
+             // Parse the response and populate the randomItems list
+             JSONArray jsonArray = new JSONArray(response);
+-            int totalItems = jsonArray.length();
+-
+ 
+-            if (totalItems >= numberOfItems) {
+-
+-                List<Integer> indices = getRandomIndices(totalItems, numberOfItems);
+-
+-                for (int i = 0; i < indices.size(); i++) {
+-                    JSONObject jsonProduct = jsonArray.getJSONObject(indices.get(i));
+-                    String name = jsonProduct.getString("productName");
+-                    String description = jsonProduct.getString("productDescription");
+-                    double price = jsonProduct.getDouble("price");
+-                    int productID= Integer.parseInt(jsonProduct.getString("productID"));
+-
+-                    Product product = new Product(name, description, price, productID);
+-                    randomItems.add(product);
+-                }
++            for (int i = 0; i < 2; i++) {
++                JSONObject jsonProduct = jsonArray.getJSONObject(i);
++                String name = jsonProduct.getString("productName");
++                String description = jsonProduct.getString("productDescription");
++                double price = jsonProduct.getDouble("price");
++                int productID= Integer.parseInt(jsonProduct.getString("productID"));
++                Product product = new Product(name, description, price, productID);
++                randomItems.add(product);
+             }
+         } catch (JSONException e) {
+             Log.e("getRandomItems", e.getMessage());
+@@ -193,20 +192,5 @@
+         return randomItems;
+ 
+     }
+-
+-    private List<Integer> getRandomIndices(int totalItems, int numberOfItems) {
+-        List<Integer> indices = new ArrayList<>();
+-        int count = 0;
+-        while (count < numberOfItems) {
+-            int index = (int) (Math.random() * totalItems) + 2;
+-            if (!indices.contains(index)) {
+-                indices.add(index);
+-                count++;
+-            }
+-        }
+-        return indices;
+-    }
+-
+-
+ }
+ 
+Index: app/src/main/java/com/example/logintest/ProductSearchIntermediateFragment.java
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/ProductSearchIntermediateFragment.java b/app/src/main/java/com/example/logintest/ProductSearchIntermediateFragment.java
+deleted file mode 100644
+--- a/app/src/main/java/com/example/logintest/ProductSearchIntermediateFragment.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ /dev/null	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
+@@ -1,109 +0,0 @@
+-package com.example.logintest;
+-
+-import android.os.Bundle;
+-import android.util.Log;
+-import android.view.LayoutInflater;
+-import android.view.View;
+-import android.view.ViewGroup;
+-
+-import androidx.annotation.NonNull;
+-import androidx.annotation.Nullable;
+-import androidx.appcompat.widget.SearchView;
+-import androidx.fragment.app.Fragment;
+-import androidx.fragment.app.FragmentManager;
+-import androidx.recyclerview.widget.LinearLayoutManager;
+-import androidx.recyclerview.widget.RecyclerView;
+-
+-import com.example.logintest.databinding.ProductSearchIntermediateBinding;
+-
+-import java.util.List;
+-
+-public class ProductSearchIntermediateFragment extends Fragment {
+-    private FragmentManager manager;
+-    public androidx.appcompat.widget.SearchView searchView;
+-    private ProductSearchIntermediateBinding binding;
+-
+-    public String query;
+-
+-    public ProductSearchIntermediateFragment(){}
+-
+-    public ProductSearchIntermediateFragment(FragmentManager manager,String query) {
+-        this.manager = manager;
+-        this.query=query;
+-    }
+-
+-    @Nullable
+-    @Override
+-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+-        binding = ProductSearchIntermediateBinding.inflate(inflater, container, false);
+-        searchView = binding.getRoot().findViewById(R.id.searchBar);
+-
+-        //todo make it look like we didnt steal this
+-        SearchView.SearchAutoComplete searchAutoComplete = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+-        searchAutoComplete.setText(this.query);
+-
+-        //todo keyboard disappears so need to fix that too
+-        //todo maybe add onclick if java allows it
+-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+-            @Override
+-            public boolean onQueryTextSubmit(String query) {
+-                RecyclerView searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
+-                SearchResultAdapter searchResultAdapter = new SearchResultAdapter();
+-                searchRecyclerView.setAdapter(searchResultAdapter);
+-                searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+-
+-                ProductManager productManager = new ProductManager();
+-
+-                List<Product> searchResults = productManager.searchProduct(query);
+-
+-                searchResultAdapter.setProducts(searchResults);
+-
+-                searchResultAdapter.setOnItemClickListener(product -> {
+-                    // item click event
+-                    Log.d("Item Clicked", "Product");
+-
+-                    // Navigate to FragmentViewProduct
+-                    FragmentViewProduct fragmentViewProduct =
+-                            new FragmentViewProduct(product,manager);
+-
+-                    manager.beginTransaction()
+-                            .replace(R.id.container, fragmentViewProduct)
+-                            .addToBackStack(null)
+-                            .commit();
+-                });
+-                return true;
+-            }
+-
+-            @Override
+-            public boolean onQueryTextChange(String newText) {
+-                RecyclerView searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
+-                SearchResultAdapter searchResultAdapter = new SearchResultAdapter();
+-                searchRecyclerView.setAdapter(searchResultAdapter);
+-                searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+-
+-                ProductManager productManager = new ProductManager();
+-
+-                // search+reccyler view update
+-                List<Product> searchResults = productManager.searchProduct(newText);
+-                searchResultAdapter.setProducts(searchResults);
+-
+-                searchResultAdapter.setOnItemClickListener(product -> {
+-                    FragmentViewProduct fragmentViewProduct =
+-                            new FragmentViewProduct(product,manager);
+-
+-                    manager.beginTransaction()
+-                            .replace(R.id.container, fragmentViewProduct)
+-                            .addToBackStack(null)
+-                            .commit();
+-                });
+-
+-
+-                return true;
+-            }
+-        });
+-
+-        return binding.getRoot();
+-    }
+-
+-
+-}
+Index: app/src/main/java/com/example/logintest/BottomNavigationFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentManager;\r\n\r\nimport com.example.logintest.databinding.FragmentBottomNavBinding;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\n\r\npublic class BottomNavigationFragment extends Fragment {\r\n\r\n    private final FragmentManager manager;\r\n    private FragmentBottomNavBinding binding;\r\n\r\n\r\n    public BottomNavigationFragment(FragmentManager manager){\r\n        this.manager = manager;\r\n    }\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        binding = FragmentBottomNavBinding.inflate(inflater, container, false);\r\n        BottomNavigationView botNav = binding.getRoot().findViewById(R.id.bottomNavView);\r\n\r\n        botNav.setOnItemSelectedListener(item->{\r\n            int id = item.getItemId();\r\n\r\n            if (id==R.id.homeNav){\r\n                utility.replaceFragment(manager,R.id.container, new HomeFragment(manager), \"home\");\r\n            }else if(id==R.id.addProductNav){\r\n                utility.replaceFragment(manager,R.id.container, new AddProductFragment(), \"addProduct\");\r\n            }else{\r\n                //R.id.userProfileNav\r\n                utility.replaceFragment(manager,R.id.container, new UserProfileFragment(), \"userProfile\");\r\n            }\r\n            return false;\r\n        });\r\n\r\n        return binding.getRoot();\r\n    }\r\n\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/BottomNavigationFragment.java b/app/src/main/java/com/example/logintest/BottomNavigationFragment.java
+--- a/app/src/main/java/com/example/logintest/BottomNavigationFragment.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/java/com/example/logintest/BottomNavigationFragment.java	(date 1686413492366)
+@@ -38,7 +38,7 @@
+                 utility.replaceFragment(manager,R.id.container, new AddProductFragment(), "addProduct");
+             }else{
+                 //R.id.userProfileNav
+-                utility.replaceFragment(manager,R.id.container, new UserProfileFragment(), "userProfile");
++                utility.replaceFragment(manager,R.id.container, new UserProfileFragment(manager), "userProfile");
+             }
+             return false;
+         });
+Index: app/src/main/java/com/example/logintest/FragmentAddress.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentManager;\r\n\r\nimport com.example.logintest.databinding.FragmentAddressBinding;\r\n\r\npublic class FragmentAddress extends Fragment {\r\n\r\n    FragmentAddressBinding binding;\r\n    FragmentManager manager;\r\n\r\n    public int productID;\r\n\r\n    public void setArguments(int productID){\r\n        this.productID=productID;\r\n    }\r\n\r\n    public FragmentAddress(FragmentManager manager){\r\n        this.manager = manager;\r\n    }\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        binding = FragmentAddressBinding.inflate(inflater,container,false);\r\n        return binding.getRoot();\r\n    }\r\n\r\n    @Override\r\n    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {\r\n        super.onViewCreated(view, savedInstanceState);\r\n\r\n        EditText addressLine1 = binding.getRoot().findViewById(R.id.edAddressLine1);\r\n        EditText addressLine2 = binding.getRoot().findViewById(R.id.edAddressLine2);\r\n        EditText cityEdit = binding.getRoot().findViewById(R.id.edCity);\r\n        EditText zipEdit = binding.getRoot().findViewById(R.id.edZIPCode);\r\n        Button addAddress = binding.getRoot().findViewById(R.id.btnAddAddress);\r\n\r\n        addAddress.setOnClickListener(view1->{\r\n            String line1 = addressLine1.getText().toString();\r\n            String line2 = addressLine2.getText().toString();\r\n            String city = cityEdit.getText().toString();\r\n            String zip = zipEdit.getText().toString();\r\n\r\n            //checks if input is empty\r\n            if (line1.isEmpty()||line2.isEmpty()||city.isEmpty()||zip.isEmpty()){\r\n                Toast.makeText(getContext(),\"Enter all fields\",Toast.LENGTH_LONG).show();\r\n                return;\r\n            }\r\n\r\n            PaymentFragment fragment = new PaymentFragment(manager);\r\n            fragment.setArguments(productID);\r\n\r\n            utility.replaceFragment(manager,R.id.container, fragment,\"payment\");\r\n        });\r\n\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/FragmentAddress.java b/app/src/main/java/com/example/logintest/FragmentAddress.java
+--- a/app/src/main/java/com/example/logintest/FragmentAddress.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/java/com/example/logintest/FragmentAddress.java	(date 1686412491189)
+@@ -20,10 +20,10 @@
+     FragmentAddressBinding binding;
+     FragmentManager manager;
+ 
+-    public int productID;
++    public Product product;
+ 
+-    public void setArguments(int productID){
+-        this.productID=productID;
++    public void setArguments(Product product){
++        this.product=product;
+     }
+ 
+     public FragmentAddress(FragmentManager manager){
+@@ -60,7 +60,7 @@
+             }
+ 
+             PaymentFragment fragment = new PaymentFragment(manager);
+-            fragment.setArguments(productID);
++            fragment.setArguments(product);
+ 
+             utility.replaceFragment(manager,R.id.container, fragment,"payment");
+         });
+Index: app/src/main/java/com/example/logintest/UsersManager.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Context;\r\n\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\npublic class UsersManager extends AppCompatActivity {\r\n\r\n    final HTTPHandler handler = new HTTPHandler();\r\n    public UsersManager(){}\r\n\r\n    public long getCurrentUserID(){\r\n        Context context = this;\r\n        SharedPreferencesManager.initialize(context);\r\n        return SharedPreferencesManager.retrieveUserId();\r\n\r\n    }\r\n\r\n    public JSONObject getUserInformation(){\r\n        //get saved user id\r\n        long userID = getCurrentUserID();\r\n\r\n        //assign params\r\n        JSONObject params = new JSONObject();\r\n        try {\r\n            params.put(\"userID\",userID);\r\n        }catch (JSONException e){\r\n            System.out.println(\"error\");\r\n        }\r\n\r\n        //url to get request\r\n        String url = \"https://lamp.ms.wits.ac.za/~s2621933/php/getuserinfo.php\";\r\n\r\n        return handler.getRequest(url,params,JSONObject.class);\r\n    }\r\n\r\n    public JSONObject searchUserInfo(long userID){\r\n        //assign params\r\n        JSONObject params = new JSONObject();\r\n        try {\r\n            params.put(\"userID\",userID);\r\n        }catch (JSONException e){\r\n            System.out.println(\"error\");\r\n        }\r\n\r\n        //url to get request\r\n        String url = \"https://lamp.ms.wits.ac.za/~s2621933/php/getuserinfo.php\";\r\n\r\n        return handler.getRequest(url,params,JSONObject.class);\r\n    }\r\n\r\n    public JSONObject checkUsername(String username){\r\n        JSONObject params = new JSONObject();\r\n        try {\r\n            params.put(\"username\",username);\r\n        }catch (JSONException e){\r\n            System.out.println(\"error\");\r\n        }\r\n        //url to get request\r\n        String url = \"https://lamp.ms.wits.ac.za/home/s2621933/php/checkusername.php\";\r\n        return handler.postRequest(url,params,JSONObject.class);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/UsersManager.java b/app/src/main/java/com/example/logintest/UsersManager.java
+--- a/app/src/main/java/com/example/logintest/UsersManager.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/java/com/example/logintest/UsersManager.java	(date 1686411770130)
+@@ -33,7 +33,7 @@
+         }
+ 
+         //url to get request
+-        String url = "https://lamp.ms.wits.ac.za/~s2621933/php/getuserinfo.php";
++        String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/getuserinfo.php";
+ 
+         return handler.getRequest(url,params,JSONObject.class);
+     }
+@@ -48,7 +48,7 @@
+         }
+ 
+         //url to get request
+-        String url = "https://lamp.ms.wits.ac.za/~s2621933/php/getuserinfo.php";
++        String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/getuserinfo.php";
+ 
+         return handler.getRequest(url,params,JSONObject.class);
+     }
+Index: app/src/main/res/layout/fragment_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:id=\"@+id/constraintLayoutHome\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n    <com.google.android.material.card.MaterialCardView\r\n        android:id=\"@+id/home_header\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        app:cardCornerRadius=\"8dp\"\r\n        app:cardElevation=\"12dp\"\r\n        app:cardUseCompatPadding=\"true\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.5\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\">\r\n\r\n        <androidx.appcompat.widget.SearchView\r\n            android:id=\"@+id/searchBar\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            app:iconifiedByDefault=\"false\"\r\n            app:queryBackground=\"@android:color/transparent\"\r\n            app:queryHint=\"Search\">\r\n\r\n        </androidx.appcompat.widget.SearchView>\r\n\r\n\r\n    </com.google.android.material.card.MaterialCardView>\r\n\r\n    <TextView\r\n        android:id=\"@+id/tvRecommendedHeading\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"16dp\"\r\n        android:gravity=\"center\"\r\n        android:text=\"@string/recommended_picks\"\r\n        android:textSize=\"18sp\"\r\n        android:textStyle=\"bold\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/home_header\" />\r\n\r\n    <androidx.recyclerview.widget.RecyclerView\r\n        android:id=\"@+id/recommendedRecyclerView\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"8dp\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/tvRecommendedHeading\" />\r\n\r\n\r\n    <androidx.recyclerview.widget.RecyclerView\r\n        android:id=\"@+id/search_recycler_view\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"600dp\"\r\n        android:layout_marginTop=\"88dp\"\r\n        android:visibility=\"gone\"\r\n\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.52\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"@+id/home_header\"\r\n        app:layout_constraintVertical_bias=\"0.142\"\r\n        tools:visibility=\"visible\" />\r\n\r\n    <ImageView\r\n        android:id=\"@+id/imageView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"350dp\"\r\n        android:alpha=\"0.6\"\r\n        android:contentDescription=\"@string/landing_page_photo\"\r\n        android:scaleType=\"centerCrop\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/recommendedRecyclerView\"\r\n        app:srcCompat=\"@drawable/welcome_open_eyes\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_home.xml b/app/src/main/res/layout/fragment_home.xml
+--- a/app/src/main/res/layout/fragment_home.xml	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/res/layout/fragment_home.xml	(date 1686411716058)
+@@ -44,6 +44,20 @@
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@id/home_header" />
+ 
++    <TextView
++        android:id="@+id/tvWelcomeUser"
++        android:layout_width="0dp"
++        android:layout_height="wrap_content"
++        android:layout_marginTop="188dp"
++        android:gravity="center"
++        android:text="Welcome User"
++        android:textSize="18sp"
++        android:textStyle="bold"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.0"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@id/home_header" />
++
+     <androidx.recyclerview.widget.RecyclerView
+         android:id="@+id/recommendedRecyclerView"
+         android:layout_width="0dp"
+Index: app/src/main/java/com/example/logintest/PaymentFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentManager;\r\n\r\nimport com.example.logintest.databinding.FragmentPaymentBinding;\r\n\r\npublic class PaymentFragment extends Fragment {\r\n\r\n    FragmentPaymentBinding binding;\r\n    FragmentManager manager;\r\n\r\n    int productID;\r\n\r\n    public void setArguments(int productID){\r\n        this.productID=productID;\r\n    }\r\n\r\n    public PaymentFragment(FragmentManager manager){\r\n        this.manager = manager;\r\n    }\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        binding = FragmentPaymentBinding.inflate(inflater,container,false);\r\n        return binding.getRoot();\r\n    }\r\n\r\n    @Override\r\n    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {\r\n        super.onViewCreated(view, savedInstanceState);\r\n\r\n        EditText cardHolderEdit = binding.getRoot().findViewById(R.id.edCardholder);\r\n        EditText cardNumEdit = binding.getRoot().findViewById(R.id.edCardNumber);\r\n        EditText expDateEdit = binding.getRoot().findViewById(R.id.edExpirationDate);\r\n        EditText cvvEdit = binding.getRoot().findViewById(R.id.edCVV);\r\n        Button makePayment = binding.getRoot().findViewById(R.id.btnMakePayment);\r\n        //todo date time picker for expDate\r\n\r\n        makePayment.setOnClickListener(view1->{\r\n            String cardName = cardHolderEdit.getText().toString();\r\n            String cardNum = cardNumEdit.getText().toString();\r\n            String expDate = expDateEdit.getText().toString();\r\n            String cvv = cvvEdit.getText().toString();\r\n\r\n            if (cardName.isEmpty()||cardNum.isEmpty()||expDate.isEmpty()||cvv.isEmpty()){\r\n                Toast.makeText(getContext(),\"Enter all fields\",Toast.LENGTH_LONG).show();\r\n                return;\r\n            }\r\n\r\n            Toast.makeText(getContext(), \"Purchase was successful\", Toast.LENGTH_SHORT).show();\r\n\r\n            TransactionManager transactionManager = new TransactionManager();\r\n            UsersManager usersManager = new UsersManager();\r\n            long userID = usersManager.getCurrentUserID();\r\n\r\n\r\n            transactionManager.insertTransaction(userID,productID);\r\n\r\n        });\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/PaymentFragment.java b/app/src/main/java/com/example/logintest/PaymentFragment.java
+--- a/app/src/main/java/com/example/logintest/PaymentFragment.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/java/com/example/logintest/PaymentFragment.java	(date 1686413008475)
+@@ -20,10 +20,10 @@
+     FragmentPaymentBinding binding;
+     FragmentManager manager;
+ 
+-    int productID;
++    public Product product;
+ 
+-    public void setArguments(int productID){
+-        this.productID=productID;
++    public void setArguments(Product product){
++        this.product=product;
+     }
+ 
+     public PaymentFragment(FragmentManager manager){
+@@ -65,8 +65,7 @@
+             UsersManager usersManager = new UsersManager();
+             long userID = usersManager.getCurrentUserID();
+ 
+-
+-            transactionManager.insertTransaction(userID,productID);
++            transactionManager.insertTransaction(userID,product.getProductID());
+ 
+         });
+ 
+Index: app/src/main/java/com/example/logintest/AddProductFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport static android.app.Activity.RESULT_OK;\r\n\r\nimport android.content.ClipData;\r\nimport android.content.ContentResolver;\r\nimport android.content.Intent;\r\nimport android.graphics.Bitmap;\r\nimport android.graphics.BitmapFactory;\r\nimport android.net.Uri;\r\nimport android.os.Bundle;\r\nimport android.util.Base64;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.webkit.MimeTypeMap;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.Spinner;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.activity.result.ActivityResultLauncher;\r\nimport androidx.activity.result.contract.ActivityResultContracts;\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.recyclerview.widget.LinearLayoutManager;\r\nimport androidx.recyclerview.widget.RecyclerView;\r\n\r\nimport com.example.logintest.databinding.FragmentAddProductBinding;\r\n\r\nimport java.io.ByteArrayOutputStream;\r\nimport java.io.IOException;\r\nimport java.io.InputStream;\r\nimport java.util.ArrayList;\r\nimport java.util.UUID;\r\n\r\nimport okhttp3.Call;\r\nimport okhttp3.MediaType;\r\nimport okhttp3.MultipartBody;\r\nimport okhttp3.OkHttpClient;\r\nimport okhttp3.Request;\r\nimport okhttp3.RequestBody;\r\n\r\npublic class AddProductFragment extends Fragment {\r\n    private FragmentAddProductBinding binding;\r\n    private final ProductManager productManager = new ProductManager();\r\n    private EditText productNameEditText;\r\n    private EditText productPriceEditText;\r\n    private EditText productDescriptionEditText;\r\n    private Spinner productCategorySpinner;\r\n\r\n    RecyclerView uploadImageRecyclerView;\r\n    private ActivityResultLauncher<Intent> imageSelectionLauncher;\r\n    private static final int MAX_IMAGE_SELECTION = 10;\r\n    private ArrayList<Bitmap> selectedImages;\r\n    private ArrayList<Bitmap> imagesToBeUploaded;\r\n    private ArrayList<String> extentions;\r\n\r\n    final private int productID = utility.generateRandomID();\r\n\r\n    public AddProductFragment(){}\r\n\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n        binding = FragmentAddProductBinding.inflate(inflater, container, false);\r\n        productNameEditText = binding.getRoot().findViewById(R.id.edProductName);\r\n        productDescriptionEditText = binding.getRoot().findViewById(R.id.edProductDesc);\r\n        productPriceEditText = binding.getRoot().findViewById(R.id.edPrice);\r\n        productCategorySpinner = binding.getRoot().findViewById(R.id.productCategorySpinner);\r\n        uploadImageRecyclerView = binding.getRoot().findViewById(R.id.ivAddProductPlaceholder);\r\n        Button buttonSelectImage = binding.getRoot().findViewById(R.id.btnSelectImage);\r\n        Button addProductButton = binding.getRoot().findViewById(R.id.btnAddProduct);\r\n\r\n\r\n\r\n        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),\r\n                R.array.categories_array, android.R.layout.simple_spinner_item);\r\n        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);\r\n        productCategorySpinner.setAdapter(adapter);\r\n\r\n\r\n        extentions = new ArrayList<>();\r\n        selectedImages = new ArrayList<>();\r\n        imagesToBeUploaded = new ArrayList<>();\r\n\r\n        ImageAdapterGetFromGallery imageAdapterGetFromGallery = new ImageAdapterGetFromGallery(selectedImages);\r\n        uploadImageRecyclerView.setLayoutManager(new LinearLayoutManager(\r\n                getContext(), LinearLayoutManager.HORIZONTAL, false));\r\n        uploadImageRecyclerView.setAdapter(imageAdapterGetFromGallery);\r\n\r\n        imageSelectionLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {\r\n            if (result.getResultCode() == RESULT_OK) {\r\n                Intent data = result.getData();\r\n\r\n                if (data != null) {\r\n                    if (data.getClipData() != null) {\r\n                        handleMultipleImageSelection(data.getClipData());\r\n                    } else if (data.getData() != null) {\r\n                        handleSingleImageSelection(data.getData());\r\n                    }\r\n                    imageAdapterGetFromGallery.setImageList(selectedImages);\r\n                }\r\n            }\r\n        });\r\n\r\n        buttonSelectImage.setOnClickListener(v-> openImageSelection());\r\n\r\n\r\n        addProductButton.setOnClickListener(v -> {\r\n            // Get the product details from user input (e.g., name, description, price, category)\r\n            String productName = productNameEditText.getText().toString();\r\n            String productDescription = productDescriptionEditText.getText().toString();\r\n            String productPriceText = productPriceEditText.getText().toString();\r\n            String productCategory = productCategorySpinner.getSelectedItem().toString();\r\n\r\n\r\n            if (productName.isEmpty() || productDescription.isEmpty() || productPriceText.isEmpty()) {\r\n                Toast.makeText(getActivity(), \"Please fill in all the fields\", Toast.LENGTH_SHORT).show();\r\n                return; // Exit the onClickListener without adding the product\r\n            }\r\n\r\n            double productPrice;\r\n            try {\r\n                productPrice = Double.parseDouble(productPriceText);\r\n            } catch (NumberFormatException e) {\r\n                Toast.makeText(getActivity(), \"Invalid price format\", Toast.LENGTH_SHORT).show();\r\n                return; // Exit the onClickListener without adding the product\r\n            }\r\n\r\n            try {\r\n                Product product = new Product(productName, productDescription, productPrice,productID);\r\n\r\n                SharedPreferencesManager.initialize(getActivity());\r\n                long userID = SharedPreferencesManager.retrieveUserId();\r\n\r\n                // Call the addProduct method of the product manager to add the product\r\n                productManager.addProduct(product,userID,productCategory);\r\n\r\n                //uploads images\r\n                upload(imagesToBeUploaded);\r\n\r\n                Toast.makeText(getActivity(), \"Product added successfully\", Toast.LENGTH_SHORT).show();\r\n            } catch (Exception e) {\r\n                e.printStackTrace();\r\n                Toast.makeText(getActivity(), \"Failed to add product\", Toast.LENGTH_SHORT).show();\r\n            }\r\n        });\r\n\r\n        return binding.getRoot();\r\n    }\r\n\r\n    private void openImageSelection() {\r\n        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);\r\n        intent.setType(\"image/*\");\r\n        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);\r\n        imageSelectionLauncher.launch(Intent.createChooser(intent, \"Select Images\"));\r\n    }\r\n\r\n    private void handleMultipleImageSelection(@NonNull ClipData clipData) {\r\n        int itemCount = clipData.getItemCount();\r\n        int imageCount = Math.min(itemCount, MAX_IMAGE_SELECTION);\r\n\r\n        imagesToBeUploaded.clear();\r\n        selectedImages.clear();\r\n        extentions.clear();\r\n\r\n        for (int i = 0; i < imageCount; i++) {\r\n            Uri imageUri = clipData.getItemAt(i).getUri();\r\n\r\n            ContentResolver contentResolver = requireContext().getContentResolver();\r\n            MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();\r\n            String fileExtension = mimeTypeMap.getExtensionFromMimeType(\r\n                    contentResolver.getType(imageUri));\r\n\r\n            extentions.add(fileExtension);\r\n\r\n            Bitmap bitmap = getBitmapFromUri(imageUri);\r\n            if (bitmap != null) {\r\n                selectedImages.add(bitmap);\r\n\r\n                // Compress the bitmap before adding to the list for upload\r\n                Bitmap compressedBitmap = compressBitmap(bitmap);\r\n                imagesToBeUploaded.add(compressedBitmap);\r\n            }\r\n        }\r\n    }\r\n\r\n    private void handleSingleImageSelection(Uri imageUri) {\r\n        Bitmap bitmap = getBitmapFromUri(imageUri);\r\n\r\n        if (bitmap != null) {\r\n            selectedImages.clear();\r\n            imagesToBeUploaded.clear();\r\n            selectedImages.add(bitmap);\r\n            extentions.clear();\r\n\r\n            ContentResolver contentResolver = requireContext().getContentResolver();\r\n            MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();\r\n            String fileExtension = mimeTypeMap.getExtensionFromMimeType(\r\n                    contentResolver.getType(imageUri));\r\n\r\n            extentions.add(fileExtension);\r\n            // Compress the bitmap before adding to the list for upload\r\n            Bitmap compressedBitmap = compressBitmap(bitmap);\r\n            imagesToBeUploaded.add(compressedBitmap);\r\n        }\r\n    }\r\n\r\n    private Bitmap compressBitmap(@NonNull Bitmap bitmap) {\r\n        ByteArrayOutputStream stream = new ByteArrayOutputStream();\r\n        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);\r\n        byte[] byteArray = stream.toByteArray();\r\n        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);\r\n    }\r\n\r\n    @Nullable\r\n    private Bitmap getBitmapFromUri(Uri uri) {\r\n        try {\r\n            InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);\r\n            return BitmapFactory.decodeStream(inputStream);\r\n        } catch (IOException e) {\r\n            e.printStackTrace();\r\n        }\r\n        return null;\r\n    }\r\n\r\n\r\n    public void upload(ArrayList<Bitmap> images_path) {\r\n        MultipartBody.Builder builder = new MultipartBody.Builder()\r\n                .setType(MultipartBody.FORM);\r\n\r\n        //todo image view\r\n        for (int i = 0; i < images_path.size(); i++) {\r\n            Bitmap file = images_path.get(i);\r\n            String fileExtention = extentions.get(i);\r\n\r\n            ByteArrayOutputStream baos = new ByteArrayOutputStream();\r\n\r\n            String mediaTypeString = \"image/jpeg\";\r\n\r\n            if (\"png\".equals(fileExtention)) {\r\n                file.compress(Bitmap.CompressFormat.PNG, 100, baos);\r\n                mediaTypeString = \"image/png\";\r\n            } else {\r\n                file.compress(Bitmap.CompressFormat.JPEG, 100, baos);\r\n            }\r\n\r\n            byte[] bitmapData = baos.toByteArray();\r\n            String base64Image = Base64.encodeToString(bitmapData, Base64.DEFAULT);\r\n\r\n            String filename = UUID.randomUUID().toString();\r\n\r\n            MediaType mediaType = MediaType.parse(mediaTypeString);\r\n            builder.addFormDataPart(\"image[]\", filename + \".\" + fileExtention,\r\n                    RequestBody.create(mediaType, base64Image));\r\n        }\r\n\r\n        //todo put the proper product id\r\n        builder.addFormDataPart(\"productID\", Integer.toString(productID));\r\n\r\n        RequestBody requestBody = builder.build();\r\n        Request request = new Request.Builder()\r\n                .url(\"https://lamp.ms.wits.ac.za/home/s2621933/php/insertimages.php\")\r\n                .post(requestBody)\r\n                .build();\r\n\r\n        OkHttpClient client = new OkHttpClient.Builder().build();\r\n\r\n        Call call = client.newCall(request);\r\n        call.enqueue(new okhttp3.Callback() {\r\n            @Override\r\n            public void onFailure(@NonNull Call call, @NonNull IOException e) {\r\n                e.printStackTrace();\r\n                Log.e(\"error\",\"onFailure called\");\r\n            }\r\n            @Override\r\n            public void onResponse(@NonNull Call call, @NonNull okhttp3.Response response) {\r\n            }\r\n        });\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/AddProductFragment.java b/app/src/main/java/com/example/logintest/AddProductFragment.java
+--- a/app/src/main/java/com/example/logintest/AddProductFragment.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/java/com/example/logintest/AddProductFragment.java	(date 1686411999772)
+@@ -233,7 +233,6 @@
+         MultipartBody.Builder builder = new MultipartBody.Builder()
+                 .setType(MultipartBody.FORM);
+ 
+-        //todo image view
+         for (int i = 0; i < images_path.size(); i++) {
+             Bitmap file = images_path.get(i);
+             String fileExtention = extentions.get(i);
+@@ -259,7 +258,6 @@
+                     RequestBody.create(mediaType, base64Image));
+         }
+ 
+-        //todo put the proper product id
+         builder.addFormDataPart("productID", Integer.toString(productID));
+ 
+         RequestBody requestBody = builder.build();
+Index: app/src/main/java/com/example/logintest/HomePage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.logintest;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.WindowManager;\r\nimport android.widget.Button;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.appcompat.app.AlertDialog;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.fragment.app.Fragment;\r\nimport androidx.fragment.app.FragmentManager;\r\n\r\nimport com.example.logintest.databinding.EmptyLayoutBinding;\r\nimport com.example.logintest.databinding.ProductSearchIntermediateBinding;\r\n\r\n\r\npublic class HomePage extends AppCompatActivity {\r\n\r\n    EmptyLayoutBinding binding;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        binding = EmptyLayoutBinding.inflate(getLayoutInflater());\r\n        setContentView(binding.getRoot());\r\n        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);\r\n\r\n        FragmentManager fragmentManager = getSupportFragmentManager();\r\n        fragmentManager.beginTransaction()\r\n                        .replace(R.id.container,new HomeFragment(fragmentManager),\"home\")\r\n                        .replace(R.id.container1, new BottomNavigationFragment(fragmentManager),\r\n                                \"bottomNav\")\r\n                        .commit();\r\n\r\n        fragmentManager.executePendingTransactions();\r\n    }\r\n\r\n\r\n    /**\r\n     * If the back key is pressed, it goes back to login instead of just crashing.\r\n     * There is an alert dialog used here.\r\n     */\r\n    @Override\r\n    public void onBackPressed() {\r\n        FragmentManager manager = getSupportFragmentManager();\r\n        Fragment botNavFragment = manager.findFragmentById(R.id.container1);\r\n        Fragment mainFragment = manager.findFragmentById(R.id.container);\r\n\r\n        if (botNavFragment instanceof EmptyFragment ) {\r\n            //in search screen goes back to main\r\n            if (mainFragment instanceof HomeFragment) {\r\n                ((HomeFragment) mainFragment).unHide();\r\n            }else if (mainFragment instanceof FragmentViewProduct){\r\n                utility.replaceFragment(manager,R.id.container,new HomeFragment(manager),\"home\");\r\n                utility.replaceFragment(manager,R.id.container1,\r\n                        new BottomNavigationFragment(manager),\"bottomNavigation\");\r\n            }\r\n\r\n        }else if (botNavFragment instanceof BottomNavigationFragment){\r\n            //app goes to home tab before showing log out alert\r\n            if (mainFragment instanceof HomeFragment) {\r\n                showAlert();\r\n            }else{\r\n                utility.replaceFragment(getSupportFragmentManager(),\r\n                        R.id.container,new HomeFragment(manager),\"home\");\r\n            }\r\n        }\r\n    }\r\n\r\n    public void showAlert(){\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);\r\n        LayoutInflater inflater = getLayoutInflater();\r\n        View dialogView = inflater.inflate(R.layout.alert_dialog, null);\r\n        builder.setView(dialogView);\r\n\r\n        TextView titleTextView = dialogView.findViewById(R.id.dialog_title);\r\n        String title = \"Logout\";\r\n        titleTextView.setText(title);\r\n\r\n        TextView messageTextView = dialogView.findViewById(R.id.dialog_message);\r\n        String message = \"Are you sure you want to log out?\";\r\n        messageTextView.setText(message);\r\n\r\n        final AlertDialog alertDialog = builder.create();\r\n\r\n        Button buttonYes = dialogView.findViewById(R.id.btnYes);\r\n        buttonYes.setOnClickListener(v -> {\r\n            //todo check if userID is reset\r\n            SharedPreferencesManager.initialize(this);\r\n            SharedPreferencesManager.resetUserID();\r\n            Intent intent = new Intent(HomePage.this,AccountActivity.class);\r\n            intent.putExtra(\"action\", \"login\");\r\n            startActivity(intent);\r\n        });\r\n        Button buttonNo = dialogView.findViewById(R.id.btnNo);\r\n        buttonNo.setOnClickListener(v -> alertDialog.dismiss());\r\n        alertDialog.show();\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/logintest/HomePage.java b/app/src/main/java/com/example/logintest/HomePage.java
+--- a/app/src/main/java/com/example/logintest/HomePage.java	(revision 26b7c0a8ecc88d2390ccb35506dbac2c7d31d38d)
++++ b/app/src/main/java/com/example/logintest/HomePage.java	(date 1686412491219)
+@@ -57,6 +57,14 @@
+                 utility.replaceFragment(manager,R.id.container,new HomeFragment(manager),"home");
+                 utility.replaceFragment(manager,R.id.container1,
+                         new BottomNavigationFragment(manager),"bottomNavigation");
++            }else if (mainFragment instanceof FragmentAddress){
++                Product product = ((FragmentAddress) mainFragment).product;
++                utility.replaceFragment(manager,R.id.container,
++                        new FragmentViewProduct(product,manager),"viewProduct");
++            }else if (mainFragment instanceof PaymentFragment){
++                Product product = ((PaymentFragment) mainFragment).product;
++                utility.replaceFragment(manager,R.id.container,
++                        new FragmentViewProduct(product,manager),"viewProduct");
+             }
+ 
+         }else if (botNavFragment instanceof BottomNavigationFragment){
+@@ -88,7 +96,6 @@
+ 
+         Button buttonYes = dialogView.findViewById(R.id.btnYes);
+         buttonYes.setOnClickListener(v -> {
+-            //todo check if userID is reset
+             SharedPreferencesManager.initialize(this);
+             SharedPreferencesManager.resetUserID();
+             Intent intent = new Intent(HomePage.this,AccountActivity.class);
