@@ -1,11 +1,13 @@
 package com.example.logintest;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,6 +39,14 @@ public class HomeFragment extends Fragment {
     private RecyclerView searchRecyclerView;
     private SearchResultAdapter searchResultAdapter;
 
+    private List<Product> searchResults;
+
+    private final ProductManager productManager = new ProductManager();
+
+    //add delay to search
+    private Handler handler = new Handler();
+    private Runnable runnable;
+
     public HomeFragment(FragmentManager manager) {
         this.manager = manager;
         // Required empty public constructor
@@ -49,6 +59,8 @@ public class HomeFragment extends Fragment {
         recommendedRecyclerView = binding.getRoot().findViewById(R.id.recommendedRecyclerView);
         searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
         ImageView imageView = binding.getRoot().findViewById(R.id.imageView);
+        TextView recommendedText = binding.getRoot().findViewById(R.id.tvRecommendedHeading);
+
 
 
         //recycler for recommended products
@@ -65,32 +77,79 @@ public class HomeFragment extends Fragment {
         } else {
             recommendedProductAdapter.setProducts(recommendedProducts);
         }
+
+        boolean isHidden = false;
+
+        searchResultAdapter = new SearchResultAdapter();
+        searchResultAdapter.setManager(manager);
+        searchRecyclerView.setAdapter(searchResultAdapter);
+        //searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        searchRecyclerView.setLayoutManager(new LinearLayoutManager(
+                requireContext(), LinearLayoutManager.VERTICAL, false));
+
         //todo maybe add onclick if java allows it
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // Start the SearchResultsActivity and pass the search query
+                if (!isHidden){
+                    imageView.setVisibility(View.GONE);
+                    recommendedRecyclerView.setVisibility(View.GONE);
+                    recommendedText.setVisibility(View.GONE);
+                    searchRecyclerView.setVisibility(View.VISIBLE);
+                    utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
+                }
+
+                searchResults = productManager.searchProduct(query);
+                searchResultAdapter.setProducts(searchResults);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if (!isHidden){
+                    imageView.setVisibility(View.GONE);
+                    recommendedRecyclerView.setVisibility(View.GONE);
+                    recommendedText.setVisibility(View.GONE);
+                    searchRecyclerView.setVisibility(View.VISIBLE);
+                    utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
+                }
+                handler.removeCallbacks(runnable);
+                runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        // Perform your action here
+                        searchResults = productManager.searchProduct(newText);
+                        searchResultAdapter.setProducts(searchResults);
+                    }
+                };
 
-
-                manager.beginTransaction()
-                        .replace(R.id.container,
-                                new ProductSearchIntermediateFragment(manager,newText),
-                                "searchIntermediate")
-                        .commit();
-
-
-                utility.replaceFragment(manager, R.id.container1,new EmptyFragment(),"empty");
-
-                return false;
+                handler.postDelayed(runnable, 500);
+                return true;
             }
         });
 
+
         return binding.getRoot();
+    }
+
+    public void unHide(){
+        searchView = binding.getRoot().findViewById(R.id.searchBar);
+        recommendedRecyclerView = binding.getRoot().findViewById(R.id.recommendedRecyclerView);
+        searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
+        ImageView imageView = binding.getRoot().findViewById(R.id.imageView);
+        TextView recommendedText = binding.getRoot().findViewById(R.id.tvRecommendedHeading);
+
+        imageView.setVisibility(View.VISIBLE);
+        recommendedRecyclerView.setVisibility(View.VISIBLE);
+        recommendedText.setVisibility(View.VISIBLE);
+        searchRecyclerView.setVisibility(View.GONE);
+
+        utility.replaceFragment(manager, R.id.container1
+                ,new BottomNavigationFragment(manager)
+                ,"bottomNavigation");
+
+        searchResults.clear();
+        searchResultAdapter.setProducts(searchResults);
     }
 
     private List<Product> getRecommendedProducts() {

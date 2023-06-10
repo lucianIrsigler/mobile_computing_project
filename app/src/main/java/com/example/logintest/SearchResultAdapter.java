@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
@@ -24,6 +25,9 @@ import okhttp3.internal.http2.Http2Connection;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
     private static List<Product> productList;
+    FragmentManager manager;
+
+
 
 
     public void setProducts(List<Product> productList) {
@@ -36,6 +40,10 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
     public interface OnItemClickListener {
         void onItemClick(Product product);
+    }
+
+    public void setManager(FragmentManager manager){
+        this.manager = manager;
     }
 
     private static OnItemClickListener listener;
@@ -78,6 +86,17 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         byte[] decodedString = Base64.decode(response, Base64.DEFAULT);
         Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         holder.ivPhotoPlaceholder.setImageBitmap(decodedBitmap);
+
+        holder.itemView.setOnClickListener(view -> {
+            FragmentViewProduct fragmentViewProduct =
+                    new FragmentViewProduct(product,manager);
+
+            manager.beginTransaction()
+                    .replace(R.id.container, fragmentViewProduct)
+                    .addToBackStack(null)
+                    .commit();
+        });
+
     }
 
     @Override

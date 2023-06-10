@@ -52,7 +52,6 @@ public class ProductSearchIntermediateFragment extends Fragment {
                 searchRecyclerView.setAdapter(searchResultAdapter);
                 searchRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-
                 ProductManager productManager = new ProductManager();
 
                 List<Product> searchResults = productManager.searchProduct(query);
