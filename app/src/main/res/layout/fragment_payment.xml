@@ -113,8 +113,21 @@
             android:textSize="21dp"
             android:padding="8dp"
             />
-    </LinearLayout>
 
+    </LinearLayout>
+    <EditText
+        android:id="@+id/edEmail"
+        android:layout_width="match_parent"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="10dp"
+        android:layout_height="50dp"
+        style="@style/editText"
+        android:hint="Enter Email"
+        android:backgroundTint="@color/grey_2"
+        app:layout_constraintBottom_toTopOf="@id/btnMakePayment"
+
+        />
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnMakePayment"
         android:layout_width="275dp"

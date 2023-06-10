@@ -15,10 +15,13 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.logintest.databinding.FragmentPaymentBinding;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.time.LocalDate;
 
 public class PaymentFragment extends Fragment {
-
+final HTTPHandler handler = new HTTPHandler();
     FragmentPaymentBinding binding;
     FragmentManager manager;
 
@@ -48,6 +51,7 @@ public class PaymentFragment extends Fragment {
         EditText expDateEdit = binding.getRoot().findViewById(R.id.edExpirationDate);
         EditText cvvEdit = binding.getRoot().findViewById(R.id.edCVV);
         Button makePayment = binding.getRoot().findViewById(R.id.btnMakePayment);
+        EditText emailEdit= binding.getRoot().findViewById(R.id.edEmail);
         //todo date time picker for expDate
 
         makePayment.setOnClickListener(view1->{
@@ -55,8 +59,9 @@ public class PaymentFragment extends Fragment {
             String cardNum = cardNumEdit.getText().toString();
             String expDate = expDateEdit.getText().toString();
             String cvv = cvvEdit.getText().toString();
+            String email=emailEdit.getText().toString();
 
-            if (!validate(cardName,cardNum,expDate,cvv)){
+            if (!validate(cardName,cardNum,expDate,cvv,email)){
                 Toast.makeText(getContext(),"Enter all fields",Toast.LENGTH_LONG).show();
             }else{
                 TransactionManager transactionManager = new TransactionManager();
@@ -70,11 +75,13 @@ public class PaymentFragment extends Fragment {
                 utility.replaceFragment(manager,R.id.container,
                         new FragmentViewProduct(product,manager),
                         "viewproduct");
+                getEmail(email);
+
             }
         });
     }
 
-    private boolean validate(String accountHolderName,String cardNumber, String expiryDate,String cvv){
+    private boolean validate(String accountHolderName, String cardNumber, String expiryDate, String cvv, String email){
         if(accountHolderName.isEmpty()||cardNumber.isEmpty()||cvv.isEmpty()||expiryDate.isEmpty()){
             Toast.makeText(getContext(),"Enter all fields",Toast.LENGTH_LONG).show();
             return false;
@@ -114,5 +121,18 @@ public class PaymentFragment extends Fragment {
 
         return true;
     }
+    public JSONObject getEmail(String userEmail){
+        //assign params
+        JSONObject params = new JSONObject();
+        try {
+            params.put("emailTo",userEmail);
+        }catch (JSONException e){
+            System.out.println("error");
+        }
 
+        //url to get request
+        String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/sendemail.php";
+
+        return handler.getRequest(url,params,JSONObject.class);
+    }
 }
