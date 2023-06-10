@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.logintest.databinding.EmptyLayoutBinding;
-import com.example.logintest.databinding.ProductSearchIntermediateBinding;
 
 
 public class HomePage extends AppCompatActivity {

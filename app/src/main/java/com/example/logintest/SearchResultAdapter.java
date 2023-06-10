@@ -2,7 +2,6 @@ package com.example.logintest;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.GnssAntennaInfo;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,13 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
-
-import okhttp3.internal.http2.Http2Connection;
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
     private static List<Product> productList;
