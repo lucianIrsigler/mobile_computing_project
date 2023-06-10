@@ -187,7 +187,14 @@ public class SignUpPersonalDetailsFragment extends Fragment {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
-
+            /**
+             * Callback method invoked when the text in the associated TextView has changed.
+             *
+             * @param charSequence the updated text
+             * @param i the start position of the changed text
+             * @param i1 the length of the changed text
+             * @param i2 the new length after the change
+             */
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
                 String firstName = Objects.requireNonNull(editFirstName.getText()).toString().trim();
@@ -219,7 +226,14 @@ public class SignUpPersonalDetailsFragment extends Fragment {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2){
 
             }
-
+            /**
+             * Callback method invoked when the text in the associated TextView has changed.
+             *
+             * @param charSequence the updated text
+             * @param i the start position of the changed text
+             * @param i1 the length of the changed text
+             * @param i2 the new length after the change
+             */
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
                 String lastName = Objects.requireNonNull(editLastName.getText()).toString();
@@ -254,7 +268,14 @@ public class SignUpPersonalDetailsFragment extends Fragment {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2){
 
             }
-
+            /**
+             * Callback method invoked when the text in the associated TextView has changed.
+             *
+             * @param charSequence the updated text
+             * @param i the start position of the changed text
+             * @param i1 the length of the changed text
+             * @param i2 the new length after the change
+             */
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
                 //validate phone number using regex
@@ -284,7 +305,9 @@ public class SignUpPersonalDetailsFragment extends Fragment {
     private boolean isInvalidDate() {
         return editDOB.getText().toString().isEmpty();
     }
-
+    /**
+     * Initializes the date picker dialog and sets the selected date to the editDOB TextView.
+     */
     @SuppressWarnings("deprecation")
     private void initDatePicker()
     {
@@ -307,14 +330,26 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         datePickerDialog = new DatePickerDialog(getActivity(),
                 style, dateSetListener, year, month, day);
     }
-
+    /**
+     * Constructs a date string from the given day, month, and year values.
+     *
+     * @param day   the day value
+     * @param month the month value
+     * @param year  the year value
+     * @return the constructed date string
+     */
     private String makeDateString(int day, int month, int year)
     {
         //set so we can validate
         DOBstorage = day + "-" + month + "-" + year;
         return getMonthFormat(month) + " " + day + " " + year;
     }
-
+    /**
+     * Returns the formatted month string based on the provided month value.
+     *
+     * @param month the month value (1-12)
+     * @return the formatted month string
+     */
     private String getMonthFormat(int month)
     {
         Map<Integer, String> monthsMap = utility.createMonthMap();
@@ -326,7 +361,11 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         datePickerDialog.show();
     }
 
-    //generating a random salt and hashing the password
+    /**
+     * Generates a random salt of 4 bytes.
+     *
+     * @return the generated salt as a byte array
+     */
     @NonNull
     private byte[] generateSalt() {
         SecureRandom random = new SecureRandom();
@@ -334,7 +373,13 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         random.nextBytes(salt);
         return salt;
     }
-
+    /**
+     * Combines the salt and password into a single byte array.
+     *
+     * @param salt     the salt as a byte array
+     * @param password the password as a byte array
+     * @return the combined salt and password as a byte array
+     */
     @NonNull
     private byte[] combineSaltAndPassword(@NonNull byte[] salt, @NonNull byte[] password) {
         byte[] saltedPassword = new byte[salt.length + password.length];
@@ -342,7 +387,13 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         System.arraycopy(password, 0, saltedPassword, salt.length, password.length);
         return saltedPassword;
     }
-
+    /**
+     * Hashes the salted password using the SHA-256 algorithm.
+     *
+     * @param saltedPassword the salted password as a byte array
+     * @return the hashed password as a byte array
+     * @throws RuntimeException if an error occurs while hashing the password
+     */
     @NonNull
     private byte[] hashPassword(byte[] saltedPassword) {
         try {
@@ -354,7 +405,12 @@ public class SignUpPersonalDetailsFragment extends Fragment {
     }
 
     private final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
-
+    /**
+     * Converts a byte array to a hexadecimal string representation.
+     *
+     * @param bytes the byte array to convert
+     * @return the hexadecimal string representation of the byte array
+     */
     @Contract(value = "_ -> new", pure = true)
     public @NotNull String bytesToHex(@NonNull byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
