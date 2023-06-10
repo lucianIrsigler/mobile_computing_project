@@ -64,7 +64,8 @@ public class ProductSearchIntermediateFragment extends Fragment {
                     Log.d("Item Clicked", "Product");
 
                     // Navigate to FragmentViewProduct
-                    FragmentViewProduct fragmentViewProduct = new FragmentViewProduct(product);
+                    FragmentViewProduct fragmentViewProduct =
+                            new FragmentViewProduct(product,manager);
 
                     manager.beginTransaction()
                             .replace(R.id.container, fragmentViewProduct)
@@ -88,7 +89,8 @@ public class ProductSearchIntermediateFragment extends Fragment {
                 searchResultAdapter.setProducts(searchResults);
 
                 searchResultAdapter.setOnItemClickListener(product -> {
-                    FragmentViewProduct fragmentViewProduct = new FragmentViewProduct(product);
+                    FragmentViewProduct fragmentViewProduct =
+                            new FragmentViewProduct(product,manager);
 
                     manager.beginTransaction()
                             .replace(R.id.container, fragmentViewProduct)

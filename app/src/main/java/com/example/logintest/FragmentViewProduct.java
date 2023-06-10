@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,12 +31,11 @@ public class FragmentViewProduct extends Fragment {
     final HTTPHandler handler = new HTTPHandler();
     final UsersManager usersManager = new UsersManager();
     FragmentViewProductBinding binding;
-    public FragmentViewProduct() {
-        // Required empty public constructor
-    }
+    FragmentManager manager;
 
-    public FragmentViewProduct(Product product) {
+    public FragmentViewProduct(Product product,FragmentManager manager) {
         this.product = product;
+        this.manager = manager;
     }
     @Nullable
     @Override
@@ -103,12 +103,22 @@ public class FragmentViewProduct extends Fragment {
 
         //set onclicks
 
-        buyProduct.setOnClickListener(view -> {});
+        buyProduct.setOnClickListener(view -> {
+            FragmentAddress fragment = new FragmentAddress(manager);
+            fragment.setArguments(product.getProductID());
+            utility.replaceFragment(manager,R.id.container,fragment,"address");
+
+        });
 
         addRating.setOnClickListener(view -> {
             TransactionManager transactionManager = new TransactionManager();
             int productID = product.getProductID();
             long userID = usersManager.getCurrentUserID();
+            Log.i("rating", Integer.toString(productID));
+            Log.i("rating",Long.toString(userID));
+            Log.i("rating",Boolean.toString(transactionManager.checkTransaction(userID,productID)));
+
+
 
             if (transactionManager.checkTransaction(userID,productID)){
                 //add rating now
