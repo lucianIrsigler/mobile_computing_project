@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.logintest.databinding.EmptyLayoutBinding;
+import com.example.logintest.databinding.ProductSearchIntermediateBinding;
 
 
 public class HomePage extends AppCompatActivity {
@@ -26,7 +27,6 @@ public class HomePage extends AppCompatActivity {
         binding = EmptyLayoutBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -47,17 +47,25 @@ public class HomePage extends AppCompatActivity {
     public void onBackPressed() {
         FragmentManager manager = getSupportFragmentManager();
         Fragment botNavFragment = manager.findFragmentById(R.id.container1);
+        Fragment mainFragment = manager.findFragmentById(R.id.container);
 
         if (botNavFragment instanceof EmptyFragment) {
-            utility.replaceFragment(getSupportFragmentManager(),
-                    R.id.container,new HomeFragment(manager),"home");
+            //in search screen goes back to main
+            if (mainFragment instanceof ProductSearchIntermediateFragment){
+                utility.replaceFragment(getSupportFragmentManager(),
+                        R.id.container,new HomeFragment(manager),"home");
 
-            utility.replaceFragment(getSupportFragmentManager(),R.id.container1,
-                    new BottomNavigationFragment(manager),"bottomNav");
-
+                utility.replaceFragment(getSupportFragmentManager(),R.id.container1,
+                        new BottomNavigationFragment(manager),"bottomNav");
+            }else if (mainFragment instanceof FragmentViewProduct){
+                //in product page
+                utility.replaceFragment(getSupportFragmentManager(),
+                        R.id.container,new ProductSearchIntermediateFragment(),"search");
+                //todo add query
+            }
         }else if (botNavFragment instanceof BottomNavigationFragment){
             //app goes to home tab before showing log out alert
-            Fragment mainFragment = manager.findFragmentById(R.id.container);
+
             if (mainFragment instanceof HomeFragment) {
                 showAlert();
             }else{

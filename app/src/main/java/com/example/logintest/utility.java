@@ -23,6 +23,15 @@ public class utility {
         fragmentTransaction.commit();
     }
 
+    public static void replaceFragmentWithBackStack(FragmentManager manager, int id,
+                                                    Fragment fragment,
+                                                    String goBackToFragment,
+                                                    String tag){
+        FragmentTransaction fragmentTransaction = manager.beginTransaction().addToBackStack(goBackToFragment);
+        fragmentTransaction.replace(id,fragment,tag);
+        fragmentTransaction.commit();
+    }
+
     public static int generateRandomID() {
         Random random = new Random();
         int min = 1000000; // Minimum 7-digit number

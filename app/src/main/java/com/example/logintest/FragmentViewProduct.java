@@ -119,7 +119,6 @@ public class FragmentViewProduct extends Fragment {
             Log.i("rating",Boolean.toString(transactionManager.checkTransaction(userID,productID)));
 
 
-
             if (transactionManager.checkTransaction(userID,productID)){
                 //add rating now
             }else{

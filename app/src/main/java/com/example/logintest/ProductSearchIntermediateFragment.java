@@ -105,4 +105,6 @@ public class ProductSearchIntermediateFragment extends Fragment {
 
         return binding.getRoot();
     }
+
+
 }
