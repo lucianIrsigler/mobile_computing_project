@@ -15,6 +15,7 @@ public class AccountActivity extends AppCompatActivity {
     EmptyLayoutBinding binding;
 
     @Override
+
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = EmptyLayoutBinding.inflate(getLayoutInflater());
@@ -35,6 +36,10 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     @Override
+    /**
+     * Called when the back button is pressed.
+     * Overrides the default back button press.
+     */
     public void onBackPressed() {
         FragmentManager manager = getSupportFragmentManager();
         Fragment mainFragment = manager.findFragmentById(R.id.container);

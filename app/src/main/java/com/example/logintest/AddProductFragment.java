@@ -152,14 +152,21 @@ public class AddProductFragment extends Fragment {
 
         return binding.getRoot();
     }
-
+    /**
+     * Opens the image selection activity.
+     * Allows the user to select multiple images.
+     */
     private void openImageSelection() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         imageSelectionLauncher.launch(Intent.createChooser(intent, "Select Images"));
     }
-
+    /**
+     * Handles the selection of multiple images.
+     *
+     * @param clipData the ClipData containing the selected images
+     */
     private void handleMultipleImageSelection(@NonNull ClipData clipData) {
         int itemCount = clipData.getItemCount();
         int imageCount = Math.min(itemCount, MAX_IMAGE_SELECTION);
@@ -188,7 +195,11 @@ public class AddProductFragment extends Fragment {
             }
         }
     }
-
+    /**
+     * Handles the selection of a single image.
+     *
+     * @param imageUri the URI of the selected image
+     */
     private void handleSingleImageSelection(Uri imageUri) {
         Bitmap bitmap = getBitmapFromUri(imageUri);
 
@@ -209,14 +220,24 @@ public class AddProductFragment extends Fragment {
             imagesToBeUploaded.add(compressedBitmap);
         }
     }
-
+    /**
+     * Compresses the given bitmap by reducing its quality.
+     *
+     * @param bitmap the bitmap to compress
+     * @return the compressed bitmap
+     */
     private Bitmap compressBitmap(@NonNull Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
         byte[] byteArray = stream.toByteArray();
         return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
     }
-
+    /**
+     * Retrieves a Bitmap from the given Uri.
+     *
+     * @param uri the Uri of the image
+     * @return the Bitmap retrieved from the Uri, or null if an error occurred
+     */
     @Nullable
     private Bitmap getBitmapFromUri(Uri uri) {
         try {
@@ -228,7 +249,11 @@ public class AddProductFragment extends Fragment {
         return null;
     }
 
-
+    /**
+     * Uploads the images to a server.
+     *
+     * @param images_path the list of Bitmap images to upload
+     */
     public void upload(ArrayList<Bitmap> images_path) {
         MultipartBody.Builder builder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM);
