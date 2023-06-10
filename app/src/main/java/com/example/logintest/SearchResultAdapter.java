@@ -60,7 +60,12 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                 R.layout.search_recycler_view_row, parent, false);
         return new ViewHolder(view);
     }
-
+    /**
+     * Binds the data to the ViewHolder at the specified position.
+     *
+     * @param holder   the ViewHolder to bind the data to
+     * @param position the position of the item in the list
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Product product = productList.get(position);
@@ -108,7 +113,11 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         TextView tvNamePlaceholder;
         TextView tvPricePlaceholder;
         ImageView ivPhotoPlaceholder;
-
+        /**
+         * Constructor for the ViewHolder class.
+         *
+         * @param itemView the item view representing a single item in the RecyclerView
+         */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNamePlaceholder = itemView.findViewById(R.id.tvNamePlaceholder);

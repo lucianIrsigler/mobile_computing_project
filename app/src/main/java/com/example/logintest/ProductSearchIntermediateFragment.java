@@ -73,7 +73,12 @@ public class ProductSearchIntermediateFragment extends Fragment {
                 });
                 return true;
             }
-
+            /**
+             * Callback method invoked when the query text in the SearchView has changed.
+             *
+             * @param newText the new query text entered by the user
+             * @return true if the query text change is handled, false otherwise
+             */
             @Override
             public boolean onQueryTextChange(String newText) {
                 RecyclerView searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
