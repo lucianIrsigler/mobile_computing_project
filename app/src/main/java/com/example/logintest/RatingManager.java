@@ -16,16 +16,14 @@ public class RatingManager {
      * @param userID userID of user writing the review
      * @param productID productID of the product being reviewed
      * @param stars rating
-     * @param date date of review added
      */
-    public void addRating(Integer userID, Integer productID, Double stars, String  date){
+    public void addRating(Long userID, Integer productID, float stars){
         String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/addrating.php";
         JSONObject params = new JSONObject();
         try {
             params.put("userID", userID);
             params.put("productID",productID);
             params.put("stars",stars);
-            params.put("date",date);
         }catch (JSONException e) {
             System.out.println("error");
         }

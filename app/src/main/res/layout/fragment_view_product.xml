@@ -58,17 +58,17 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.denzcoskun.imageslider.ImageSlider
             android:id="@+id/view_products_rv"
             android:layout_width="match_parent"
             android:layout_height="350dp"
-            android:orientation="horizontal"
+            app:iss_auto_cycle="false"
+            app:iss_corner_radius="10"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/view_product_header">
+            app:layout_constraintTop_toBottomOf="@id/view_product_header"
+            />
 
-
-        </androidx.recyclerview.widget.RecyclerView>
 
         <TextView
             android:id="@+id/tvProductNameViewProduct"

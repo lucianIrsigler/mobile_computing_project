@@ -27,9 +27,8 @@ public class UserProfileFragment extends Fragment {
     TextView textItems;
     TextView textReviews;
 
+    public UserProfileFragment() {}
 
-    public UserProfileFragment() {
-    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

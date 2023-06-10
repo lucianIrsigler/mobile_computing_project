@@ -23,12 +23,11 @@ public class TransactionManager{
         try {
             params.put("userID",userID);
             params.put("productID",productID);
-            JSONObject response = handler.getRequest(
+            String response = handler.getRequest(
                     "https://lamp.ms.wits.ac.za/home/s2621933/php/checktransaction.php",
-                    params,JSONObject.class);
+                    params,String.class);
 
-            String value = response.getString("hasTransaction");
-            return value.equals("true");
+            return response.equals("true");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

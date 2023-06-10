@@ -10,12 +10,12 @@ import java.util.Random;
 
 public class utility {
     //todo doc string dis
+
     /**
-     *
-     * @param manager
-     * @param id
-     * @param fragment
-     * @param tag
+     * @param manager fragment
+     * @param id id to switch
+     * @param fragment fragment to switch
+     * @param tag tag of new fragment
      */
     public static void replaceFragment(FragmentManager manager, int id, Fragment fragment,String tag){
         FragmentTransaction fragmentTransaction = manager.beginTransaction();

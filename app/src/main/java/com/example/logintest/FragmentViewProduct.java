@@ -1,6 +1,13 @@
 package com.example.logintest;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.transition.Slide;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,19 +19,26 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.logintest.databinding.FragmentViewProductBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FragmentViewProduct extends Fragment {
     private Product product;
@@ -48,11 +62,14 @@ public class FragmentViewProduct extends Fragment {
         TextView productPriceTextView = binding.getRoot().findViewById(R.id.tvPriceViewProduct);
         TextView productDescriptionTextView = binding.getRoot().findViewById(R.id.tvDescriptionViewProduct);
         TextView dateOfProduct = binding.getRoot().findViewById(R.id.tvDateViewProduct);
-        RecyclerView showImageRecyclerView = binding.getRoot().findViewById(R.id.view_products_rv);
+        //RecyclerView showImageRecyclerView = binding.getRoot().findViewById(R.id.view_products_rv);
         Button buyProduct = binding.getRoot().findViewById(R.id.btnBuyNow);
         Button addRating = binding.getRoot().findViewById(R.id.btnAddRating);
         RatingBar ratingBar = binding.getRoot().findViewById(R.id.ratingBar);
         TextView avgStars = binding.getRoot().findViewById(R.id.tvAvgRating);
+
+        ImageSlider showImageSlider = binding.getRoot().findViewById(R.id.view_products_rv);
+
 
         productNameTextView.setText(product.getName());
         String price = String.format("R%.2f",product.getPrice());
@@ -74,14 +91,16 @@ public class FragmentViewProduct extends Fragment {
             //get image paths
             JSONArray imagePathResponse = getImagePaths();
 
-            //get base64
-            List<String> base64ImageList = getBase64Strings(imagePathResponse);
+            List<SlideModel> slideModels = new ArrayList<SlideModel>();
 
-            //set recycler view
-            ImageAdapterGetFromDatabase imageAdapterGetFromDatabase = new ImageAdapterGetFromDatabase(base64ImageList);
-            showImageRecyclerView.setLayoutManager(new LinearLayoutManager(
-                    getContext(), LinearLayoutManager.HORIZONTAL, false));
-            showImageRecyclerView.setAdapter(imageAdapterGetFromDatabase);
+            for (int i = 0; i < imagePathResponse.length(); i++) {
+                String imagePath = imagePathResponse.getJSONObject(i).getString("imagePath");
+                String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/getimage.php?imagepath="+imagePath;
+                SlideModel slide = new SlideModel(url,ScaleTypes.FIT);
+                slideModels.add(slide);
+            }
+
+            showImageSlider.setImageList(slideModels);
 
             //set rating bar and avg star textview
             RatingManager ratingManager = new RatingManager();
@@ -95,6 +114,7 @@ public class FragmentViewProduct extends Fragment {
             }
 
             ratingBar.setRating(avg_stars);
+
 
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -116,17 +136,31 @@ public class FragmentViewProduct extends Fragment {
             long userID = usersManager.getCurrentUserID();
             Log.i("rating", Integer.toString(productID));
             Log.i("rating",Long.toString(userID));
-            Log.i("rating",Boolean.toString(transactionManager.checkTransaction(userID,productID)));
 
+            if (transactionManager.checkTransaction(userID,productID)) {
+                showAlert();
 
-            if (transactionManager.checkTransaction(userID,productID)){
-                //add rating now
+                //update stars
+                RatingManager ratingManager = new RatingManager();
+
+                float avg_stars = 0;
+                try {
+                    avg_stars = ratingManager.getAverageRating(product.getProductID());
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                if (avg_stars == 0) {
+                    avgStars.setText("0");
+                } else {
+                    avgStars.setText(Float.toString(avg_stars));
+                }
+                ratingBar.setRating(avg_stars);
+
             }else{
                 Toast.makeText(getContext(),
                         "You must buy the item before you can leave a review",
                         Toast.LENGTH_LONG).show();
             }
-
         });
         return binding.getRoot();
     }
@@ -184,32 +218,62 @@ public class FragmentViewProduct extends Fragment {
                 params, JSONArray.class);
     }
 
-    /**
-     * Using the image paths, returns the base64 strings from the disk on the server
-     * @param imagePathResponse JSONArray with paths
-     * @return the base64 strings in a list
-     * @throws JSONException if params fails/JSONObject creation fails
-     */
-    private List<String> getBase64Strings(JSONArray imagePathResponse) throws JSONException {
-        JSONObject newParams = new JSONObject();
+    public void showAlert(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.review_product_dialog, null);
+        builder.setView(dialogView);
 
-        for (int i = 0; i < imagePathResponse.length(); i++) {
-            String imagePath = imagePathResponse.getJSONObject(i).getString("imagePath");
-            newParams.put("image" + i, imagePath);
-        }
+        TextView ratingNum = dialogView.findViewById(R.id.dialog_rating);
+        Button submit = dialogView.findViewById(R.id.btnSubmit);
+        Button cancel = dialogView.findViewById(R.id.btnCancel);
+        RatingBar bar = dialogView.findViewById(R.id.rbRateYourPurchase);
+        final AlertDialog alertDialog = builder.create();
 
-        newParams.put("imageCount", imagePathResponse.length());
+        ratingNum.addTextChangedListener(new TextWatcher() {
+         @Override
+         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+         }
 
-        List<String> base64ImageList = new ArrayList<>();
+         @Override
+         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+             if (charSequence.toString().isEmpty()) {
+                 bar.setRating(0);
+                 return;
+             }
 
-        JSONArray base64fileResponse = handler.postRequest(
-                "https://lamp.ms.wits.ac.za/home/s2621933/php/base64_files.php",
-                newParams, JSONArray.class);
+             float stars = Float.parseFloat(charSequence.toString());
 
-        for (int i = 0; i < base64fileResponse.length(); i++) {
-            base64ImageList.add(base64fileResponse.getJSONObject(i).getString("base64"));
-        }
+             if (stars<=5){
+                 bar.setRating(stars);
+             }else{
+                 bar.setRating(0);
+             }
+         }
+         @Override
+         public void afterTextChanged(Editable editable) {
 
-        return base64ImageList;
+         }});
+
+        submit.setOnClickListener(v -> {
+            float stars = Float.parseFloat(ratingNum.getText().toString());
+
+            if (stars > 5 || stars<0){
+                Toast.makeText(getActivity(), "Invalid rating", Toast.LENGTH_SHORT).show();
+                alertDialog.dismiss();
+            }
+            RatingManager ratingManager = new RatingManager();
+
+            ratingManager.addRating(usersManager.getCurrentUserID(),
+                    product.getProductID(),stars);
+
+            alertDialog.dismiss();
+        });
+
+        cancel.setOnClickListener(v -> alertDialog.dismiss());
+        alertDialog.show();
     }
+
+
+
 }

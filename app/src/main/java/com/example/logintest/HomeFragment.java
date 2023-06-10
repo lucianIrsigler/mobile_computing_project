@@ -25,6 +25,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+//visibility -> 0 (visible) , 1(gone but still space), 2-> (gone and no space)
+
 public class HomeFragment extends Fragment {
     private final FragmentManager manager;
     public androidx.appcompat.widget.SearchView searchView;
@@ -46,7 +48,7 @@ public class HomeFragment extends Fragment {
         searchView = binding.getRoot().findViewById(R.id.searchBar);
         recommendedRecyclerView = binding.getRoot().findViewById(R.id.recommendedRecyclerView);
         searchRecyclerView = binding.getRoot().findViewById(R.id.search_recycler_view);
-
+        ImageView imageView = binding.getRoot().findViewById(R.id.imageView);
 
 
         //recycler for recommended products
@@ -73,6 +75,8 @@ public class HomeFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+
+
                 manager.beginTransaction()
                         .replace(R.id.container,
                                 new ProductSearchIntermediateFragment(manager,newText),
