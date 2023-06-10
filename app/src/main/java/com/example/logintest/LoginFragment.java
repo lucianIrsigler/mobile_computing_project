@@ -143,6 +143,14 @@ public class LoginFragment extends Fragment {
             }
 
             @Override
+            /**
+             * Callback method invoked when the text in the associated TextView has changed.
+             *
+             * @param charSequence the updated text
+             * @param i the start position of the changed text
+             * @param i1 the length of the changed text
+             * @param i2 the new length after the change
+             */
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
                 if(Objects.requireNonNull(editPassword.getText()).toString().isEmpty()){
                     editPassword.setError("Please enter your Password");

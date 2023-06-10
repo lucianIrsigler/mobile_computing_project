@@ -9,7 +9,12 @@ import java.security.NoSuchAlgorithmException;
 public class PasswordHashing
 {
     private final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
-
+    /**
+     * Converts a byte array to a hexadecimal string representation.
+     *
+     * @param bytes the byte array to convert
+     * @return the hexadecimal string representation of the byte array
+     */
     @Contract(value = "_ -> new", pure = true)
     public @NotNull String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
@@ -20,7 +25,14 @@ public class PasswordHashing
         }
         return new String(hexChars);
     }
-
+    /**
+     * Generates a hashed password using the SHA-256 algorithm and the given salt and password.
+     *
+     * @param salt     the salt used for hashing
+     * @param password the password to be hashed
+     * @return the hashed password as a hexadecimal string
+     * @throws NoSuchAlgorithmException if the SHA-256 algorithm is not available
+     */
     public String hashedPassword(byte[] salt, String password) throws NoSuchAlgorithmException
     {
         byte[] saltedPassword = new byte[salt.length + password.getBytes().length];

@@ -1,13 +1,8 @@
 package com.example.logintest;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.transition.Slide;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
@@ -34,11 +26,9 @@ import com.example.logintest.databinding.FragmentViewProductBinding;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class FragmentViewProduct extends Fragment {
     private Product product;
@@ -217,7 +207,12 @@ public class FragmentViewProduct extends Fragment {
                 "https://lamp.ms.wits.ac.za/home/s2621933/php/imageReader.php",
                 params, JSONArray.class);
     }
-
+    /**
+     * Shows an alert dialog for reviewing a product.
+     * Allows user to provide a rating for the product.
+     *
+     * Upon pressing submit, the rating is added to the product's ratings.
+     */
     public void showAlert(){
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         LayoutInflater inflater = getLayoutInflater();
@@ -236,6 +231,14 @@ public class FragmentViewProduct extends Fragment {
          }
 
          @Override
+         /**
+          * Callback method invoked when the text in the associated TextView has changed.
+          *
+          * @param charSequence the updated text
+          * @param i the start position of the changed text
+          * @param i1 the length of the changed text
+          * @param i2 the new length after the change
+          */
          public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
              if (charSequence.toString().isEmpty()) {
                  bar.setRating(0);
