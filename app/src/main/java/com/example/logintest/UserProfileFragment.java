@@ -1,6 +1,7 @@
 package com.example.logintest;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.logintest.databinding.FragmentUserProfileBinding;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
@@ -57,19 +59,29 @@ public class UserProfileFragment extends Fragment {
 
         SearchResultAdapter productsListedAdapter = new SearchResultAdapter();
         productsListedAdapter.setManager(manager);
-
         productsListed.setAdapter(productsListedAdapter);
         List<Product> products= productManager.searchProductUserID(usersManager.getCurrentUserID());
 
         productsListedAdapter.setProducts(products);
 
+
         //listed reviews
         productsReviewed.setLayoutManager(new LinearLayoutManager(requireContext(),
                 LinearLayoutManager.HORIZONTAL, false));
 
+        SearchResultAdapter productsReviewedAdapter = new SearchResultAdapter();
+        productsReviewedAdapter.setManager(manager);
+        productsReviewed.setAdapter(productsReviewedAdapter);
+
+        //get products that user left review on
+        RatingManager ratingManager = new RatingManager();
+        JSONArray productIDS = ratingManager.getUserReviews(usersManager.getCurrentUserID());
+        List<Product> productsReviews = productManager.createProductsFromArray(productIDS);
+
+        productsReviewedAdapter.setProducts(productsReviews);
+
 
         updateUserProfile();
-
         return binding.getRoot();
     }
 

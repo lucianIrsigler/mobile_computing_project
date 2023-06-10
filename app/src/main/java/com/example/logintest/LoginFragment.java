@@ -42,6 +42,10 @@ public class LoginFragment extends Fragment {
         this.manager=manager;
     }
 
+    public LoginFragment(){
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -41,6 +41,9 @@ public class SignUpAccountDetailsFragment extends Fragment {
     public SignUpAccountDetailsFragment(FragmentManager manager){
         this.manager = manager;
     }
+
+    public SignUpAccountDetailsFragment(){}
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

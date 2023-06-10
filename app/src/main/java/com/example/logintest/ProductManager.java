@@ -84,6 +84,46 @@ public class ProductManager {
 
     }
 
+    /**
+     * Creates product list given JSONArray with productIDs in it
+     * @param products JSONArray with productIDs in it
+     * @return List<Product> with products in it
+     */
+
+    public List<Product> createProductsFromArray(JSONArray products){
+
+        List<Product> output = new ArrayList<Product>();
+
+        for (int i =0; i < products.length();i++){
+            try {
+                int productID = Integer.parseInt(
+                        products.getJSONObject(0).getString("productID"));
+
+                JSONObject params = new JSONObject();
+                params.put("productID",productID );
+
+                 JSONArray response =httpHandler.getRequest(
+                        "https://lamp.ms.wits.ac.za/home/s2621933/php/searchoneproduct.php",
+                        params, JSONArray.class);
+
+
+                 JSONObject obj = response.getJSONObject(0);
+
+                 String name = obj.getString("productName");
+                 String description = obj.getString("productDescription");
+                 double price = obj.getDouble("price");
+
+                Product product = new Product(name,description,price,productID);
+                output.add(product);
+
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return output;
+    }
+
     public /*void*/List<Product> searchProductUserID(long userID) {
         List<Product> searchResults = new ArrayList<>();
 
@@ -167,7 +207,6 @@ public class ProductManager {
 
         return searchResults;
     }
-
 
 
 }

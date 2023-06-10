@@ -48,10 +48,6 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
     private static OnItemClickListener listener;
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
-    }
-
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

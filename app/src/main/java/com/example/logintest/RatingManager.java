@@ -52,6 +52,18 @@ public class RatingManager {
         return handler.getRequest(url,params,JSONArray.class);
     }
 
+    public JSONArray getUserReviews(long userID){
+        JSONObject params = new JSONObject();
+
+        try {
+            params.put("userID",userID);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        String url="https://lamp.ms.wits.ac.za/home/s2621933/php/getUserReviews.php";
+        return handler.postRequest(url,params,JSONArray.class);
+    }
+
     /**
      * GETS ratings based on userID/productID
      * @param mode mode for the GET request. 0->use the userID, 1->use the productID
@@ -60,7 +72,6 @@ public class RatingManager {
      */
     public JSONArray getRatings(Integer mode,Integer value){
         JSONObject params = new JSONObject();
-
         try {
             params.put("mode", mode);
             params.put("value",value);

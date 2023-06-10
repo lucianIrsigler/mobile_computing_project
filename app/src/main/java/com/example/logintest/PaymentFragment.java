@@ -15,6 +15,8 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.logintest.databinding.FragmentPaymentBinding;
 
+import java.time.LocalDate;
+
 public class PaymentFragment extends Fragment {
 
     FragmentPaymentBinding binding;
@@ -54,20 +56,63 @@ public class PaymentFragment extends Fragment {
             String expDate = expDateEdit.getText().toString();
             String cvv = cvvEdit.getText().toString();
 
-            if (cardName.isEmpty()||cardNum.isEmpty()||expDate.isEmpty()||cvv.isEmpty()){
+            if (!validate(cardName,cardNum,expDate,cvv)){
                 Toast.makeText(getContext(),"Enter all fields",Toast.LENGTH_LONG).show();
-                return;
+            }else{
+                TransactionManager transactionManager = new TransactionManager();
+                UsersManager usersManager = new UsersManager();
+                long userID = usersManager.getCurrentUserID();
+
+                transactionManager.insertTransaction(userID,product.getProductID());
+
+                Toast.makeText(getContext(), "Purchase was successful", Toast.LENGTH_SHORT).show();
+
+                utility.replaceFragment(manager,R.id.container,
+                        new FragmentViewProduct(product,manager),
+                        "viewproduct");
             }
-
-            Toast.makeText(getContext(), "Purchase was successful", Toast.LENGTH_SHORT).show();
-
-            TransactionManager transactionManager = new TransactionManager();
-            UsersManager usersManager = new UsersManager();
-            long userID = usersManager.getCurrentUserID();
-
-            transactionManager.insertTransaction(userID,product.getProductID());
-
         });
-
     }
+
+    private boolean validate(String accountHolderName,String cardNumber, String expiryDate,String cvv){
+        if(accountHolderName.isEmpty()||cardNumber.isEmpty()||cvv.isEmpty()||expiryDate.isEmpty()){
+            Toast.makeText(getContext(),"Enter all fields",Toast.LENGTH_LONG).show();
+            return false;
+        }
+        //Start with Mr, Mrs or Miss, followed by a space, followed by a capital letter, followed by letters only
+        //Mr B Z Nhlebela or Ms L Bayat or Miss A B C Random
+        if (!accountHolderName.matches("^(?:Mr|Mrs|Miss) [A-Z](?: [A-Z])*(?: [A-Z][a-zA-Z]+)+$")){
+            Toast.makeText(getContext(),
+                    "Account holder format is: Title firstname lastname. eg) Mr L surname",Toast.LENGTH_LONG).show();
+            return false;
+        }
+        //16-digit number only
+        else if (!cardNumber.matches("^[0-9]{16}$")) {
+            Toast.makeText(getContext(),"16 digits are required for the card number",Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        String[] dates = expiryDate.split("/");
+        LocalDate now = LocalDate.now();
+
+        //Start with 2 digits, followed by a /, followed by 2 digits
+        if (!expiryDate.matches("^[0-9]{2}/[0-9]{2}$")){
+            Toast.makeText(getContext(),"Must be 2 numbers followed by a / then another 2 numbers",
+                    Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else if(Integer.parseInt(dates[0]) <= now.getMonthValue() && Integer.parseInt("20"+dates[1]) <= now.getYear()){
+            Toast.makeText(getContext(),"Expired card",Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        //3-digit number only
+        if (!cvv.matches("^[0-9]{3}$")){
+            Toast.makeText(getContext(),"Invalid cvv",Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
+    }
+
 }

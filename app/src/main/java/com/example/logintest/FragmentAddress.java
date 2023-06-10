@@ -54,7 +54,7 @@ public class FragmentAddress extends Fragment {
             String zip = zipEdit.getText().toString();
 
             //checks if input is empty
-            if (line1.isEmpty()||line2.isEmpty()||city.isEmpty()||zip.isEmpty()){
+            if (!validateAddress(line1,line2,city,zip)){
                 Toast.makeText(getContext(),"Enter all fields",Toast.LENGTH_LONG).show();
                 return;
             }
@@ -64,7 +64,43 @@ public class FragmentAddress extends Fragment {
 
             utility.replaceFragment(manager,R.id.container, fragment,"payment");
         });
+    }
 
+    public boolean validateAddress(String address,String suburb,String city,String zip){
+        if(address.isEmpty()||suburb.isEmpty()||city.isEmpty()||zip.isEmpty()){
+            Toast.makeText(getContext(),"Enter all fields",Toast.LENGTH_LONG).show();
+            return false;
+        }
+        //Start with number (1 to 4 digits long), followed by a space, followed by a capital letter, followed by letters only
+        //followed by a space, followed by a capital letter, followed by letters only
+        //38 Hello Street
+        if(!address.matches("^[A-Za-z0-9\\s.'-]{1,50}$")){
+            Toast.makeText(getContext(),"Address is invalid",Toast.LENGTH_LONG).show();
+            return false;
+        }
+        //Start with a capital letter, followed by letters only
+        else if(!suburb.matches("^[A-Z][a-zA-Z]{2,19}$")){
+            Toast.makeText(getContext(),
+        "Suburb must start with a capital letter, followed by letters only"
+                    ,Toast.LENGTH_LONG).show();
+            return false;
+        }
 
+        //Start with a capital letter, followed by letters only
+        else if(!city.matches("^[A-Z][a-zA-Z]{2,19}$")){
+            Toast.makeText(getContext(),
+        "City must start with a capital letter, followed by letters only"
+                    ,Toast.LENGTH_LONG).show();
+            return false;
+        }
+        //Start with a capital letter, followed by capital letters or numbers only
+        else if(!zip.matches("^[A-Z0-9]{4,8}$")){
+            Toast.makeText(getContext(),
+                    "Zip must start with a capital letter, followed by capital letters or numbers only"
+                    ,Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
     }
 }
