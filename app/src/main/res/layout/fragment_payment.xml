@@ -126,6 +126,7 @@
         android:hint="Enter Email"
         android:backgroundTint="@color/grey_2"
         app:layout_constraintBottom_toTopOf="@id/btnMakePayment"
+        android:visibility="invisible"
 
         />
     <androidx.appcompat.widget.AppCompatButton

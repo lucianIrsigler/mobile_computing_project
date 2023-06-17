@@ -26,30 +26,26 @@ public class AccountActivity extends AppCompatActivity {
 
         if (loginOrRegister.equals("login")){
             utility.replaceFragment(getSupportFragmentManager(),
-                    R.id.container,new LoginFragment(getSupportFragmentManager()),"login");
+                    R.id.container,new FragmentLogin(getSupportFragmentManager()),"login");
         }else{
             //action=register
             utility.replaceFragment(getSupportFragmentManager(),R.id.container,
-                    new SignUpAccountDetailsFragment(getSupportFragmentManager()),
+                    new FragmentSignUpAccountDetails(),
                     "signUpAccount");
         }
     }
 
     @Override
-    /**
-     * Called when the back button is pressed.
-     * Overrides the default back button press.
-     */
     public void onBackPressed() {
         FragmentManager manager = getSupportFragmentManager();
         Fragment mainFragment = manager.findFragmentById(R.id.container);
 
-        if (mainFragment instanceof SignUpAccountDetailsFragment){
+        if (mainFragment instanceof FragmentSignUpAccountDetails){
             utility.replaceFragment(getSupportFragmentManager(),
-                    R.id.container,new LoginFragment(getSupportFragmentManager()),"login");
-        }else if (mainFragment instanceof SignUpPersonalDetailsFragment){
+                    R.id.container,new FragmentLogin(getSupportFragmentManager()),"login");
+        }else if (mainFragment instanceof FragmentSignUpPersonalDetails){
             utility.replaceFragment(getSupportFragmentManager(),R.id.container,
-                    new SignUpAccountDetailsFragment(getSupportFragmentManager()),
+                    new FragmentSignUpAccountDetails(),
                     "signUpAccount");
         }
     }

@@ -97,6 +97,7 @@
         android:layout_marginTop="15dp"
         android:textSize="21dp"
         android:padding="7dp"
+        android:visibility="invisible"
         />
 
     <EditText
@@ -113,6 +114,7 @@
         android:textSize="21dp"
         android:padding="7dp"
         android:inputType="number"
+
         />
 
     <androidx.appcompat.widget.AppCompatButton

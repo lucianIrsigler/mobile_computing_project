@@ -17,8 +17,8 @@ import com.example.logintest.databinding.FragmentAddressBinding;
 
 public class FragmentAddress extends Fragment {
 
-    FragmentAddressBinding binding;
-    FragmentManager manager;
+    private FragmentAddressBinding binding;
+    public final FragmentManager manager;
 
     public Product product;
 
@@ -29,6 +29,7 @@ public class FragmentAddress extends Fragment {
     public FragmentAddress(FragmentManager manager){
         this.manager = manager;
     }
+
 
     @Nullable
     @Override
@@ -55,14 +56,16 @@ public class FragmentAddress extends Fragment {
 
             //checks if input is empty
             if (!validateAddress(line1,line2,city,zip)){
-                Toast.makeText(getContext(),"Enter all fields",Toast.LENGTH_LONG).show();
                 return;
             }
 
-            PaymentFragment fragment = new PaymentFragment(manager);
+            FragmentPayment fragment = new FragmentPayment(manager);
             fragment.setArguments(product);
 
-            utility.replaceFragment(manager,R.id.container, fragment,"payment");
+            manager.beginTransaction()
+                    .replace(R.id.container,fragment,fragment.getClass().getSimpleName())
+                    .addToBackStack(fragment.getClass().getSimpleName())
+                    .commit();
         });
     }
 
@@ -96,7 +99,7 @@ public class FragmentAddress extends Fragment {
         //Start with a capital letter, followed by capital letters or numbers only
         else if(!zip.matches("^[A-Z0-9]{4,8}$")){
             Toast.makeText(getContext(),
-                    "Zip must start with a capital letter, followed by capital letters or numbers only"
+                    "Zip must be between 4 and 8 numbers long"
                     ,Toast.LENGTH_LONG).show();
             return false;
         }

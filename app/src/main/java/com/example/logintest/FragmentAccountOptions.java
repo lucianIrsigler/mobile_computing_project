@@ -13,10 +13,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.logintest.databinding.FragmentAccountOptionsBinding;
 
-public class AccountOptionsFragment extends Fragment {
+public class FragmentAccountOptions extends Fragment {
     private FragmentAccountOptionsBinding binding;
 
-    public AccountOptionsFragment() {
+    public FragmentAccountOptions() {
         // Required empty public constructor
     }
 

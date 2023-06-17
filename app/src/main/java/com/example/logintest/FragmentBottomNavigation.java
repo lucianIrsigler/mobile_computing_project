@@ -1,5 +1,6 @@
 package com.example.logintest;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +14,18 @@ import androidx.fragment.app.FragmentManager;
 import com.example.logintest.databinding.FragmentBottomNavBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class BottomNavigationFragment extends Fragment {
+public class FragmentBottomNavigation extends Fragment {
 
-    private final FragmentManager manager;
+    private FragmentManager manager;
     private FragmentBottomNavBinding binding;
 
 
-    public BottomNavigationFragment(FragmentManager manager){
-        this.manager = manager;
+    public FragmentBottomNavigation(){}
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.manager = getParentFragmentManager();
     }
 
     @Nullable
@@ -31,14 +36,22 @@ public class BottomNavigationFragment extends Fragment {
 
         botNav.setOnItemSelectedListener(item->{
             int id = item.getItemId();
-
             if (id==R.id.homeNav){
-                utility.replaceFragment(manager,R.id.container, new HomeFragment(manager), "home");
+                manager.beginTransaction()
+                        .replace(R.id.container,new FragmentHome(),"home")
+                        .replace(R.id.searchbarContainer,new FragmentSearchBar(),"searchBar")
+                        .commit();
             }else if(id==R.id.addProductNav){
-                utility.replaceFragment(manager,R.id.container, new AddProductFragment(), "addProduct");
+                manager.beginTransaction()
+                        .replace(R.id.container,new FragmentAddProduct(),"addProduct")
+                        .replace(R.id.searchbarContainer,new EmptyFragment(),"empty")
+                        .commit();
             }else{
                 //R.id.userProfileNav
-                utility.replaceFragment(manager,R.id.container, new UserProfileFragment(manager), "userProfile");
+                manager.beginTransaction()
+                        .replace(R.id.container,new FragmentUserProfile(),"userProfile")
+                        .replace(R.id.searchbarContainer,new EmptyFragment(),"empty")
+                        .commit();
             }
             return false;
         });

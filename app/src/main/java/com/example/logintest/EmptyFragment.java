@@ -9,16 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.logintest.databinding.EmptyFragmentBinding;
-
 
 public class EmptyFragment extends Fragment {
-    private EmptyFragmentBinding binding;
 
-    @Nullable
+    public EmptyFragment() {}
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = EmptyFragmentBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        return inflater.inflate(R.layout.empty_fragment, container, false);
     }
 }

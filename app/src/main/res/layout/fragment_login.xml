@@ -74,18 +74,6 @@
         android:text="Login"
         />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvForgotPassword"
-        app:layout_constraintTop_toBottomOf="@id/login_button"
-        app:layout_constraintStart_toStartOf="@id/edPassword"
-        app:layout_constraintEnd_toEndOf="@id/edPassword"
-        android:text="Forgot Password"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/navy_2"
-        />
-
 
     <TextView
         android:id="@+id/tvLogin"

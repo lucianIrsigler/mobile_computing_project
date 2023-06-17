@@ -18,14 +18,17 @@
         <activity
             android:name=".InitializationActivity"
             android:windowSoftInputMode="adjustResize"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AccountActivity"/>
-        <activity android:name=".HomePage" />
+        <activity android:name=".AccountActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".HomePage"
+            android:screenOrientation="portrait"/>
 
     </application>
 

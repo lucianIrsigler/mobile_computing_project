@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 
 import android.content.ClipData;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,6 +27,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,7 +46,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-public class AddProductFragment extends Fragment {
+public class FragmentAddProduct extends Fragment {
+
+    public FragmentManager manager;
     private FragmentAddProductBinding binding;
     private final ProductManager productManager = new ProductManager();
     private EditText productNameEditText;
@@ -61,7 +65,12 @@ public class AddProductFragment extends Fragment {
 
     final private int productID = utility.generateRandomID();
 
-    public AddProductFragment(){}
+    public FragmentAddProduct(){}
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
 
     @Nullable
     @Override
@@ -74,7 +83,6 @@ public class AddProductFragment extends Fragment {
         uploadImageRecyclerView = binding.getRoot().findViewById(R.id.ivAddProductPlaceholder);
         Button buttonSelectImage = binding.getRoot().findViewById(R.id.btnSelectImage);
         Button addProductButton = binding.getRoot().findViewById(R.id.btnAddProduct);
-
 
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
@@ -144,6 +152,10 @@ public class AddProductFragment extends Fragment {
                 upload(imagesToBeUploaded);
 
                 Toast.makeText(getActivity(), "Product added successfully", Toast.LENGTH_SHORT).show();
+
+                SharedPreferencesManager.initialize(getActivity());
+                SharedPreferencesManager.storeUserInfo(new UsersManager().getUserInformation());
+
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(getActivity(), "Failed to add product", Toast.LENGTH_SHORT).show();

@@ -28,21 +28,20 @@ import org.json.JSONObject;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 
-public class LoginFragment extends Fragment {
+public class FragmentLogin extends Fragment {
 
     private FragmentLoginBinding binding;
     EditText editUsername;
     EditText editPassword;
     Button btnLogin;
-    TextView lblForgotPassword;
     TextView signUpText;
 
     FragmentManager manager;
-    public LoginFragment(FragmentManager manager){
+    public FragmentLogin(FragmentManager manager){
         this.manager=manager;
     }
 
-    public LoginFragment(){
+    public FragmentLogin(){
 
     }
 
@@ -60,7 +59,6 @@ public class LoginFragment extends Fragment {
         editUsername = binding.getRoot().findViewById(R.id.edUsername);
         editPassword = binding.getRoot().findViewById(R.id.edPassword);
         btnLogin = binding.getRoot().findViewById(R.id.login_button);
-        lblForgotPassword = binding.getRoot().findViewById(R.id.tvForgotPassword);
         signUpText = binding.getRoot().findViewById(R.id.signUpText);
         ToggleButton tglPassword = binding.getRoot().findViewById(R.id.togglePwd);
 
@@ -70,7 +68,7 @@ public class LoginFragment extends Fragment {
         JSONObject params = new JSONObject();
 
         signUpText.setOnClickListener(view1 -> utility.replaceFragment(manager,R.id.container,
-                new SignUpAccountDetailsFragment(manager),"signUpAccount"));
+                new FragmentSignUpAccountDetails(),"signUpAccount"));
 
         btnLogin.setOnClickListener(view1 -> {
             try{
@@ -101,7 +99,10 @@ public class LoginFragment extends Fragment {
                                     );
 
                             SharedPreferencesManager.initialize(getActivity());
+                            SharedPreferencesManager.storeUserName(resp_username);
                             SharedPreferencesManager.storeUserId(Integer.parseInt(response1));
+                            SharedPreferencesManager.storeUserInfo(new UsersManager().getUserInformation());
+                            SharedPreferencesManager.setRecommendedProducts();
 
                         }
                         else{
@@ -147,14 +148,6 @@ public class LoginFragment extends Fragment {
             }
 
             @Override
-            /**
-             * Callback method invoked when the text in the associated TextView has changed.
-             *
-             * @param charSequence the updated text
-             * @param i the start position of the changed text
-             * @param i1 the length of the changed text
-             * @param i2 the new length after the change
-             */
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
                 if(Objects.requireNonNull(editPassword.getText()).toString().isEmpty()){
                     editPassword.setError("Please enter your Password");

@@ -1,5 +1,6 @@
 package com.example.logintest;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,19 +31,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentViewProduct extends Fragment {
-    private Product product;
+    private final Product product;
     final HTTPHandler handler = new HTTPHandler();
     final UsersManager usersManager = new UsersManager();
     FragmentViewProductBinding binding;
     FragmentManager manager;
 
-    public FragmentViewProduct(Product product,FragmentManager manager) {
+    public FragmentViewProduct(Product product) {
         this.product = product;
-        this.manager = manager;
+
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.manager = getParentFragmentManager();
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        utility.replaceFragment(manager,R.id.container1,new EmptyFragment(),"empty");
+        utility.replaceFragment(manager,R.id.searchbarContainer,new EmptyFragment(),"empty");
+
         binding = FragmentViewProductBinding.inflate(inflater, container, false);
 
         // Access the views in the fragment layout and update them with the product details
@@ -108,8 +120,10 @@ public class FragmentViewProduct extends Fragment {
         buyProduct.setOnClickListener(view -> {
             FragmentAddress fragment = new FragmentAddress(manager);
             fragment.setArguments(product);
-            utility.replaceFragment(manager,R.id.container,fragment,"address");
-
+            manager.beginTransaction()
+                    .replace(R.id.container,fragment,fragment.getClass().getSimpleName())
+                    .addToBackStack(fragment.getClass().getSimpleName())
+                    .commit();
         });
 
         addRating.setOnClickListener(view -> {
@@ -137,6 +151,12 @@ public class FragmentViewProduct extends Fragment {
                         "You must buy the item before you can leave a review",
                         Toast.LENGTH_LONG).show();
             }
+
+            SharedPreferencesManager.initialize(getActivity());
+            SharedPreferencesManager.storeUserInfo(new UsersManager().getUserInformation());
+
+
+
         });
         return binding.getRoot();
     }
@@ -257,6 +277,14 @@ public class FragmentViewProduct extends Fragment {
                     product.getProductID(),stars);
 
             alertDialog.dismiss();
+
+            //reload the fragment
+            manager.beginTransaction()
+                    .replace(R.id.container,new FragmentViewProduct(product),
+                            FragmentViewProduct.class.getSimpleName())
+                    .addToBackStack(null)
+                    .commit();
+
         });
 
         cancel.setOnClickListener(v -> alertDialog.dismiss());

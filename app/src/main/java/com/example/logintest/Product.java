@@ -1,13 +1,10 @@
 package com.example.logintest;
 
-import android.graphics.Bitmap;
 public class Product {
-    private String name;
-    private String description;
-    private double price;
-    private String category;
-    private Bitmap image;
-    private int productID;
+    private final String name;
+    private final String description;
+    private final double price;
+    private final int productID;
 
     public Product(String name, String description, double price, int productID) {
         this.name = name;
@@ -30,21 +27,6 @@ public class Product {
 
     public int getProductID() {
         return productID;
-    }
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public Bitmap getImage() {
-        return image;
-    }
-
-    public void setImage(Bitmap image) {
-        this.image = image;
     }
 
 

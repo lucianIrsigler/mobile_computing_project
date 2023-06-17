@@ -15,15 +15,11 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.logintest.databinding.FragmentPaymentBinding;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.time.LocalDate;
 
-public class PaymentFragment extends Fragment {
-final HTTPHandler handler = new HTTPHandler();
+public class FragmentPayment extends Fragment {
     FragmentPaymentBinding binding;
-    FragmentManager manager;
+    final FragmentManager manager;
 
     public Product product;
 
@@ -31,7 +27,7 @@ final HTTPHandler handler = new HTTPHandler();
         this.product=product;
     }
 
-    public PaymentFragment(FragmentManager manager){
+    public FragmentPayment(FragmentManager manager){
         this.manager = manager;
     }
 
@@ -51,37 +47,34 @@ final HTTPHandler handler = new HTTPHandler();
         EditText expDateEdit = binding.getRoot().findViewById(R.id.edExpirationDate);
         EditText cvvEdit = binding.getRoot().findViewById(R.id.edCVV);
         Button makePayment = binding.getRoot().findViewById(R.id.btnMakePayment);
-        EditText emailEdit= binding.getRoot().findViewById(R.id.edEmail);
-        //todo date time picker for expDate
 
         makePayment.setOnClickListener(view1->{
             String cardName = cardHolderEdit.getText().toString();
             String cardNum = cardNumEdit.getText().toString();
             String expDate = expDateEdit.getText().toString();
             String cvv = cvvEdit.getText().toString();
-            String email=emailEdit.getText().toString();
 
-            if (!validate(cardName,cardNum,expDate,cvv,email)){
-                Toast.makeText(getContext(),"Enter all fields",Toast.LENGTH_LONG).show();
-            }else{
-                TransactionManager transactionManager = new TransactionManager();
-                UsersManager usersManager = new UsersManager();
-                long userID = usersManager.getCurrentUserID();
-
-                transactionManager.insertTransaction(userID,product.getProductID());
-
-                Toast.makeText(getContext(), "Purchase was successful", Toast.LENGTH_SHORT).show();
-
-                utility.replaceFragment(manager,R.id.container,
-                        new FragmentViewProduct(product,manager),
-                        "viewproduct");
-                getEmail(email);
-
+            if (!validate(cardName,cardNum,expDate,cvv)){
+                return;
             }
+
+            TransactionManager transactionManager = new TransactionManager();
+            UsersManager usersManager = new UsersManager();
+            long userID = usersManager.getCurrentUserID();
+
+            transactionManager.insertTransaction(userID,product.getProductID());
+
+            Toast.makeText(getContext(), "Purchase was successful", Toast.LENGTH_SHORT).show();
+
+            manager.beginTransaction()
+                    .replace(R.id.container,new FragmentViewProduct(product),FragmentViewProduct.class.getSimpleName())
+                    .addToBackStack(null)
+                    .commit();
+
         });
     }
 
-    private boolean validate(String accountHolderName, String cardNumber, String expiryDate, String cvv, String email){
+    private boolean validate(String accountHolderName, String cardNumber, String expiryDate, String cvv){
         if(accountHolderName.isEmpty()||cardNumber.isEmpty()||cvv.isEmpty()||expiryDate.isEmpty()){
             Toast.makeText(getContext(),"Enter all fields",Toast.LENGTH_LONG).show();
             return false;
@@ -120,19 +113,5 @@ final HTTPHandler handler = new HTTPHandler();
         }
 
         return true;
-    }
-    public JSONObject getEmail(String userEmail){
-        //assign params
-        JSONObject params = new JSONObject();
-        try {
-            params.put("emailTo",userEmail);
-        }catch (JSONException e){
-            System.out.println("error");
-        }
-
-        //url to get request
-        String url = "https://lamp.ms.wits.ac.za/home/s2621933/php/sendemail.php";
-
-        return handler.getRequest(url,params,JSONObject.class);
     }
 }

@@ -37,14 +37,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SignUpPersonalDetailsFragment extends Fragment {
+public class FragmentSignUpPersonalDetails extends Fragment {
 
     private FragmentRegisterPt2Binding binding;
     public String email;
     public String userName;
     public String password;
 
-    FragmentManager manager;
+    final FragmentManager manager;
 
     EditText editFirstName;
     EditText editLastName;
@@ -65,7 +65,7 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         this.password=password;
     }
 
-    public SignUpPersonalDetailsFragment(FragmentManager manager){
+    public FragmentSignUpPersonalDetails(FragmentManager manager){
         this.manager=manager;
     }
 
@@ -90,7 +90,7 @@ public class SignUpPersonalDetailsFragment extends Fragment {
         initDatePicker();
 
         alreadyHaveAccountlbl.setOnClickListener(view1 -> utility.replaceFragment(manager,R.id.container,
-                new LoginFragment(manager),"login"));
+                new FragmentLogin(manager),"login"));
 
         datePickerDialog.setOnDateSetListener((datePicker, i, i1, i2) -> {
             LocalDate today = LocalDate.now();
@@ -151,7 +151,6 @@ public class SignUpPersonalDetailsFragment extends Fragment {
                     params.put("salt", salt);
                 }catch (Exception e){
                     System.out.println("Error");
-                    //todo proper error handling
                 }
 
                 AtomicBoolean flag = new AtomicBoolean(false);
@@ -167,12 +166,11 @@ public class SignUpPersonalDetailsFragment extends Fragment {
                             params.put("salt", bytesToHex(generateSalt()));
                         } catch (JSONException e) {
                             throw new RuntimeException(e);
-                            //todo proper error handling
                         }
                         flag.set(false);
                     }
                     else{
-                        utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login");
+                        utility.replaceFragment(manager,R.id.container,new FragmentLogin(manager),"login");
                         flag.set(true);
                     }
                 }
@@ -195,7 +193,6 @@ public class SignUpPersonalDetailsFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2){
                 String firstName = Objects.requireNonNull(editFirstName.getText()).toString().trim();
-                //todo idk the editFirstName and editLastName does not change its background to red
                 if (firstName.isEmpty()) {
                     errorText.setText(R.string.please_enter_your_first_name);
                     editFirstName.setBackgroundResource(R.drawable.edterr);

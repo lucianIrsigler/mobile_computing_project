@@ -25,16 +25,20 @@ public class HomePage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = EmptyLayoutBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        //ensures that the bottom nav doesnt go up as the keyboard goes up
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                        .replace(R.id.container,new HomeFragment(fragmentManager),"home")
-                        .replace(R.id.container1, new BottomNavigationFragment(fragmentManager),
-                                "bottomNav")
+                        .replace(R.id.container,new FragmentHome(),
+                                FragmentHome.class.getSimpleName())
+                        .replace(R.id.container1, new FragmentBottomNavigation(),
+                                FragmentBottomNavigation.class.getSimpleName())
+                        .replace(R.id.searchbarContainer, new FragmentSearchBar(),
+                                FragmentSearchBar.class.getSimpleName())
+                        .addToBackStack(null)
                         .commit();
-
-        fragmentManager.executePendingTransactions();
     }
 
 
@@ -45,37 +49,37 @@ public class HomePage extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         FragmentManager manager = getSupportFragmentManager();
-        Fragment botNavFragment = manager.findFragmentById(R.id.container1);
         Fragment mainFragment = manager.findFragmentById(R.id.container);
+        Fragment searchBar = manager.findFragmentById(R.id.searchbarContainer);
 
-        if (botNavFragment instanceof EmptyFragment ) {
-            //in search screen goes back to main
-            if (mainFragment instanceof HomeFragment) {
-                ((HomeFragment) mainFragment).unHide();
-            }else if (mainFragment instanceof FragmentViewProduct){
-                utility.replaceFragment(manager,R.id.container,new HomeFragment(manager),"home");
-                utility.replaceFragment(manager,R.id.container1,
-                        new BottomNavigationFragment(manager),"bottomNavigation");
-            }else if (mainFragment instanceof FragmentAddress){
-                Product product = ((FragmentAddress) mainFragment).product;
-                utility.replaceFragment(manager,R.id.container,
-                        new FragmentViewProduct(product,manager),"viewProduct");
-            }else if (mainFragment instanceof PaymentFragment){
-                Product product = ((PaymentFragment) mainFragment).product;
-                utility.replaceFragment(manager,R.id.container,
-                        new FragmentViewProduct(product,manager),"viewProduct");
-            }
-
-        }else if (botNavFragment instanceof BottomNavigationFragment){
-            //app goes to home tab before showing log out alert
-            if (mainFragment instanceof HomeFragment) {
+        if (mainFragment != null) {
+            if (mainFragment instanceof FragmentHome) {
                 showAlert();
-            }else{
-                utility.replaceFragment(getSupportFragmentManager(),
-                        R.id.container,new HomeFragment(manager),"home");
+            }else if (mainFragment instanceof FragmentAddProduct
+                    || mainFragment instanceof FragmentUserProfile
+                    ||mainFragment instanceof FragmentViewProduct
+            ){
+                manager.beginTransaction()
+                        .replace(R.id.container, new FragmentHome(),
+                                FragmentHome.class.getSimpleName())
+                        .replace(R.id.searchbarContainer,new FragmentSearchBar(),
+                                FragmentSearchBar.class.getSimpleName())
+                        .replace(R.id.container1,new FragmentBottomNavigation(),
+                                FragmentBottomNavigation.class.getSimpleName())
+                        .commit();
+            }else {
+                //covers when we go from FragmentSearchClass back to home
+                if (searchBar instanceof FragmentSearchBar){
+                    ((FragmentSearchBar) searchBar).searchView.setQuery("",false);
+                }
+
+                manager.popBackStackImmediate(mainFragment.getClass().getSimpleName(),
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
             }
         }
-    }
+
+
 
     public void showAlert(){
         AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);

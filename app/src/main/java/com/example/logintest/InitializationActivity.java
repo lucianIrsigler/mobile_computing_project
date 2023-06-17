@@ -13,8 +13,9 @@ public class InitializationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.startup_activity);
+
         utility.replaceFragment(getSupportFragmentManager(),
-                R.id.container,new SplashScreenFragment(),"splashScreen");
+                R.id.container,new FragmentSplashScreen(),"splashScreen");
         Handler handler = new Handler();
         handler.postDelayed(this::switchToAccountOptions,2500);
     }
@@ -22,7 +23,7 @@ public class InitializationActivity extends AppCompatActivity {
     private void switchToAccountOptions(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container,new AccountOptionsFragment());
+        fragmentTransaction.replace(R.id.container,new FragmentAccountOptions());
         fragmentTransaction.setCustomAnimations(R.anim.slide_in, 0, 0, 0);
         fragmentTransaction.commit();
     }

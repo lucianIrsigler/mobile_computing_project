@@ -41,7 +41,7 @@ public class ImageAdapterGetFromDatabase extends RecyclerView.Adapter<ImageAdapt
     }
 
     static class ImageViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
+        final ImageView imageView;
 
         ImageViewHolder(View itemView) {
             super(itemView);

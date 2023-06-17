@@ -1,5 +1,6 @@
 package com.example.logintest;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class UserProfileFragment extends Fragment {
+public class FragmentUserProfile extends Fragment {
     private FragmentUserProfileBinding binding;
     final UsersManager usersManager = new UsersManager();
     final ProductManager productManager = new ProductManager();
@@ -33,61 +34,66 @@ public class UserProfileFragment extends Fragment {
     TextView textItems;
     TextView textReviews;
 
-    private FragmentManager manager;
+    public FragmentManager manager;
 
-    public UserProfileFragment(FragmentManager manager) {
-        this.manager = manager;
+    public FragmentUserProfile() {}
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.manager = getParentFragmentManager();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        utility.replaceFragment(manager,R.id.searchbarContainer,new EmptyFragment(),"empty");
+
         binding = FragmentUserProfileBinding.inflate(inflater, container, false);
         textUsername = binding.getRoot().findViewById(R.id.tvUsernameUP);
         textID = binding.getRoot().findViewById(R.id.tvIDUP);
         textEmail = binding.getRoot().findViewById(R.id.tvEmailUP);
         textItems = binding.getRoot().findViewById(R.id.tvItemCount);
         textReviews = binding.getRoot().findViewById(R.id.tvReviewCount);
-        RecyclerView productsListed = binding.getRoot().findViewById(R.id.products_rv);
-        RecyclerView productsReviewed = binding.getRoot().findViewById(R.id.reviews_rv);
+        RecyclerView productsListedView = binding.getRoot().findViewById(R.id.products_rv);
+        RecyclerView productsReviewedView = binding.getRoot().findViewById(R.id.reviews_rv);
 
-        //listed products (get 20 of the users posted)
-        productsListed.setLayoutManager(new LinearLayoutManager(requireContext(),
+        // listed products
+        productsListedView.setLayoutManager(new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.HORIZONTAL, false));
 
         SearchResultAdapter productsListedAdapter = new SearchResultAdapter();
         productsListedAdapter.setManager(manager);
-        productsListed.setAdapter(productsListedAdapter);
-        List<Product> products= productManager.searchProductUserID(usersManager.getCurrentUserID());
+        productsListedView.setAdapter(productsListedAdapter);
+        List<Product> productsListedO = productManager.searchProductUserID(usersManager.getCurrentUserID());
+        productsListedAdapter.setProducts(productsListedO);
 
-        productsListedAdapter.setProducts(products);
 
-
-        //listed reviews
-        productsReviewed.setLayoutManager(new LinearLayoutManager(requireContext(),
+        // reviewed products
+        productsReviewedView.setLayoutManager(new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.HORIZONTAL, false));
 
         SearchResultAdapter productsReviewedAdapter = new SearchResultAdapter();
         productsReviewedAdapter.setManager(manager);
-        productsReviewed.setAdapter(productsReviewedAdapter);
+        productsReviewedView.setAdapter(productsReviewedAdapter);
 
-        //get products that user left review on
+        // get products that the user left reviews on
         RatingManager ratingManager = new RatingManager();
         JSONArray productIDS = ratingManager.getUserReviews(usersManager.getCurrentUserID());
-        List<Product> productsReviews = productManager.createProductsFromArray(productIDS);
+        List<Product> productsReviewedR = productManager.createProductsFromArray(productIDS);
 
-        productsReviewedAdapter.setProducts(productsReviews);
-
+        productsReviewedAdapter.setProducts(productsReviewedR);
 
         updateUserProfile();
         return binding.getRoot();
     }
 
+
+
     private void updateUserProfile(){
-        //TODO get userid to set things
         SharedPreferencesManager.initialize(getActivity());
         long userId = SharedPreferencesManager.retrieveUserId();
-        JSONObject userInfo = usersManager.getUserInformation();
+        JSONObject userInfo = SharedPreferencesManager.retriveUserInfo();
 
         try {
             textUsername.setText(userInfo.getString("username"));
@@ -98,7 +104,6 @@ public class UserProfileFragment extends Fragment {
         }catch (JSONException e){
             Toast.makeText(getActivity(),"Invalid user",Toast.LENGTH_SHORT).show();
         }
-
     }
 
 }

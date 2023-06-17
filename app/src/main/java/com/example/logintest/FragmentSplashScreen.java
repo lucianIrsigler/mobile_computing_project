@@ -11,11 +11,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.logintest.databinding.FragmentSplashScreenBinding;
 
-//todo new splash screen api maybe
-public class SplashScreenFragment extends Fragment {
+public class FragmentSplashScreen extends Fragment {
     private FragmentSplashScreenBinding binding;
 
-    public SplashScreenFragment() {
+    public FragmentSplashScreen() {
         // Required empty public constructor
     }
 

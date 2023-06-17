@@ -89,7 +89,7 @@ public class ProductManager {
 
     public List<Product> createProductsFromArray(JSONArray products){
 
-        List<Product> output = new ArrayList<Product>();
+        List<Product> output = new ArrayList<>();
 
         for (int i =0; i < products.length();i++){
             try {
@@ -205,5 +205,34 @@ public class ProductManager {
         return searchResults;
     }
 
+    public static List<Product> getRecommendedProducts() {
+        List<Product> randomItems = new ArrayList<>();
+
+        try {
+            JSONObject params = new JSONObject();
+            String randomItemsUrl =
+                    "https://lamp.ms.wits.ac.za/home/s2621933/php/selectRandomProducts.php";
+
+            HTTPHandler httpHandler = new HTTPHandler();
+            String response = httpHandler.getRequest(randomItemsUrl, params, String.class);
+            // Parse the response and populate the randomItems list
+            JSONArray jsonArray = new JSONArray(response);
+
+            for (int i = 0; i < 2; i++) {
+                JSONObject jsonProduct = jsonArray.getJSONObject(i);
+                String name = jsonProduct.getString("productName");
+                String description = jsonProduct.getString("productDescription");
+                double price = jsonProduct.getDouble("price");
+                int productID= Integer.parseInt(jsonProduct.getString("productID"));
+                Product product = new Product(name, description, price, productID);
+                randomItems.add(product);
+            }
+        } catch (JSONException e) {
+            Log.e("getRandomItems", e.getMessage());
+        }
+
+        return randomItems;
+
+    }
 
 }

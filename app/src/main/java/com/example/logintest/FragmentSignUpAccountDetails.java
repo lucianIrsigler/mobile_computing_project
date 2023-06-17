@@ -1,5 +1,6 @@
 package com.example.logintest;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -25,7 +26,7 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class SignUpAccountDetailsFragment extends Fragment {
+public class FragmentSignUpAccountDetails extends Fragment {
 
     private FragmentRegisterBinding binding;
     public EditText editEmail;
@@ -37,11 +38,14 @@ public class SignUpAccountDetailsFragment extends Fragment {
 
     private FragmentManager manager;
 
-    public SignUpAccountDetailsFragment(FragmentManager manager){
-        this.manager = manager;
-    }
 
-    public SignUpAccountDetailsFragment(){}
+    public FragmentSignUpAccountDetails(){}
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.manager = getParentFragmentManager();
+    }
 
     @Nullable
     @Override
@@ -65,7 +69,7 @@ public class SignUpAccountDetailsFragment extends Fragment {
 
         alreadyHaveAccountlbl = binding.getRoot().findViewById(R.id.tvLogin);
 
-        alreadyHaveAccountlbl.setOnClickListener( view1-> utility.replaceFragment(manager,R.id.container,new LoginFragment(manager),"login")
+        alreadyHaveAccountlbl.setOnClickListener( view1-> utility.replaceFragment(manager,R.id.container,new FragmentLogin(manager),"login")
         );
 
         btnNext.setOnClickListener(view1 -> {
@@ -99,7 +103,7 @@ public class SignUpAccountDetailsFragment extends Fragment {
             ){
                 Toast.makeText(getActivity(), "Make sure all fields are valid", Toast.LENGTH_LONG).show();
             }else{
-                SignUpPersonalDetailsFragment fragment = new SignUpPersonalDetailsFragment(manager);
+                FragmentSignUpPersonalDetails fragment = new FragmentSignUpPersonalDetails(manager);
                 fragment.setArguments(email,username,password);
                 utility.replaceFragment(manager,R.id.container,fragment,"signupPersonal");
             }
